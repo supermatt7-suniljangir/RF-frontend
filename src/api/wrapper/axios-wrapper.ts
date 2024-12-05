@@ -1,4 +1,3 @@
-"use client";
 import { AxiosInstance, AxiosError } from 'axios';
 import { createAxiosInstance } from '../config/axios-config';
 import { ApiErrorResponse } from '../types/api-types';

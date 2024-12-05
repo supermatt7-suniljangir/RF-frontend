@@ -1,19 +1,23 @@
+import { ProjectMini } from "./project";
+
 export interface User {
   _id: number;
   expiresIn: number;
-  username?: string;
   email: string;
   fullName: string;
   profile?: Profile;
+  projects: ProjectMini[];
 }
 
 export interface Profile {
+  availableForHire?: boolean;
   bio?: string;
   avatar?: string;
   cover?: string;
   followers?: number[];
   following?: number[];
   website?: string;
+  profession?: string;
   phone?: string;
   social?: Social;
 }

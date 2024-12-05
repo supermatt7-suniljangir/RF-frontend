@@ -5,120 +5,87 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
-
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 20 14.3% 4.1%;
-    --card: 0 0% 100%;
-    --card-foreground: 20 14.3% 4.1%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 20 14.3% 4.1%;
-    --primary: 24.6 95% 53.1%;
-    --primary-foreground: 24 9.8% 10%;
-    --secondary: 60 4.8% 95.9%;
-    --secondary-foreground: 24 9.8% 10%;
-    --muted: 60 4.8% 95.9%;
-    --muted-foreground: 25 5.3% 44.7%;
-    --accent: 60 4.8% 95.9%;
-    --accent-foreground: 24 9.8% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 60 9.1% 97.8%;
-    --border: 20 5.9% 90%;
-    --input: 20 5.9% 90%;
-    --ring: 24.6 95% 53.1%;
-    --radius: 0.5rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-  }
-
-  .dark {
-    --background: 20 14.3% 4.1%;
-    --foreground: 60 9.1% 97.8%;
-    --card: 20 14.3% 4.1%;
-    --card-foreground: 60 9.1% 97.8%;
-    --popover: 20 14.3% 4.1%;
-    --popover-foreground: 60 9.1% 97.8%;
-    --primary: 20.5 90.2% 48.2%;
-    --primary-foreground: 60 9.1% 97.8%;
-    --secondary: 12 6.5% 15.1%;
-    --secondary-foreground: 60 9.1% 97.8%;
-    --muted: 12 6.5% 15.1%;
-    --muted-foreground: 24 5.4% 63.9%;
-    --accent: 12 6.5% 15.1%;
-    --accent-foreground: 60 9.1% 97.8%;
-    --destructive: 0 72.2% 50.6%;
-    --destructive-foreground: 60 9.1% 97.8%;
-    --border: 12 6.5% 15.1%;
-    --input: 12 6.5% 15.1%;
-    --ring: 20.5 90.2% 48.2%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-  }
+* {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
-/* @layer base {
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+@layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 98%;
+    --foreground: 240 8% 12%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 240 10% 4%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 174 75% 39%;    
-    --primary-foreground: 180 5% 98%;
-    --secondary: 0 0% 0%;    
-    --secondary-foreground: 0 0% 100%;  
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 172 35% 92%;
-    --accent-foreground: 172 35% 15%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 174 75% 39%;
-    --ring: 174 75% 39%;
+    --popover-foreground: 240 10% 4%;
+
+    --primary: 37 8% 40%; /* Slightly cooler, more slaty tone */
+    --primary-foreground: 0 0% 100%; /* White text for clarity */
+
+    /* Secondary - Soft Slate/Charcoal */
+    --secondary: 240 5% 20%; /* Slate/Charcoal tone */
+    --secondary-foreground: 0 0% 90%; /* Slightly off-white for readability */
+
+    /* Muted - True muted, more neutral and lighter */
+    --muted: 45 15% 85%; /* Lighter, more neutral beige with less saturation */
+    --muted-foreground: 240 5% 20%; /* Muted darker text for a softer feel */
+
+    /* Accent - Muted Coral */
+    --accent: 20 30% 55%; /* #F1A7A7, muted coral */
+    --accent-foreground: 0 0% 95%; /* Light text for clarity */
+
+    /* Destructive - Soft Red */
+    --destructive: 0 60% 45%; /* #D56B6B, softer red */
+    --destructive-foreground: 0 0% 100%; /* White for destructive elements */
+
+    --border: 240 5% 85%;
+    --input: 240 5% 85%;
+    --ring: 37 12% 45%; /* Matches softened primary */
     --radius: 0.5rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+
+    /* Chart colors */
+    --chart-1: 37 12% 45%; /* Darkened Primary */
+    --chart-2: 160 45% 55%; /* Soft Teal */
+    --chart-3: 40 75% 60%; /* Warm Ochre */
+    --chart-4: 10 50% 50%; /* Muted Rose */
+    --chart-5: 200 50% 50%; /* Soft Sky Blue */
   }
 
   .dark {
-    --background: 210 20% 4%;   
-    --foreground: 210 40% 98%;
-    --card: 210 20% 4%;     
-    --card-foreground: 210 40% 98%;
-    --popover: 210 20% 4%;      
-    --popover-foreground: 210 40% 98%;
-    --primary: 180 90% 50%;    
-    --primary-foreground: 180 5% 10%;
-    --secondary: 0 0% 100%;   
-    --secondary-foreground: 0 0% 0%;  
-    --muted: 210 20% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 178 60% 20%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 210 20% 17.5%;
-    --input: 180 90% 50%;
-    --ring: 180 90% 50%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --background: 240 10% 10%;
+    --foreground: 0 0% 90%;
+    --card: 240 10% 12%;
+    --card-foreground: 0 0% 90%;
+    --popover: 240 10% 10%;
+    --popover-foreground: 0 0% 90%;
+
+    /* Primary - Darker Beige with White Text */
+    --primary: 37 12% 35%; /* Darkened shade of B6A28E */
+    --primary-foreground: 0 0% 100%; /* White text for contrast */
+
+    --primary: 37 8% 40%; /* Slightly cooler, more slaty tone */
+    --primary-foreground: 0 0% 100%; /* White text for clarity */
+
+    /* Muted - Slightly lighter than Secondary, still subdued */
+    --muted: 240 5% 35%; /* Lighter than secondary, maintaining a neutral tone */
+    --muted-foreground: 240 5% 70%; /* Slightly lighter muted text */
+
+    /* Accent - Muted Coral */
+    --accent: 20 30% 50%; /* Muted coral */
+    --accent-foreground: 0 0% 90%; /* White text for clarity */
+
+    /* Destructive - Soft Red */
+    --destructive: 0 60% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 5% 35%;
+    --input: 240 5% 35%;
+    --ring: 37 12% 35%; /* Matches softened primary */
   }
-} */
+}
 
 @layer base {
   * {
@@ -128,4 +95,3 @@ body {
     @apply bg-background text-foreground;
   }
 }
-

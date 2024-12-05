@@ -1,3 +1,4 @@
+import { User } from "./user";
 
  export interface ITools {
     name: string;
@@ -13,6 +14,20 @@
     content: string;
     createdAt: Date;
   }
+
+  export interface ProjectMini{
+    _id?: string;
+    title: string;
+    thumbnail: string;
+    stats: {
+      views: number;
+      likes: number;
+      comments: number;
+    };
+    featured: boolean;
+    publishedAt: Date;
+    status: 'draft' | 'published';
+  }
   
   // Main Project Type
   export interface ProjectType {
@@ -22,7 +37,7 @@
     shortDescription: string;
     thumbnail: string;
     media: Imedia[];
-    creator: string; // User ID
+    creator: User; // User ID
     collaborators?: string[]; // Array of user IDs
     tags: string[];
     tools: ITools[];
@@ -30,7 +45,6 @@
     stats: {
       views: number;
       likes: number;
-      saves: number;
       comments: number;
     };
     comments: IComment[]; // Simplified comments array
@@ -38,7 +52,7 @@
     publishedAt: Date;
     createdAt?: Date;
     updatedAt?: Date;
-    status: 'draft' | 'published' | 'archived';
+    status: 'draft' | 'published';
     projectUrl?: string;
     copyright: {
       license: string;

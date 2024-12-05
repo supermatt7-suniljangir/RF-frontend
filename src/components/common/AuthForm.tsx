@@ -26,7 +26,7 @@ interface FormInputs {
 }
 
 const AuthForm = () => {
-  const urlParams = new URLSearchParams(window.location.search);
+  const urlParams = new URLSearchParams(window?.location?.search);
   const redirectPath = urlParams.get("redirect");
   const pathname = usePathname();
   const isLogin = pathname === "/login";

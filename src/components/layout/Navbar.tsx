@@ -1,105 +1,4 @@
-// import React from 'react';
-// import {
-//   NavigationMenu,
-//   NavigationMenuContent,
-//   NavigationMenuItem,
-//   NavigationMenuLink,
-//   NavigationMenuList,
-//   NavigationMenuTrigger,
-// } from "@/components/ui/navigation-menu";
-// import { Button } from "@/components/ui/button";
-// import { Input } from "@/components/ui/input";
-// import { Search, Upload, Bell } from "lucide-react";
 
-// const Navbar = () => {
-//   return (
-//     <div className="w-full border-b">
-//       <div className="container flex items-center justify-between h-16 px-4 mx-auto">
-//         {/* Logo */}
-//         <div className="flex items-center gap-10">
-//           <a href="/" className="text-xl font-bold">
-//             Logo
-//           </a>
-
-//           {/* Main Navigation */}
-//           <NavigationMenu>
-//             <NavigationMenuList>
-//               <NavigationMenuItem>
-//                 <NavigationMenuTrigger>Inspiration</NavigationMenuTrigger>
-//                 <NavigationMenuContent>
-//                   <div className="grid w-[400px] gap-3 p-4">
-//                     <NavigationMenuLink className="block p-2  rounded-md">
-//                       Browse Trending
-//                     </NavigationMenuLink>
-//                     <NavigationMenuLink className="block p-2  rounded-md">
-//                       New & Noteworthy
-//                     </NavigationMenuLink>
-//                     <NavigationMenuLink className="block p-2  rounded-md">
-//                       Featured Projects
-//                     </NavigationMenuLink>
-//                   </div>
-//                 </NavigationMenuContent>
-//               </NavigationMenuItem>
-
-//               <NavigationMenuItem>
-//                 <NavigationMenuTrigger>Find Work</NavigationMenuTrigger>
-//                 <NavigationMenuContent>
-//                   <div className="grid w-[400px] gap-3 p-4">
-//                     <NavigationMenuLink className="block p-2  rounded-md">
-//                       Job Board
-//                     </NavigationMenuLink>
-//                     <NavigationMenuLink className="block p-2  rounded-md">
-//                       Freelance Projects
-//                     </NavigationMenuLink>
-//                   </div>
-//                 </NavigationMenuContent>
-//               </NavigationMenuItem>
-
-//               <NavigationMenuItem>
-//                 <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium">
-//                   Learn Design
-//                 </NavigationMenuLink>
-//               </NavigationMenuItem>
-
-//               <NavigationMenuItem>
-//                 <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium">
-//                   Go Pro
-//                 </NavigationMenuLink>
-//               </NavigationMenuItem>
-//             </NavigationMenuList>
-//           </NavigationMenu>
-//         </div>
-
-//         {/* Right Side: Search, Actions */}
-//         <div className="flex items-center gap-4">
-//           {/* Search */}
-//           <div className="relative w-64">
-//             <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
-//             <Input
-//               placeholder="Search inspiration"
-//               className="pl-8"
-//             />
-//           </div>
-
-//           {/* Action Buttons */}
-//           <Button variant="ghost" size="icon">
-//             <Bell className="h-5 w-5" />
-//           </Button>
-
-//           <Button variant="ghost" size="icon">
-//             <Upload className="h-5 w-5" />
-//           </Button>
-
-//           <Button variant="default">
-//             Share Work
-//           </Button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Navbar;
 "use client";
 import React, { useState } from "react";
 import {
@@ -119,16 +18,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Search,
-  Upload,
-  Bell,
+  // Upload,
+  // Bell,
   Menu,
   X,
   LogInIcon,
   LogOutIcon,
+  CircleUserRound,
 } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { ModeToggle } from "./ModeToggle";
@@ -245,7 +144,7 @@ const DesktopNav = () => {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-primary font-semibold">
+                  <NavigationMenuTrigger className="font-semibold">
                     Explore
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="">
@@ -264,7 +163,7 @@ const DesktopNav = () => {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-primary font-semibold">
+                  <NavigationMenuTrigger className="font-semibold">
                     Find Work
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -283,7 +182,7 @@ const DesktopNav = () => {
           </div>
 
           {/* Search and Actions */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
             {/* <div className="relative w-64">
               <Search className="absolute left-2 top-2.5 h-4 w-4 " />
               <Input
@@ -291,13 +190,14 @@ const DesktopNav = () => {
                 className="pl-8 border-gray-200 focus:ring-2  focus:border-transparent"
               />
             </div> */}
-            <Button variant="ghost" size="icon" className="">
+            <Link href={"/search"}>
               <Search className="h-5 w-5" />
-            </Button>
+            </Link>
 
-            <Button variant="ghost" size="icon" className="">
-              <Upload className="h-5 w-5" />
-            </Button>
+            <Link href={"/profile"}>
+              <CircleUserRound className="h-5 w-5" />
+            </Link>
+            <ModeToggle />
 
             {user ? (
               <Button
@@ -313,7 +213,6 @@ const DesktopNav = () => {
                 </Button>
               </Link>
             )}
-            <ModeToggle />
           </div>
         </div>
       </div>

@@ -41,7 +41,7 @@ export default function SearchBar() {
       className="flex items-start gap-4 w-full"
     >
       <div className="relative w-full">
-        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-2 top-2.5 h-4 w-4 text-secondary-foreground" />
         <Input
           {...register("query", {
             required: "Search query cannot be empty",
@@ -49,7 +49,8 @@ export default function SearchBar() {
           placeholder="Search inspiration"
           className={`pl-8 ${
             errors.query ? "ring-2 ring-red-500" : "focus:ring-2"
-          } bg-secondary focus:border-transparent`}
+          } bg-secondary text-secondary-foreground focus:border-transparent placeholder:text-secondary-foreground`}
+         
         />
         {errors.query && (
           <p className="text-red-500 text-sm mt-1">{errors.query.message}</p>
@@ -58,4 +59,5 @@ export default function SearchBar() {
       <Button type="submit">Search</Button>
     </form>
   );
+  
 }

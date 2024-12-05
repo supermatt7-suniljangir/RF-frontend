@@ -39,7 +39,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
     fetchInitialData();
   }, []);
-  const logout = async() => {
+  const logout = async () => {
     await logoutHook();
     setUser(null);
   };
