@@ -7,7 +7,7 @@ import { useDropzone } from "react-dropzone";
 const ProfilePhoto: React.FC = () => {
   const { user } = useUser();
   const [image, setImage] = useState<string | null>(
-    user.profile.avatar || null
+    user?.profile?.avatar || null
   );
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -30,9 +30,8 @@ const ProfilePhoto: React.FC = () => {
     <div {...getRootProps()} className="relative w-32 h-32">
       <input {...getInputProps()} />
       <div
-        className={`w-full h-full rounded-full border-2 border-dashed flex items-center relative justify-center overflow-hidden cursor-pointer ${
-          isDragActive ? "border-blue-500" : "border-gray-300"
-        }`}
+        className={`w-full h-full rounded-full border-2 border-dashed flex items-center relative justify-center overflow-hidden cursor-pointer ${isDragActive ? "border-blue-500" : "border-gray-300"
+          }`}
       >
         {image ? (
           // Show uploaded image

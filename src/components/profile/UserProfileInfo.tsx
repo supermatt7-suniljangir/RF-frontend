@@ -9,7 +9,7 @@ import Social from "./Social";
 import { useUser } from "@/contexts/UserContext";
 import Spinner from "@/app/loading";
 import { redirect } from "next/navigation";
-
+import ProfilePlaceholder from "@/media/user.png";
 export default function UserProfileInfo() {
   const { user: authUser, isLoading } = useUser();
   if (isLoading) return <Spinner />;
@@ -17,13 +17,15 @@ export default function UserProfileInfo() {
 
   return (
     <div className="flex flex-col space-x-4 w-full relative items-center lg:items-start text-center lg:text-left space-y-4">
-      <div className="w-20 h-20 lg:w-24 lg:h-24 relative -mt-12 lg:ml-4">
-        <Image
-          fill
-          src={authUser.profile?.avatar}
-          alt={authUser.fullName}
-          className="rounded-full"
-        />
+      <div className="w-20 h-20 lg:w-24 lg:h-24 relative -mt-12 lg:ml-4 border-2 border-primary rounded-full">
+        {authUser.profile?.avatar ? (
+          <Image
+            fill
+            src={authUser.profile?.avatar}
+            alt={authUser.fullName}
+            className="rounded-full"
+          />) : <Image fill src={ProfilePlaceholder} alt={authUser.fullName} className="rounded-full" />
+        }
       </div>
 
       <div className="space-y-1">

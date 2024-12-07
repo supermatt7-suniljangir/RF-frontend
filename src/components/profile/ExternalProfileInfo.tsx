@@ -15,6 +15,7 @@ import { toast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
 import { User } from "@/types/user";
 import { redirect, usePathname } from "next/navigation";
+import ProfilePlaceholder from "@/media/user.png";
 
 export default function ExternalProfileInfo({ user }: { user: User }) {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -24,12 +25,14 @@ export default function ExternalProfileInfo({ user }: { user: User }) {
     return (
         <div className="flex flex-col space-x-4 w-full relative items-center lg:items-start text-center lg:text-left space-y-4">
             <div className="w-20 h-20 lg:w-24 lg:h-24 relative -mt-12 lg:ml-4">
-                <Image
-                    fill
-                    src={user.profile?.avatar}
-                    alt={user.fullName}
-                    className="rounded-full"
-                />
+                {user.profile?.avatar ? (
+                    <Image
+                        fill
+                        src={user.profile?.avatar}
+                        alt={user.fullName}
+                        className="rounded-full"
+                    />) : <Image fill src={ProfilePlaceholder} alt={user.fullName} className="rounded-full" />
+                }
             </div>
 
             <div className="space-y-1">

@@ -19,6 +19,9 @@ export default async function Profile({
     redirect("/login");
   }
   const projects: ProjectMini[] = await getUserProjects(authToken);
+  if (!projects) {
+    throw new Error("Failed to fetch user projects");
+  }
   return (
     <Suspense fallback={<Spinner />}>
       <ProfileData display={display} projects={projects} />

@@ -67,7 +67,7 @@ const ProfileData: React.FC<ProfileDataProps> = ({ display, projects, user }) =>
                 </div>
                 <div className="lg:col-span-4 place-items-center lg:place-items-start w-full">
                     <ProfileMenu />
-                    {projects && projects?.length > 0 && display === "projects" && (
+                    {display === "projects" && (
                         <ProfileProjects projects={projects} />
                     )}
 

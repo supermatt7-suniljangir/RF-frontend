@@ -23,10 +23,10 @@ const BasicInfoEdit: React.FC = () => {
       reset({
         fullName: user.fullName || "",
         profile: {
-          profession: user.profile?.profession || "",
-          phone: user.profile?.phone || "",
-          bio: user.profile?.bio || "",
-          website: user.profile?.website || "",
+          profession: user?.profile?.profession || "",
+          phone: user?.profile?.phone || "",
+          bio: user?.profile?.bio || "",
+          website: user?.profile?.website || "",
         },
       });
     }

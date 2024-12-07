@@ -9,7 +9,7 @@ interface ProfileProjectProps {
 const ProfileProjects: React.FC<ProfileProjectProps> = ({ projects }) => {
   return (
     <div className="flex flex-wrap gap-4 justify-center">
-      {projects.length > 0 && projects.map((project) => (
+      {projects?.length > 0 && projects?.map((project) => (
         <ProjectCard key={project._id} project={project} />
       ))}
       <CreateProjectCard />

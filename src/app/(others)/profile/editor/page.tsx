@@ -26,9 +26,9 @@ const ProfileEditor: React.FC = () => {
   return (
     <Card className="w-full max-w-3xl md:mt-8 mx-auto md:rounded-sm rounded-none">
       <div className="flex justify-between p-4  items-center">
-          <Button variant="secondary" className="rounded-full w-8 h-8" onClick={()=>router.push("/profile")}>
-            <CircleArrowLeft />
-          </Button>
+        <Button variant="secondary" className="rounded-full w-8 h-8" onClick={() => router.push("/profile")}>
+          <CircleArrowLeft />
+        </Button>
         <div className="flex gap-2">
           <Button
             variant="ghost"
