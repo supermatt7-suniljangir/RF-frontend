@@ -42,3 +42,24 @@
 // } catch (error) {
 //   console.error("Error fetching user profile and this is where the page.tsx is:", error);
 // }
+import axios from "axios";
+import { User } from "@/types/user";
+
+export const getServerAuth = async (authToken: string): Promise<User | null> => {
+  try {
+    const response = await axios.get("http://localhost:5500/api/users/", {
+      headers: {
+        Cookie: `auth_token=${authToken}`, // Manually set the cookie
+      },
+      withCredentials: true, // Important: This enables sending cookies in cross-origin requests
+    });
+
+    return response.data; // Directly return the user object
+  } catch (error) {
+    console.error(
+      "Profile fetch error:",
+      error instanceof Error ? error.message : error
+    );
+    return null;
+  }
+};

@@ -1,7 +1,7 @@
 import { ProjectMini } from "./project";
 
 export interface User {
-  _id: number;
+  _id: string;
   expiresIn: number;
   email: string;
   fullName: string;

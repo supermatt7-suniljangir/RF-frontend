@@ -5,13 +5,13 @@ interface ProjectResponse {
 import ApiService, { ApiResponse } from "@/api/wrapper/axios-wrapper";
 import { ProjectType } from "@/types/project";
 
-interface LoginPayload {
+interface ProjectPayload {
   id: string;
 }
 
 export async function fetchProjectById({
   id,
-}: LoginPayload): Promise<ProjectResponse | null> {
+}: ProjectPayload): Promise<ProjectResponse | null> {
   try {
     const apiService = ApiService.getInstance();
     const url = `/projects/${id}`;

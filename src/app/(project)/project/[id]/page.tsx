@@ -4,7 +4,7 @@ import { ProjectType } from "@/types/project";
 import React from "react";
 import { fetchProjectById } from "@/features/project/useGetProjectById";
 import Spinner from "@/app/loading";
-import { Metadata, ResolvingMetadata } from "next";
+import { Metadata } from "next";
 
 interface ProjectResponse {
   data: ProjectType;
@@ -21,7 +21,7 @@ export async function generateMetadata(
   // parent: ResolvingMetadata
 ): Promise<Metadata> {
   const project: ProjectResponse | null = await fetchProjectById({
-    id: "674e9db7800d87b1df8c8982",
+    id: params.id,
   });
 
   if (!project) {
@@ -59,7 +59,7 @@ export async function generateMetadata(
 
 const Project = async ({ params }: ProjectPageProps) => {
   const project: ProjectResponse | null = await fetchProjectById({
-    id: "674e9db7800d87b1df8c8982",
+    id: params.id
   });
 
   if (!project) {

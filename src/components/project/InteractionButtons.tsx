@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 interface InteractionButtonsProps {
   stats: {
     likes: number;
-    saves: number;
+    comments: number;
+    views: number;
   };
 }
 

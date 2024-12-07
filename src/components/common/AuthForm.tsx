@@ -17,6 +17,7 @@ import { useUser } from "@/contexts/UserContext";
 import { useAuth } from "@/features/auth/useLogin";
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
+import Spinner from "@/app/loading";
 
 interface FormInputs {
   email: string;
@@ -29,6 +30,7 @@ const AuthForm = () => {
   const urlParams = new URLSearchParams(window?.location?.search);
   const redirectPath = urlParams.get("redirect");
   const pathname = usePathname();
+  console.log(redirectPath);
   const isLogin = pathname === "/login";
   const { isLoading, user } = useUser();
   const {
@@ -50,7 +52,7 @@ const AuthForm = () => {
     console.log(res);
   };
   if (user) redirect(redirectPath ? redirectPath : "/");
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Spinner />
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>

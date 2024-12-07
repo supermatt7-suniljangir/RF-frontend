@@ -5,14 +5,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Wallpaper, X } from "lucide-react";
 import Image from "next/image";
+import { useUser } from "@/contexts/UserContext";
+import Spinner from "@/app/loading";
 
 interface ProfileBannerProps {
   cover?: string | null;
 }
 
 export default function ProfileBanner({ cover }: ProfileBannerProps) {
+  const { user, isLoading } = useUser();
   const [bannerImage, setBannerImage] = useState<string | File | null>(
-    cover || null
+    cover || user?.profile?.cover || null
   );
   const [isHovered, setIsHovered] = useState(false);
 
@@ -40,7 +43,33 @@ export default function ProfileBanner({ cover }: ProfileBannerProps) {
           {...getRootProps()}
           className="flex items-center w-full p-0 justify-center h-56 md:h-64 cursor-pointer relative"
         >
-          {bannerImage ? (
+          {isLoading ? <Spinner /> :
+            bannerImage && !isLoading ? (
+              typeof bannerImage === "string" ? (
+                <Image
+                  src={bannerImage}
+                  alt="Banner"
+                  fill
+                  className="w-full h-full object-cover relative"
+                />
+              ) : (
+                <Image
+                  src={URL.createObjectURL(bannerImage)}
+                  alt="Banner"
+                  fill
+                  className="w-full h-full object-cover relative"
+                />
+              )
+            ) : (
+              <div className="grid place-items-center text-center">
+                <Wallpaper size={48} />
+                <h2 className="text-2xl font-semibold">Banner Image</h2>
+                <p className="text-muted-foreground text-lg mt-2">
+                  Optimal dimensions 3200x410px
+                </p>
+              </div>
+            )}
+          {/* {bannerImage && !isLoading ? (
             typeof bannerImage === "string" ? (
               <Image
                 src={bannerImage}
@@ -64,7 +93,7 @@ export default function ProfileBanner({ cover }: ProfileBannerProps) {
                 Optimal dimensions 3200x410px
               </p>
             </div>
-          )}
+          )} */}
           <input {...getInputProps()} />
         </div>
         {isHovered && bannerImage && (

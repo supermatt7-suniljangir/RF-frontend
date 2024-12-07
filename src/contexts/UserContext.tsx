@@ -21,15 +21,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   // const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
+  // const router = useRouter();
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
         const profile = await fetchProfile();
-        if (!profile) {
-          router.replace("/login?redirect=/");
+        if (profile) {
+          setUser(profile);
         }
-        setUser(profile);
       } catch (error) {
         console.error("Failed to fetch user profile:", error);
       } finally {
@@ -39,6 +38,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
     fetchInitialData();
   }, []);
+
+
   const logout = async () => {
     await logoutHook();
     setUser(null);

@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { useSearchParams, redirect } from "next/navigation";
 import {

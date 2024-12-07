@@ -1,7 +1,8 @@
 import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { User } from "@/types/user";
 
-const Statistics = () => {
+const Statistics = ({ user }: { user?: User | null }) => {
   return (
     <Card className="w-full">
       <CardHeader>

@@ -16,10 +16,20 @@ export const createAxiosInstance = (): AxiosInstance => {
   // Configure axios to handle cookies
   instance.defaults.withCredentials = true; // Important: This enables sending cookies in cross-origin requests
 
-  // Request interceptor
+  // // Request interceptor
+  // instance.interceptors.request.use(
+  //   (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+  //     // No need to manually set Authorization header anymore as cookie will be sent automatically
+  //     return config;
+  //   },
+  //   (error: AxiosError): Promise<never> => {
+  //     return Promise.reject(error);
+  //   }
+  // );
   instance.interceptors.request.use(
     (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
-      // No need to manually set Authorization header anymore as cookie will be sent automatically
+      // Explicitly set withCredentials for each request
+      config.withCredentials = true;
       return config;
     },
     (error: AxiosError): Promise<never> => {
