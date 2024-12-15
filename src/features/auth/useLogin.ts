@@ -3,8 +3,8 @@ import { User } from "@/types/user";
 import ApiService from "@/api/wrapper/axios-wrapper";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
-import { fetchProfile } from "../user/fetchProfile";
 import { usePathname } from "next/navigation";
+import { getUserProfile } from "@/services/users/getUserProfile";
 
 interface LoginPayload {
   googleToken?: string;
@@ -40,7 +40,7 @@ export function useAuth() {
           });
           throw new Error("Login failed");
         }
-        const fetchUserData = (await fetchProfile()) as User;
+        const fetchUserData = (await getUserProfile({cacheSettings:"no-store"})) as User;
         if (!fetchUserData) {
           throw new Error("Fetching profile failed");
         }
@@ -71,8 +71,8 @@ export function useAuth() {
           });
           throw new Error(isLogin ? "Login failed" : "Registration failed");
         }
-        const fetchUserData = (await fetchProfile()) as User;
-        if (!fetchProfile) {
+        const fetchUserData = (await getUserProfile({cacheSettings:"no-store"})) as User;
+        if (!fetchUserData) {
           throw new Error("Fetching profile failed");
         }
         userData = fetchUserData;

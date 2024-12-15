@@ -7,12 +7,12 @@ import {
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 
-const MessageModal = ({ isOpen, onClose, onSubmit }) => {
+const MessageModal = ({ isOpen, onClose, onSubmit, label }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="py-8">
         <DialogHeader>
-          <DialogTitle>Message X</DialogTitle>
+          <DialogTitle>Message {label}</DialogTitle>
         </DialogHeader>
         <Textarea
           placeholder="Your Message"

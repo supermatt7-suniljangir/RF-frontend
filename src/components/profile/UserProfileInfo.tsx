@@ -1,10 +1,9 @@
 "use client";
-import { Pencil, AtSign, SquareArrowOutUpRight } from "lucide-react";
+import { Pencil, AtSign, SquareArrowOutUpRight, Settings } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { Label } from "../ui/label";
-import { Switch } from "../ui/switch";
+
 import Social from "./Social";
 import { useUser } from "@/contexts/UserContext";
 import Spinner from "@/app/loading";
@@ -14,7 +13,6 @@ export default function UserProfileInfo() {
   const { user: authUser, isLoading } = useUser();
   if (isLoading) return <Spinner />;
   if (!authUser) redirect("/login?redirect=/profile");
-
   return (
     <div className="flex flex-col space-x-4 w-full relative items-center lg:items-start text-center lg:text-left space-y-4">
       <div className="w-20 h-20 lg:w-24 lg:h-24 relative -mt-12 lg:ml-4 border-2 border-primary rounded-full">
@@ -23,8 +21,8 @@ export default function UserProfileInfo() {
             fill
             src={authUser.profile?.avatar}
             alt={authUser.fullName}
-            className="rounded-full"
-          />) : <Image fill src={ProfilePlaceholder} alt={authUser.fullName} className="rounded-full" />
+            className="rounded-full object-cover"
+          />) : <Image fill src={ProfilePlaceholder} alt={authUser.fullName} className="rounded-full object-cover" />
         }
       </div>
 
@@ -36,13 +34,17 @@ export default function UserProfileInfo() {
             {authUser.email}
           </Link>
         </div>
+        {authUser.profile?.profession && <div>
+          <Settings size={16} className="inline" /> {" "}
+          {authUser.profile.profession}
+        </div>}
         {authUser.profile?.website && (
           <div>
             <Link
               href={authUser.profile.website}
               target="_blank"
             >
-              <SquareArrowOutUpRight className="inline" size={14} />
+              <SquareArrowOutUpRight className="inline" size={14} />{" "}
               Website
             </Link>
           </div>
@@ -59,16 +61,6 @@ export default function UserProfileInfo() {
         </Button>
       </Link>
 
-      <div className="space-x-4 flex items-center">
-        <Label htmlFor="availableForHire" className="text-lg font-semibold">
-          Available for hire?
-        </Label>
-        <Switch
-          id="availableForHire"
-          defaultChecked={authUser.profile?.availableForHire}
-          className="scale-x-125 scale-y-125 checked:bg-primary"
-        />
-      </div>
 
       <div className="!mt-8 w-[95%] p-4 lg:p-0">
         <h2 className="text-muted-foreground font-bold uppercase">About</h2>

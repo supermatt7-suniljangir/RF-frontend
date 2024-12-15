@@ -4,6 +4,7 @@ import {
     AtSign,
     Check,
     Mail,
+    Settings,
     SquareArrowOutUpRight
 } from "lucide-react";
 import Image from "next/image";
@@ -30,7 +31,7 @@ export default function ExternalProfileInfo({ user }: { user: User }) {
                         fill
                         src={user.profile?.avatar}
                         alt={user.fullName}
-                        className="rounded-full"
+                        className="rounded-full object-cover"
                     />) : <Image fill src={ProfilePlaceholder} alt={user.fullName} className="rounded-full" />
                 }
             </div>
@@ -43,13 +44,17 @@ export default function ExternalProfileInfo({ user }: { user: User }) {
                         {user.email}
                     </Link>
                 </div>
+                {user.profile?.profession && <div>
+                    <Settings size={16} className="inline" /> {" "}
+                    {user.profile.profession}
+                </div>}
                 {user.profile?.website && (
                     <div>
                         <Link
                             href={user.profile.website}
                             target="_blank"
                         >
-                            <SquareArrowOutUpRight className="inline" size={14} />
+                            <SquareArrowOutUpRight className="inline" size={14} />{" "}
                             Website
                         </Link>
                     </div>
@@ -81,6 +86,7 @@ export default function ExternalProfileInfo({ user }: { user: User }) {
             </Button>
 
             <MessageModal
+                label={user.fullName}
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onSubmit={() => setIsModalOpen(false)}

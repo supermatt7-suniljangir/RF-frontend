@@ -2,9 +2,8 @@
 import { User } from "@/types/user";
 import { createContext, useState, useContext, useEffect } from "react";
 import React from "react";
-import { fetchProfile } from "@/features/user/fetchProfile";
-import { useRouter } from "next/navigation";
 import { logout as logoutHook } from "@/features/auth/useLogout";
+import { getUserProfile } from "@/services/users/getUserProfile";
 // import { useRouter } from "next/navigation";
 
 interface UserContextType {
@@ -25,7 +24,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const profile = await fetchProfile();
+        const profile = await getUserProfile();
         if (profile) {
           setUser(profile);
         }

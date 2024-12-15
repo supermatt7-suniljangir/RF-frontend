@@ -2,9 +2,9 @@ import { Suspense } from "react";
 import ProjectInfo from "@/components/project/Project";
 import { ProjectType } from "@/types/project";
 import React from "react";
-import { fetchProjectById } from "@/features/project/useGetProjectById";
 import Spinner from "@/app/loading";
 import { Metadata } from "next";
+import { getProjectById } from "@/services/Projects/getProjectById";
 
 interface ProjectResponse {
   data: ProjectType;
@@ -12,18 +12,14 @@ interface ProjectResponse {
 }
 
 interface ProjectPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-// Dynamic Metadata Generation
 export async function generateMetadata(
   { params }: ProjectPageProps,
-  // parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const project: ProjectResponse | null = await fetchProjectById({
-    id: params.id,
-  });
-
+  const { id } = await params;
+  const project: ProjectResponse | null = await getProjectById(id);
   if (!project) {
     return {
       title: "Project Not Found",
@@ -58,9 +54,8 @@ export async function generateMetadata(
 }
 
 const Project = async ({ params }: ProjectPageProps) => {
-  const project: ProjectResponse | null = await fetchProjectById({
-    id: params.id
-  });
+  const { id } = await params;
+  const project: ProjectResponse | null = await getProjectById(id);
 
   if (!project) {
     throw new Error("Project not found");

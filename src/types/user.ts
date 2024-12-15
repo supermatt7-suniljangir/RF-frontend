@@ -1,4 +1,4 @@
-import { ProjectMini } from "./project";
+// import { ProjectMini } from "./project";
 
 export interface User {
   _id: string;
@@ -6,7 +6,7 @@ export interface User {
   email: string;
   fullName: string;
   profile?: Profile;
-  projects: ProjectMini[];
+  projects: string[];
 }
 
 export interface Profile {
@@ -14,11 +14,10 @@ export interface Profile {
   bio?: string;
   avatar?: string;
   cover?: string;
-  followers?: number[];
-  following?: number[];
+  followers?: MiniUser[]; //baad me kadi karsya tem milsi jnaa
+  following?: MiniUser[]; //baad me kadi karsya tem milsi jnaa
   website?: string;
   profession?: string;
-  phone?: string;
   social?: Social;
 }
 export interface Social {
@@ -27,4 +26,15 @@ export interface Social {
   instagram?: string;
   linkedin?: string;
   github?: string;
+}
+
+// MiniUser interface
+export interface MiniUser {
+  _id: string;
+  fullName: string;
+  avatar?: string;
+  profession?: string;
+  followersCount?: number;
+  projects?: string[];
+  availableForHire?: boolean;
 }

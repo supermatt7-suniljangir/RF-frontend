@@ -33,6 +33,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { ModeToggle } from "./ModeToggle";
 import Link from "next/link";
 import { useUser } from "@/contexts/UserContext";
+import Image from "next/image";
 
 const MobileNav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -194,8 +195,8 @@ const DesktopNav = () => {
               <Search className="h-5 w-5" />
             </Link>
 
-            <Link href={"/profile"}>
-              <CircleUserRound className="h-5 w-5" />
+            <Link href={"/profile"} className="inline-block w-6 h-6 relative">
+              {user?.profile?.avatar ? <Image src={user.profile.avatar} className="rounded-full object-cover" fill alt={user.fullName} /> : <CircleUserRound className="h-5 w-5" />}
             </Link>
             <ModeToggle />
 

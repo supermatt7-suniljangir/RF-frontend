@@ -27,7 +27,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  // If you're using images from localhost
 
   images: {
     remotePatterns: [
@@ -37,21 +36,45 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
   typescript: {
     ignoreBuildErrors: true, // Ignore TypeScript errors during build
   },
+
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // If you want to proxy API calls to your local backend
-  //  async rewrites() {
-  //    return [
-  //      {
-  //        source: '/api/:path*',
-  //        destination: 'http://localhost:5500/api/:path*'
-  //      }
-  //    ]
-  //  }
+
+
+  // Disable source maps in development to remove unnecessary 404 logs
+  webpack: (config, { dev }) => {
+    if (dev) {
+      config.devtool = false; // Disable all source maps in development
+      config.module.rules.push({
+        test: /\.js$/,
+        enforce: "pre",
+        use: [
+          {
+            loader: "source-map-loader",
+            options: {
+              filterSourceMappingUrl: () => false, // Ignore all source map errors
+            },
+          },
+        ],
+      });
+    }
+    return config;
+  },
+
+  // Optional: Proxy API calls to your local backend
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: '/api/:path*',
+  //       destination: 'http://localhost:5500/api/:path*'
+  //     }
+  //   ];
+  // }
 } satisfies NextConfig;
 
 export default nextConfig;

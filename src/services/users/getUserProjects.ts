@@ -1,0 +1,46 @@
+
+
+
+import { cookies } from "next/headers";
+import { ProjectMini } from "@/types/project";
+import { URL } from "@/api/config/configs";
+
+interface ProjectsResponse {
+  success: boolean;
+  count: number;
+  data: ProjectMini[];
+}
+
+export const getUserProjectsApi = async (userId?: string): Promise<ProjectMini[] | null> => {
+  const cookieStore = await cookies(); // Access the cookies
+  const authToken = cookieStore.get("auth_token")?.value;
+   const urlPath = userId ? `projects/user/${userId}` : `projects/user/personal`;
+  try {
+    const url = `${URL}/${urlPath}`
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `auth_token=${authToken || ""}`,
+      },
+      cache: "force-cache", 
+    });
+
+    if (!response.ok) {
+      console.error("Failed to fetch user projects:", response.statusText);
+      return null;
+    }
+
+    const data: ProjectsResponse = await response.json();
+
+    if (!data.success) {
+      console.error("Failed to fetch user projects, API returned success false", data);
+      return null;
+    }
+    return data.data;
+  } catch (error) {
+    console.error("Error fetching user projects:", error);
+    return null;
+  }
+};

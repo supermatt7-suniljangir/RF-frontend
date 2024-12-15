@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import XIcon from "@/media/x.svg";
@@ -9,14 +9,12 @@ import FacebookIcon from "@/media/facebook.svg";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
-
-type SocialLinks = {
-  twitter: string;
-  github: string;
-  linkedin: string;
-  instagram: string;
-  facebook: string;
-};
+import { useUser } from "@/contexts/UserContext";
+import { useUpdateUserProfile } from "@/features/user/useUpdateProfile";
+import { toast } from "@/hooks/use-toast";
+import Spinner from "@/app/loading";
+import { User, Social } from "@/types/user";
+import { redirect } from "next/navigation";
 
 const socialConfig = [
   {
@@ -53,26 +51,64 @@ const socialConfig = [
 ];
 
 const SocialEdit = () => {
+  const { updateProfile, loading: isUpdating } = useUpdateUserProfile();
+  const { user, setUser } = useUser();
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
-  } = useForm<SocialLinks>({
-    defaultValues: {
-      twitter: "",
-      github: "",
-      linkedin: "",
-      instagram: "",
-      facebook: "",
-    },
-  });
+  } = useForm<Social>();
 
-  const onSubmit = (data: SocialLinks) => {
-    console.log(data);
+  useEffect(() => {
+    if (user?.profile?.social) {
+      reset({
+        twitter: user.profile.social.twitter || undefined,
+        github: user.profile.social.github || undefined,
+        linkedin: user.profile.social.linkedin || undefined,
+        instagram: user.profile.social.instagram || undefined,
+        facebook: user.profile.social.facebook || undefined,
+      });
+    }
+  }, [user, reset]);
+
+  const onSubmit = async (data: Social) => {
+    // Clean the data by removing empty strings and undefined values
+    const cleanSocial = Object.entries(data).reduce((acc, [key, value]) => {
+      if (value?.trim()) {
+        acc[key as keyof Social] = value.trim();
+      }
+      return acc;
+    }, {} as Partial<Social>);
+
+    // Structure the data according to the User schema
+    const updateData: Partial<User> = {
+      profile: {
+        social: cleanSocial
+      }
+    };
+
+    const res = await updateProfile(updateData);
+
+    if (!res || !res?.success) {
+      toast({
+        variant: "destructive",
+        title: "Failed to update social links",
+        description: "Please try again later",
+      });
+      return;
+    }
+    toast({
+      variant: "default",
+      title: "Profile updated successfully"
+    });
+    setUser(res.data);
+    redirect("/profile");
   };
 
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-3/4 mx-auto space-y-4">
+    isUpdating ? <Spinner /> : <form onSubmit={handleSubmit(onSubmit)} className="w-3/4 mx-auto space-y-4">
       {socialConfig.map((social) => (
         <Card key={social.id} className="w-full rounded-sm px-4 py-2">
           <div className="flex items-center space-x-4">
@@ -82,27 +118,40 @@ const SocialEdit = () => {
               src={social.icon}
               alt={`${social.id} icon`}
             />
-            <div className="flex-grow">
+            <div className="flex-grow space-y-1">
               <Input
-                {...register(social.id as keyof SocialLinks, {
+                {...register(social.id as keyof Social, {
                   pattern: {
                     value: new RegExp(social.pattern),
                     message: `Please enter a valid ${social.id} URL`,
                   },
+                  validate: (value) => {
+                    if (!value) return true;
+                    if (!value.startsWith('http://') && !value.startsWith('https://')) {
+                      return 'URL must start with http:// or https://';
+                    }
+                    return true;
+                  }
                 })}
                 placeholder={social.placeholder}
                 className="w-full"
               />
-              {errors[social.id as keyof SocialLinks] && (
+              {errors[social.id as keyof Social] && (
                 <span className="text-sm text-red-500">
-                  {errors[social.id as keyof SocialLinks]?.message}
+                  {errors[social.id as keyof Social]?.message}
                 </span>
               )}
             </div>
           </div>
         </Card>
       ))}
-      <Button className="block mx-auto px-8">Save Changes</Button>
+      <Button
+        type="submit"
+        className="block mx-auto px-8"
+        disabled={isUpdating}
+      >
+        {isUpdating ? "Saving..." : "Save Changes"}
+      </Button>
     </form>
   );
 };

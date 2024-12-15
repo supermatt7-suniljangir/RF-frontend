@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,10 +7,17 @@ import ProfilePhoto from "@/components/profileEditor/ProfilePhoto";
 import { useForm } from "react-hook-form";
 import { User } from "@/types/user";
 import { useUser } from "@/contexts/UserContext";
+import { useUpdateUserProfile } from "@/features/user/useUpdateProfile";
+import { toast } from "@/hooks/use-toast";
+import Spinner from "@/app/loading";
+import { redirect } from "next/navigation";
+import { Switch } from "../ui/switch";
 
 const BasicInfoEdit: React.FC = () => {
-  const { user } = useUser();
+  const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
 
+  const { updateProfile, loading: isUpdating } = useUpdateUserProfile();
+  const { user, setUser } = useUser();
   const {
     register,
     handleSubmit,
@@ -18,29 +25,83 @@ const BasicInfoEdit: React.FC = () => {
     formState: { errors },
   } = useForm<User>();
 
+  const [availableForHire, setAvailableForHire] = useState(
+    user.profile?.availableForHire || false
+  );
+
   useEffect(() => {
     if (user) {
       reset({
-        fullName: user.fullName || "",
+        fullName: user.fullName || undefined,
         profile: {
-          profession: user?.profile?.profession || "",
-          phone: user?.profile?.phone || "",
-          bio: user?.profile?.bio || "",
-          website: user?.profile?.website || "",
+          profession: user?.profile?.profession || undefined,
+          bio: user?.profile?.bio || undefined,
+          website: user?.profile?.website || undefined,
         },
       });
+      // Ensure availableForHire state is in sync with user data
+      setAvailableForHire(user.profile?.availableForHire || false);
     }
   }, [user, reset]);
 
-  const onSubmit = (data: User) => {
-    console.log(data);
+  const onSubmit = async (formData: Partial<User>) => {
+    // Clean up the data before sending to backend
+    const cleanData: Partial<User> = {
+      fullName: formData.fullName?.trim() || undefined,
+      profile: {
+        profession: formData.profile?.profession?.trim() || undefined,
+        bio: formData.profile?.bio?.trim() || undefined,
+        website: formData.profile?.website?.trim() || undefined,
+        availableForHire: availableForHire,
+      },
+    };
+    if (cleanData.profile) {
+      Object.keys(cleanData.profile).forEach((key) => {
+        if (cleanData.profile && cleanData.profile[key as keyof typeof cleanData.profile] === undefined) {
+          delete cleanData.profile[key as keyof typeof cleanData.profile];
+        }
+      });
+
+      if (Object.keys(cleanData.profile).length === 0) {
+        delete cleanData.profile;
+      }
+    }
+
+    const res = await updateProfile(cleanData);
+
+    if (res && res.success) {
+      setUser(res.data);
+      toast({
+        title: "Profile Updated",
+        description: "Your profile has been successfully updated",
+        variant: "default"
+      });
+      redirect("/profile");
+    } else {
+      toast({
+        title: "Update Failed",
+        description: "Unable to update profile. Please try again later",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    isUpdating ? <Spinner /> : <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col md:flex-row gap-8">
         <div className="flex-shrink-0 self-center md:self-start">
           <ProfilePhoto />
+          <div className="space-x-2 flex items-center mt-2">
+            <Label htmlFor="availableForHire" className="text-base font-medium">
+              Available for hire?
+            </Label>
+            <Switch
+              id="availableForHire"
+              checked={availableForHire}
+              onCheckedChange={setAvailableForHire}
+              className="checked:bg-primary"
+            />
+          </div>
         </div>
 
         <div className="flex-grow space-y-4">
@@ -61,28 +122,11 @@ const BasicInfoEdit: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone</Label>
-            <Input
-              id="phone"
-              placeholder="Enter your Phone number"
-              {...register("profile.phone", {
-                required: "Phone is required",
-              })}
-            />
-            {errors.profile?.phone && (
-              <span className="text-red-500 text-sm">
-                {errors.profile.phone.message}
-              </span>
-            )}
-          </div>
-          <div className="space-y-2">
             <Label htmlFor="profession">Profession</Label>
             <Input
               id="profession"
               placeholder="Enter your Profession"
-              {...register("profile.profession", {
-                required: "Phone is required",
-              })}
+              {...register("profile.profession")}
             />
             {errors.profile?.profession && (
               <span className="text-red-500 text-sm">
@@ -106,8 +150,27 @@ const BasicInfoEdit: React.FC = () => {
             <Input
               id="website"
               placeholder="Enter your website URL"
-              {...register("profile.website")}
+              {...register("profile.website", {
+                pattern: {
+                  value: urlPattern,
+                  message: "Please enter a valid URL (e.g., https://example.com)"
+                },
+                validate: {
+                  validProtocol: (value) => {
+                    if (!value) return true; // Allow empty values
+                    if (!value.startsWith('http://') && !value.startsWith('https://')) {
+                      return 'URL must start with http:// or https://';
+                    }
+                    return true;
+                  }
+                }
+              })}
             />
+            {errors.profile?.website && (
+              <span className="text-red-500 text-sm">
+                {errors.profile.website.message}
+              </span>
+            )}
           </div>
 
           <Button

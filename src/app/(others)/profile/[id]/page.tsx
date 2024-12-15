@@ -1,20 +1,21 @@
-import { getUserProjects } from "@/features/project/getUserProjects";
 import { Metadata } from "next";
 import { ProjectMini } from "@/types/project";
 import ProfileData from "@/components/profile/ProfileData";
 import { Suspense } from "react";
 import Spinner from "@/app/loading";
-import { fetchProfileById } from "@/features/user/fetchProfileById";
+import { getUserProjectsApi } from "@/services/users/getUserProjects";
+import { getProfileById } from "@/services/users/getProfileById";
 
 interface ProfileProps {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ display?: string }>;
 }
-// Dynamic Metadata Generation
+
 export async function generateMetadata(
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<Metadata> {
-  const user = await fetchProfileById(params.id);
+  const { id } = await params;
+  const user = await getProfileById(id);
 
   if (!user) {
     return {
@@ -53,11 +54,11 @@ export async function generateMetadata(
 const Profile: React.FC<ProfileProps> = async ({ params, searchParams }) => {
   const { id } = await params;
   const { display } = await searchParams;
-  const user = await fetchProfileById(id);
+  const user = await getProfileById(id);
   if (!user) {
     throw new Error("User not found");
   }
-  const projects: ProjectMini[] = await getUserProjects(null, id);
+  const projects: ProjectMini[] = await getUserProjectsApi(id);
 
   return (
     <Suspense fallback={<Spinner />}>

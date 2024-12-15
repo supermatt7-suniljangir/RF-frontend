@@ -6,7 +6,6 @@ import Image from "next/image";
 import Project2 from "@/media/project-2.jpg";
 import Link from "next/link";
 import { ProjectMini } from "@/types/project";
-import InstagramIcon from "../../media/instagram.svg";
 import { useUser } from "@/contexts/UserContext";
 interface ProjectCardProps {
   project: ProjectMini;
@@ -31,9 +30,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
             className="h-full w-full object-cover"
           />
           {hovered && (
-            <CardHeader className="absolute w-full h-48 bottom-0 bg-gradient-to-t from-black via-black/60 to-transparent group-hover:opacity-100 transition-opacity duration-300">
+            <CardHeader className="absolute w-full h-36 bottom-0 bg-gradient-to-t from-black via-black/60 to-transparent group-hover:opacity-100 transition-opacity duration-300">
               <CardTitle className="absolute bottom-4 left-4 text-white text-lg font-medium">
-                {project.title}
+                {project.title} 
               </CardTitle>
             </CardHeader>
           )}
@@ -44,14 +43,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           {!isOwner && (
             <Link href={`/profile/${project?.creator?._id}`} className="w-3/4 block">
               <div className="flex space-x-2">
-                <Image
-                  src={InstagramIcon}
+                {project.creator?.profile?.avatar && <Image
+                  src={project.creator.profile.avatar}
                   alt={"something"}
                   width={24}
                   height={24}
                   className="rounded-full"
-                />
-                <p>username</p>
+                />}
+                <p>{project?.creator?.fullName}</p>
               </div>
             </Link>
           )}

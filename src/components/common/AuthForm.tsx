@@ -48,8 +48,7 @@ const AuthForm = () => {
   const password = watch("password");
 
   const onSubmit = async (data: FormInputs) => {
-    const res = await auth(data);
-    console.log(res);
+   await auth(data);
   };
   if (user) redirect(redirectPath ? redirectPath : "/");
   if (isLoading) return <Spinner />

@@ -1,48 +1,45 @@
-"use client";
+import React, { useState } from "react";
+
 import { useUser } from "@/contexts/UserContext";
 import Image from "next/image";
-import React, { useCallback, useState } from "react";
-import { useDropzone } from "react-dropzone";
+import { useDropzone } from "react-dropzone"; // Assuming you're using this for file drops
+import Spinner from "@/app/loading";
+import { useProfileUploader } from "@/features/upload/useProfileUploader";
 
 const ProfilePhoto: React.FC = () => {
-  const { user } = useUser();
-  const [image, setImage] = useState<string | null>(
-    user?.profile?.avatar || null
-  );
+  const { user, setUser } = useUser();
+  const [image, setImage] = useState<string | null>(user?.profile?.avatar || null);
+  const { handleImageUpload, loading } = useProfileUploader(setImage, setUser, "avatar");
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => setImage(reader.result as string);
-      reader.readAsDataURL(file);
-    }
-  }, []);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      "image/*": [],
+  // Use react-dropzone for handling drag and drop or file selection
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop: async (acceptedFiles) => {
+      const file = acceptedFiles[0];
+      if (file) {
+        await handleImageUpload(file);
+      }
     },
   });
 
   return (
-    <div {...getRootProps()} className="relative w-32 h-32">
+    <div
+      className="relative w-32 h-32"
+      {...getRootProps()}
+    >
       <input {...getInputProps()} />
       <div
-        className={`w-full h-full rounded-full border-2 border-dashed flex items-center relative justify-center overflow-hidden cursor-pointer ${isDragActive ? "border-blue-500" : "border-gray-300"
-          }`}
+        className={`w-full h-full rounded-full relative border-2 border-dashed flex items-center justify-center overflow-hidden cursor-pointer`}
       >
-        {image ? (
-          // Show uploaded image
+        {loading ? (
+          <Spinner />
+        ) : image ? (
           <Image
             fill
             src={image}
             alt="Uploaded profile"
-            className="w-full h-full object-cover relative"
+            className="w-full h-full object-cover"
           />
         ) : (
-          // Show placeholder
           <p className="text-sm text-gray-500 text-center">Upload</p>
         )}
       </div>

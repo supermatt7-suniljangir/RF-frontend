@@ -29,6 +29,7 @@ export interface ProjectMini {
   featured: boolean;
   publishedAt: Date;
   status: "draft" | "published";
+  category: string;
 }
 
 // Main Project Type
@@ -43,7 +44,7 @@ export interface ProjectType {
   collaborators?: string[]; // Array of user IDs
   tags: string[];
   tools: ITools[];
-  categories: string[];
+  category: string;
   stats: {
     views: number;
     likes: number;

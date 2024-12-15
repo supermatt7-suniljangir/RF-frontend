@@ -1,54 +1,58 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react"; // Icon
 import { useRouter, useSearchParams } from "next/navigation";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
-const categories: string[] = ["thing", "shit", "dick"];
+const categories: string[] = [
+  "Graphic Design",
+  "UI/UX Design",
+  "Illustration",
+  "Photography",
+  "Web Design",
+  "3D Design",
+  "Branding",
+  "Art Direction",
+  "Animation",
+];
 
 export default function CategorySelector() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedCategory = searchParams.get("category") || "";
-  const params = new URLSearchParams(searchParams.toString());
-  const category = params.get("category");
-  const handleCategoryChange = (category: string) => {
-    if (selectedCategory === category) {
-      params.delete("category"); // Remove category if selected again
-    } else {
-      params.set("category", category);
-    }
+  const type = searchParams.get("type") || "";
 
+  const handleCategoryChange = (cat: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (cat === "All") {
+      params.delete("category");
+    } else {
+      if (type !== "user") {
+        params.set("category", cat);
+      }
+    }
     router.push(`?${params.toString()}`);
   };
 
+  if (type === "user") return null;
+
   return (
     <div className="flex items-center gap-4">
-      {/* Category Dropdown with Icon */}
-      <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Button variant="outline" className="flex items-center gap-2 capitalize">
-            {category || "Categories"}
-            <ChevronDown className="w-4 h-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
+      <Select
+        value={selectedCategory}
+        onValueChange={handleCategoryChange}
+      >
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder="Category"/>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="All">All</SelectItem>
           {categories.map((category, index) => (
-            <DropdownMenuItem
-              key={index}
-              onClick={() => handleCategoryChange(category)}
-            >
+            <SelectItem value={category} key={index}>
               {category}
-            </DropdownMenuItem>
+            </SelectItem>
           ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+        </SelectContent>
+      </Select>
     </div>
   );
 }
