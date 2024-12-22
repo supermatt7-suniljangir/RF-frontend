@@ -1,16 +1,13 @@
-import ProjectCard from "@/components/common/ProjectCard";
-import { ProjectMini } from "@/types/project";
+import SearchInput from "@/components/search/SearchInput";
+import SearchResults from "@/components/search/SearchResults";
 
 const HomePage: React.FC = async () => {
-  // const projects: ProjectMini[] = await getProjects();
-  // if (!projects) throw new Error("Failed to fetch projects");
-  return (
-    <div className="flex flex-wrap gap-4 justify-center p-4">
-      {/* {projects?.map((project, index) => (
-        <ProjectCard key={index} project={project} />
-      ))} */}
-    </div>
-  );
-};
 
+  return <div className="flex w-full flex-wrap justify-center p-4 flex-col">
+    <div className="my-4">
+      <SearchInput />
+      </div>
+    <SearchResults />
+  </div>
+};
 export default HomePage;

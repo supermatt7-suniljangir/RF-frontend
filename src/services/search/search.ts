@@ -50,7 +50,7 @@ import { ProjectSearchResponse, SearchParams, UserSearchResponse } from "@/types
 export const cleanParams = (params: SearchParams) => {
   const cleanedParams: SearchParams = { page: params.page };
   Object.keys(params).forEach((key) => {
-    if (typeof params[key] === "string" && params[key].trim() !== "") {
+    if (typeof params[key] === "string" && params[key].trim() !== "" || typeof params[key] === "number" && params[key] !== undefined) {
       cleanedParams[key] = params[key];
     }
   });
@@ -87,7 +87,6 @@ export const fetchUsers = async (params: SearchParams): Promise<UserSearchRespon
 // Fetch projects function
 export const fetchProjects = async (params: SearchParams): Promise<ProjectSearchResponse> => {
   const cleanedParams = cleanParams(params);
-  console.log("cleanedParams:", cleanedParams);
 
   const queryString = buildQueryString(cleanedParams);
   const url = `${process.env.NEXT_PUBLIC_API_URL}/search/projects?${queryString}`

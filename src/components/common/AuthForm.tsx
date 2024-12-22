@@ -30,7 +30,6 @@ const AuthForm = () => {
   const urlParams = new URLSearchParams(window?.location?.search);
   const redirectPath = urlParams.get("redirect");
   const pathname = usePathname();
-  console.log(redirectPath);
   const isLogin = pathname === "/login";
   const { isLoading, user } = useUser();
   const {
@@ -44,7 +43,6 @@ const AuthForm = () => {
   const { handleGoogleSuccess, handleGoogleError } = useGoogleLogin();
   const { auth } = useAuth();
 
-  // Watch the password field
   const password = watch("password");
 
   const onSubmit = async (data: FormInputs) => {

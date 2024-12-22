@@ -1,4 +1,4 @@
-import { User } from "./user";
+import { MiniUser } from "./user";
 
 export interface ITools {
   name: string;
@@ -8,24 +8,35 @@ export interface Imedia {
   type: "image" | "video";
   url: string;
 }
-// Simplified comment interface
 export interface IComment {
-  user: string; // User ID
+  _id?: string;
   content: string;
   createdAt: Date;
+  userData?: {
+    userId: string;
+    fullName: string;
+    avatar: string;
+  };
+}
+export interface IStats {
+  views: number;
+  likes: number;
+  comments: number;
 }
 
-export interface ProjectMini {
+export interface ICopyright {
+  license: string;
+  allowsDownload: boolean;
+  commercialUse: boolean;
+}
+
+export interface MiniProject {
   _id?: string;
   title: string;
   thumbnail: string;
-  creator?: User;
-  collaborators?: User[];
-  stats: {
-    views: number;
-    likes: number;
-    comments: number;
-  };
+  creator?: MiniUser;
+  collaborators?: MiniUser[];
+  stats: IStats;
   featured: boolean;
   publishedAt: Date;
   status: "draft" | "published";
@@ -40,26 +51,19 @@ export interface ProjectType {
   shortDescription: string;
   thumbnail: string;
   media: Imedia[];
-  creator: User; // User ID
-  collaborators?: string[]; // Array of user IDs
+  creator: MiniUser;
+  collaborators?: MiniUser[];
   tags: string[];
   tools: ITools[];
+  likes: string[];
   category: string;
-  stats: {
-    views: number;
-    likes: number;
-    comments: number;
-  };
-  comments: IComment[]; // Simplified comments array
+  stats: IStats;
+  comments: IComment[];
   featured: boolean;
   publishedAt: Date;
   createdAt?: Date;
   updatedAt?: Date;
   status: "draft" | "published";
   projectUrl?: string;
-  copyright: {
-    license: string;
-    allowsDownload: boolean;
-    commercialUse: boolean;
-  };
+  copyright: ICopyright;
 }

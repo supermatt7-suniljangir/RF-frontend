@@ -11,7 +11,6 @@ interface ProfileCardProps {
 }
 const ProfileCard: React.FC<ProfileCardProps> = ({ user }) => {
     const { user: currentUser } = useUser();
-
     if (!user) return null;
     return (
         <Card className="md:w-96 w-5/6 sm:w-[48%] p-2">

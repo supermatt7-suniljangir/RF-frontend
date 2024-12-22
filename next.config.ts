@@ -65,7 +65,7 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
-
+reactStrictMode:true,
   // Optional: Proxy API calls to your local backend
   // async rewrites() {
   //   return [

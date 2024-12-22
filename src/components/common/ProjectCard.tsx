@@ -5,10 +5,11 @@ import { Eye, Heart } from "lucide-react";
 import Image from "next/image";
 import Project2 from "@/media/project-2.jpg";
 import Link from "next/link";
-import { ProjectMini } from "@/types/project";
+import { MiniProject } from "@/types/project";
 import { useUser } from "@/contexts/UserContext";
+import MiniUserInfo from "./MiniUserInfo";
 interface ProjectCardProps {
-  project: ProjectMini;
+  project: MiniProject;
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
@@ -32,7 +33,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           {hovered && (
             <CardHeader className="absolute w-full h-36 bottom-0 bg-gradient-to-t from-black via-black/60 to-transparent group-hover:opacity-100 transition-opacity duration-300">
               <CardTitle className="absolute bottom-4 left-4 text-white text-lg font-medium">
-                {project.title} 
+                {project.title}
               </CardTitle>
             </CardHeader>
           )}
@@ -41,18 +42,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
       <CardContent className="px-4 py-1 mt-1">
         <div className="flex justify-between">
           {!isOwner && (
-            <Link href={`/profile/${project?.creator?._id}`} className="w-3/4 block">
-              <div className="flex space-x-2">
-                {project.creator?.profile?.avatar && <Image
-                  src={project.creator.profile.avatar}
-                  alt={"something"}
-                  width={24}
-                  height={24}
-                  className="rounded-full"
-                />}
-                <p>{project?.creator?.fullName}</p>
-              </div>
-            </Link>
+            <MiniUserInfo id={project?.creator?._id} avatar={project?.creator?.avatar} styles="w-3/4" fullName={project?.creator?.fullName} />
           )}
           <div className="flex space-x-4 justify-between flex-grow">
             <div className="flex items-center space-x-1">

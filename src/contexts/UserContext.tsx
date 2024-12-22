@@ -2,9 +2,10 @@
 import { User } from "@/types/user";
 import { createContext, useState, useContext, useEffect } from "react";
 import React from "react";
-import { logout as logoutHook } from "@/features/auth/useLogout";
+import { logout as logoutHook } from "@/services/users/logout";
 import { getUserProfile } from "@/services/users/getUserProfile";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
 
 interface UserContextType {
   user: User | null;
@@ -17,16 +18,23 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  // const router = useRouter();
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  // const router = useRouter();
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const profile = await getUserProfile();
-        if (profile) {
-          setUser(profile);
+        const { status, user } = await getUserProfile({ cacheSettings: "reload" });
+        if (status === 401) {
+          await logout();
+          toast({
+            title: "Your Session is Expired",
+            description: "plese login again to continue"
+          })
+          router.push("/login");
+        }
+        if (user) {
+          setUser(user);
         }
       } catch (error) {
         console.error("Failed to fetch user profile:", error);

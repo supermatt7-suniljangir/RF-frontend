@@ -20,16 +20,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`antialiased`}>
-        <QueryClientWrapper>
-          <GoogleAuthWrapper>
-            <UserProvider>
-              <ThemeProvider>
+        <ThemeProvider >
+          <QueryClientWrapper>
+            <GoogleAuthWrapper>
+              <UserProvider>
                 <Navbar />
                 {children}
-              </ThemeProvider>
-            </UserProvider>
-          </GoogleAuthWrapper>
-        </QueryClientWrapper>
+              </UserProvider>
+            </GoogleAuthWrapper>
+          </QueryClientWrapper>
+        </ThemeProvider>
         <Toaster />
       </body>
     </html>

@@ -1,7 +1,7 @@
 // components/SearchContainer.jsx
 
 // import SortAndFilter from "./Filters";
-import SearchBar from "./SearchBar";
+import SearchBar from "./Search";
 import SearchTags from "./SearchTags";
 
 export default function SearchContainer() {

@@ -47,7 +47,6 @@ import {
 export const useSearch = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   const searchUsers = async (params: SearchParams) => {
     setIsLoading(true);
     setError(null);

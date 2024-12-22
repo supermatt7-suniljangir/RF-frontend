@@ -48,11 +48,11 @@ const MobileNav = () => {
             <a href="/" className="text-xl font-semibold">
               Logo
             </a>
-
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="">
+              <Link href={"/search"}>
                 <Search className="h-5 w-5" />
-              </Button>
+              </Link>
+             
               <Button
                 variant="ghost"
                 size="icon"
@@ -135,7 +135,7 @@ const DesktopNav = () => {
 
   return (
     <nav className="w-full border-b">
-      <div className="container mx-auto px-4">
+      <div className=" mx-auto px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo and Main Nav */}
           <div className="flex items-center gap-10">

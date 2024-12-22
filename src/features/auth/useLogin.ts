@@ -40,11 +40,11 @@ export function useAuth() {
           });
           throw new Error("Login failed");
         }
-        const fetchUserData = (await getUserProfile({cacheSettings:"no-store"})) as User;
-        if (!fetchUserData) {
+        const { user } = await getUserProfile({ cacheSettings: "reload" });
+        if (!user) {
           throw new Error("Fetching profile failed");
         }
-        userData = fetchUserData;
+        userData = user;
       } else {
         let response;
 
@@ -71,11 +71,13 @@ export function useAuth() {
           });
           throw new Error(isLogin ? "Login failed" : "Registration failed");
         }
-        const fetchUserData = (await getUserProfile({cacheSettings:"no-store"})) as User;
-        if (!fetchUserData) {
-          throw new Error("Fetching profile failed");
+        const { user } = await getUserProfile({ cacheSettings: "reload" });
+        if (!user) {
+          throw new Error(
+            "Oops, something went wrong while logging in, plese try again"
+          );
         }
-        userData = fetchUserData;
+        userData = user;
       }
       toast({
         title: isLogin ? "Login successful" : "Registration successful",

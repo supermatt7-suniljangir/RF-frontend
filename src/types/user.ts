@@ -1,4 +1,4 @@
-// import { ProjectMini } from "./project";
+import { MiniProject } from "./project";
 
 export interface User {
   _id: string;
@@ -17,6 +17,8 @@ export interface Profile {
   followers?: MiniUser[]; //baad me kadi karsya tem milsi jnaa
   following?: MiniUser[]; //baad me kadi karsya tem milsi jnaa
   website?: string;
+  appreciations?: MiniProject[];
+  bookmarks?: MiniProject[];
   profession?: string;
   social?: Social;
 }

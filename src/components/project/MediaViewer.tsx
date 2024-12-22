@@ -10,7 +10,7 @@ interface MediaViewerProps {
 
 const ImageViewer: React.FC<MediaViewerProps> = ({ media }) => {
   return (
-    <div className="w-5/6 mx-auto">
+    <div className="w-full mx-auto">
       {media.map((item, index) => (
         <div key={index} className="aspect-video w-full p-2 md:p-0 relative">
           {item.type === "image" ? (

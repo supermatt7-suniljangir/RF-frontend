@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import ProfileCard from "../common/UserProfileCard";
-import { ProjectMini } from "@/types/project";
+import { MiniProject } from "@/types/project";
 import { MiniUser } from "@/types/user";
 import ProjectCard from "../common/ProjectCard";
 import Spinner from "@/app/loading";
@@ -14,6 +14,8 @@ import Sort from "./Sort";
 import Filters from "./Fitler";
 
 const SearchResults = () => {
+    // const pathname = usePathname();
+    // const isSearchPage = pathname === "/search";
     const searchParams = useSearchParams();
     const { searchUsers, searchProjects, error, isLoading } = useSearch();
     const query = searchParams.get("query");
@@ -24,7 +26,7 @@ const SearchResults = () => {
     const category = searchParams.get("category");
     const page = parseInt(searchParams.get("page") || "1", 10);
     const filter = searchParams.get("filter");
-    const [projects, setProjects] = useState<ProjectMini[] | null>([]);
+    const [projects, setProjects] = useState<MiniProject[] | null>([]);
     const [users, setUsers] = useState<MiniUser[] | null>([]);
     const resultsRef = useRef<HTMLDivElement | null>(null);
 
@@ -43,7 +45,7 @@ const SearchResults = () => {
 
         if (!category && !type && !query && !tag) {
             // Use searchProjects but don't pass any query, tag, or category
-            searchProjects({ page, sortBy, sortOrder, filter })
+            searchProjects({ page, sortBy, sortOrder, filter, limit: 1 })
                 .then((response) => {
                     if (!response || !response.pagination || !response.data) return;
                     setProjects(response.data);
@@ -58,7 +60,7 @@ const SearchResults = () => {
                     });
                 });
         } else if (type !== "user" && (query || category || tag)) {
-            searchProjects({ page, query, sortBy, sortOrder, category, tag, filter })
+            searchProjects({ page, query, sortBy, sortOrder, category, tag, filter, limit:1 })
                 .then((response) => {
                     if (!response || !response.pagination || !response.data) return;
                     setProjects(response.data);
@@ -109,7 +111,7 @@ const SearchResults = () => {
         if (projects && projects?.length > 0) {
             return (
                 <div >
-                    <div className="flex flex-wrap gap-2 justify-center p-2 flex-row">
+                    <div className="flex flex-wrap gap-4 justify-center p-2 flex-row">
                         {projects.map((project, index) => (
                             <ProjectCard key={index} project={project} />
                         ))}
@@ -136,11 +138,11 @@ const SearchResults = () => {
     };
 
     return (
-        <div>
-            {(projects?.length > 0 || users?.length > 0) && <div className="md:p-8 p-4 flex justify-between"><Sort />        <Filters />
+        <div className="flex-grow">
+            {(projects?.length > 0 || users?.length > 0) && <div className=" px-4 md:px-8 py-4 flex relative w-fit ml-auto gap-4 md:gap-8"><Sort />    {(query || category || tag) && <Filters />}
             </div>}
-            <h2 className="text-lg text-center">
-                Search Results for: <b>{query || "Explore"}</b>
+            <h2 className="text-xl font-semibold text-center my-2">
+                {type === "user" ? `Users matching "${query}"` : (query || category || tag) ? `Projects matching "${query || category || tag}"` : "Featured"}
             </h2>
             <div ref={resultsRef}>{renderResults()}</div>
         </div>

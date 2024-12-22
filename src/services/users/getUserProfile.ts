@@ -1,36 +1,43 @@
 "use server";
 import { URL } from "@/api/config/configs";
 import { User } from "@/types/user";
-import { cookies } from "next/headers"; // Import cookies API to directly retrieve cookies
+import { cookies } from "next/headers";
 
-// This function wraps the getUserProfile function and caches the result
-export const getUserProfile = async ({ cacheSettings }: { cacheSettings?: "force-cache" | "reload" | "no-store" | "default" }): Promise<User | null> => {
+interface CacheSettings {
+  cacheSettings?: "force-cache" | "reload" | "no-store" | "default";
+}
+
+interface UserProfileResponse {
+  user: User | null;
+  status: number;
+}
+
+// This function wraps the getUserProfile function and returns both the status and user
+export const getUserProfile = async ({
+  cacheSettings,
+}: CacheSettings): Promise<UserProfileResponse> => {
   try {
-    const cookieStore = await cookies(); // Get cookies
-    const authToken = cookieStore.get("auth_token")?.value || ""; 
-
-    const url = URL + "/users/";
+    const cookieStore = await cookies();
+    const cookieHeader = cookieStore.toString();
+    const url = `${URL}/users/`;
 
     const response = await fetch(url, {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        ...(authToken && { "Cookie": `auth_token=${authToken}` }), 
+        Cookie: cookieHeader,
       },
-      cache: cacheSettings || "force-cache", 
+      cache: cacheSettings || "force-cache",
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch profile: ${response.statusText}`);
+      return { user: null, status: response.status };
     }
     const data: User = await response.json();
-    return data;
+    return { user: data, status: response.status };
   } catch (error) {
-    if (error instanceof Error) {
-      console.error("Profile fetch error:", error.message);
-    } else {
-      console.error("Unknown error:", error);
-    }
-    return null;
+    console.error("Profile fetch error:", error);
+    return { user: null, status: 500 };
   }
 };

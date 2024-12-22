@@ -12,7 +12,7 @@ const Pagination: React.FC<PaginationProps> = ({ metadata, props }) => {
     const { query, limit, sortBy = "createdAt", sortOrder = "desc", category, type = "project" } = props;
     const createPageUrl = (targetPage: number) => {
         const queryParams = new URLSearchParams();
-        queryParams.set("query", query);
+       if(query) queryParams.set("query", query);
         queryParams.set("page", targetPage.toString());
         if (limit) queryParams.set("limit", limit.toString());
         if (sortBy && sortBy !== "createdAt") queryParams.set("sortBy", sortBy);
