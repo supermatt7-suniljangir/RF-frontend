@@ -2,16 +2,16 @@
 
 
 import { cookies } from "next/headers";
-import { ProjectMini } from "@/types/project";
+import { MiniProject } from "@/types/project";
 import { URL } from "@/api/config/configs";
 
 interface ProjectsResponse {
   success: boolean;
   count: number;
-  data: ProjectMini[];
+  data: MiniProject[];
 }
 
-export const getUserProjectsApi = async (userId?: string): Promise<ProjectMini[] | null> => {
+export const getUserProjectsApi = async (userId?: string): Promise<MiniProject[] | null> => {
   const cookieStore = await cookies(); // Access the cookies
   const authToken = cookieStore.get("auth_token")?.value;
    const urlPath = userId ? `projects/user/${userId}` : `projects/user/personal`;

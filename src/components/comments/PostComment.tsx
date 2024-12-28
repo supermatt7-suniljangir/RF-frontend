@@ -1,16 +1,20 @@
 "use client";
 import { useUser } from "@/contexts/UserContext";
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import MiniUserInfo from "../common/MiniUserInfo";
 import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
+import { postCommentApi } from "@/services/comments/postComment";
+import { useRouter } from "next/navigation";
 
 interface PostCommentProps {
     projectId: string;
 }
 
 const PostComment: React.FC<PostCommentProps> = ({ projectId }) => {
+    const [isPosting, setIsPosting] = useState(false);
+    const router = useRouter();
     const { user } = useUser();
     const {
         register,
@@ -19,10 +23,13 @@ const PostComment: React.FC<PostCommentProps> = ({ projectId }) => {
         reset,
     } = useForm<{ comment: string }>(); // Directly use react-hook-form
 
-    const onSubmit = (data: { comment: string }) => {
+    const onSubmit = async (data: { comment: string }) => {
+        setIsPosting(true);
         const { comment } = data;
-        console.log(`Project ID: ${projectId}, Comment: ${comment}`);
+        await postCommentApi({ projectId, content: comment });
+        router.refresh();
         reset();
+        setIsPosting(false);
     };
 
     return user ? (
@@ -46,7 +53,7 @@ const PostComment: React.FC<PostCommentProps> = ({ projectId }) => {
                     {errors.comment && (
                         <div className="text-red-500 text-sm">{errors.comment.message}</div> // Display error message
                     )}
-                    <Button type="submit" className="ml-auto relative block">
+                    <Button type="submit" className="ml-auto relative block" disabled={isPosting}>
                         Submit
                     </Button>
                 </form>

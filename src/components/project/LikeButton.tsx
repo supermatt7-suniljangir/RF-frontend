@@ -1,33 +1,63 @@
 "use client";
-import React, { useState } from 'react';
-import { ThumbsUp } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Heart, ThumbsUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { toast } from '@/hooks/use-toast';
+import { toggleLikeProject } from '@/services/likes/toggleProjectLike';
+import { set } from 'react-hook-form';
+import { hasUserLikedProject } from '@/services/likes/hasUserLikedTheProject';
 
 interface LikeButtonProps {
     className?: string;
+    projectId: string;
+    size?: 'small' | 'large';
 }
 
-const LikeButton: React.FC<LikeButtonProps> = ({ className }) => {
-    const [isLiked, setIsLiked] = useState(false);
+const LikeButton: React.FC<LikeButtonProps> = ({ size = "small", projectId, className }) => {
+
+    const [isLiked, setIsLiked] = useState<boolean>(false);
+
+    useEffect(() => {
+        const checkLikeStatus = async () => {
+            const response = await hasUserLikedProject(projectId);
+            setIsLiked(response);
+        }
+        checkLikeStatus();
+    }, []);
+
+    const [updating, setUpdating] = useState<boolean>(false);
+
+    const onClickHandler = async () => {
+        if (updating) return;
+        setUpdating(true);
+        const response = await toggleLikeProject(projectId);
+        if (!response) {
+            toast({
+                title: "Error",
+                description: "An error occurred while performing the operation.",
+                variant: "destructive",
+            })
+        }
+        toast({
+            title: "Success",
+            description: "Project liked",
+            variant: "default"
+        });
+        setUpdating(false);
+        setIsLiked(!isLiked);
+    }
+
 
     return (
         <Button
-            variant="ghost"
-            size="lg"
-            className={cn(
-                "rounded-full p-8 w-24 h-24 flex items-center justify-center transition-colors duration-200",
-                isLiked ? "bg-primary" : "bg-muted",
-                className
-            )}
-            onClick={() => setIsLiked(!isLiked)}
+            onClick={onClickHandler}
+            disabled={updating}
+            variant="outline"
+            className={cn("hover:bg-secondary rounded-full bg-secondary", size === "small" ? "w-10 h-10" : "w-20 h-20", className)}
         >
-            <ThumbsUp
-
-                className={cn(
-                    "!w-8 !h-8 transition-transform duration-200",
-                    isLiked && "scale-125 text-primary-foreground"
-                )}
+            <Heart
+                className={cn(size === "small" ? "!w-5 !h-5" : "!w-10 !h-10", isLiked ? "fill-primary-foreground text-primary-foreground" : "text-primary-foreground")}
             />
         </Button>
     );

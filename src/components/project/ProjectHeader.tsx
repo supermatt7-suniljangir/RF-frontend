@@ -16,7 +16,7 @@ const ProjectHeader = ({ project }: ProjectHeaderProps) => {
       <div className="flex items-center justify-between">
         <CreatorMiniInfo creator={project.creator} />
         <div className="flex items-center gap-4">
-          <InteractionButtons stats={project.stats} />
+          <InteractionButtons  projectId={project._id}/>
         </div>
       </div>
     </div>

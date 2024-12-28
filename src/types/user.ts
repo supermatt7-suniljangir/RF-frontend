@@ -6,7 +6,6 @@ export interface User {
   email: string;
   fullName: string;
   profile?: Profile;
-  projects: string[];
 }
 
 export interface Profile {
@@ -14,11 +13,7 @@ export interface Profile {
   bio?: string;
   avatar?: string;
   cover?: string;
-  followers?: MiniUser[]; //baad me kadi karsya tem milsi jnaa
-  following?: MiniUser[]; //baad me kadi karsya tem milsi jnaa
   website?: string;
-  appreciations?: MiniProject[];
-  bookmarks?: MiniProject[];
   profession?: string;
   social?: Social;
 }

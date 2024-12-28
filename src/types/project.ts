@@ -8,16 +8,7 @@ export interface Imedia {
   type: "image" | "video";
   url: string;
 }
-export interface IComment {
-  _id?: string;
-  content: string;
-  createdAt: Date;
-  userData?: {
-    userId: string;
-    fullName: string;
-    avatar: string;
-  };
-}
+
 export interface IStats {
   views: number;
   likes: number;
@@ -55,10 +46,8 @@ export interface ProjectType {
   collaborators?: MiniUser[];
   tags: string[];
   tools: ITools[];
-  likes: string[];
   category: string;
   stats: IStats;
-  comments: IComment[];
   featured: boolean;
   publishedAt: Date;
   createdAt?: Date;

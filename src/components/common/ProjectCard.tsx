@@ -10,9 +10,10 @@ import { useUser } from "@/contexts/UserContext";
 import MiniUserInfo from "./MiniUserInfo";
 interface ProjectCardProps {
   project: MiniProject;
+  renderUser?: boolean;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ project, renderUser = true }) => {
   const { user } = useUser();
   const [hovered, setHovered] = useState<boolean>(false);
   const isOwner = user?._id === project?.creator?._id;
@@ -41,7 +42,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
       </Link>
       <CardContent className="px-4 py-1 mt-1">
         <div className="flex justify-between">
-          {!isOwner && (
+          {!isOwner && renderUser && (
             <MiniUserInfo id={project?.creator?._id} avatar={project?.creator?.avatar} styles="w-3/4" fullName={project?.creator?.fullName} />
           )}
           <div className="flex space-x-4 justify-between flex-grow">

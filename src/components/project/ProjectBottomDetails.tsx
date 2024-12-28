@@ -17,7 +17,7 @@ const ProjectBottomDetails: React.FC<CasinoMetricsProps> = ({ project }) => {
       <Card className={cn("rounded-none border-none h-full shadow-none")}>
         <CardContent className="pt-6 rounded-none border-none h-full shadow-none">
           <div className="flex flex-col items-center space-y-6 h-full">
-            <LikeButton />
+            <LikeButton size='large' projectId={project._id} />
             <h1 className="text-2xl font-bold">
               {title || "that's not supposed to happen"}
             </h1>

@@ -19,7 +19,7 @@ export async function generateMetadata(
   { params }: ProjectPageProps,
 ): Promise<Metadata> {
   const { id } = await params;
-  const project: ProjectResponse | null = await getProjectById(id);
+  const project: ProjectResponse | null = await getProjectById({ id });
   if (!project) {
     return {
       title: "Project Not Found",
@@ -55,7 +55,7 @@ export async function generateMetadata(
 
 const Project = async ({ params }: ProjectPageProps) => {
   const { id } = await params;
-  const project: ProjectResponse | null = await getProjectById(id);
+  const project: ProjectResponse | null = await getProjectById({ id });
 
   if (!project) {
     throw new Error("Project not found");

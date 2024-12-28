@@ -1,4 +1,4 @@
-import { ProjectMini } from "./project";
+import { MiniProject } from "./project";
 import { MiniUser } from "./user";
 
 export interface PaginationMetadata {
@@ -19,7 +19,7 @@ export interface UserSearchResponse {
 export interface ProjectSearchResponse {
   message: string;
   pagination: PaginationMetadata;
-  data: ProjectMini[];
+  data: MiniProject[];
 }
 
 

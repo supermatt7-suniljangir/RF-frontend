@@ -1,6 +1,3 @@
-
-
-
 import { ProjectType } from "@/types/project";
 
 interface ProjectResponse {
@@ -8,17 +5,24 @@ interface ProjectResponse {
   success: boolean;
 }
 
-// Wrap the function in React's cache
-export const getProjectById = async (id: string): Promise<ProjectResponse | null> => {
+interface GetProjectByIdArgs {
+  id: string;
+  cacheSettings?: "no-store" | "reload" | "force-cache" | "default"; 
+}
+
+export const getProjectById = async ({
+  id,
+  cacheSettings = "force-cache",
+}: GetProjectByIdArgs): Promise<ProjectResponse | null> => {
   try {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/projects/${id}`
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/projects/${id}`;
 
     const response = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-      cache: "force-cache", // Use caching explicitly
+      cache: cacheSettings ? cacheSettings : "force-cache", // Use the provided cache setting
     });
 
     if (!response.ok) {
@@ -39,5 +43,3 @@ export const getProjectById = async (id: string): Promise<ProjectResponse | null
     return null;
   }
 };
-
-
