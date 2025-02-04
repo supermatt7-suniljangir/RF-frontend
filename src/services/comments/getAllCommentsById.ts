@@ -17,6 +17,9 @@ export const fetchComments = cache(
       headers: {
         "Content-Type": "application/json",
       },
+      next: {
+        revalidate: 60 * 15,
+      },
     });
     if (!response.ok) {
       console.error("Failed to fetch comments:", response.statusText);

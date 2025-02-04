@@ -6,10 +6,6 @@ import Spinner from "@/app/loading";
 import { Metadata } from "next";
 import { getProjectById } from "@/services/Projects/getProjectById";
 
-interface ProjectResponse {
-  data: ProjectType;
-  success: boolean;
-}
 
 interface ProjectPageProps {
   params: Promise<{ id: string }>;
@@ -19,7 +15,7 @@ export async function generateMetadata(
   { params }: ProjectPageProps,
 ): Promise<Metadata> {
   const { id } = await params;
-  const project: ProjectResponse | null = await getProjectById({ id });
+  const project: ProjectType | null = await getProjectById({ id });
   if (!project) {
     return {
       title: "Project Not Found",
@@ -28,34 +24,34 @@ export async function generateMetadata(
   }
 
   return {
-    title: project.data.title,
-    description: project.data.description,
+    title: project.title,
+    description: project?.description,
 
     openGraph: {
-      title: project.data.title,
-      description: project.data.description,
+      title: project.title,
+      description: project.description,
       images: [
         {
-          url: project.data.thumbnail,
+          url: project?.thumbnail,
           width: 800,
           height: 600,
-          alt: project.data.title,
+          alt: project.title,
         },
       ],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: project.data.title,
-      description: project.data.description || "Project details",
-      images: [project.data.thumbnail || "/default-project-image.png"],
+      title: project.title,
+      description: project?.description || "Project details",
+      images: [project?.thumbnail || "/default-project-image.png"],
     },
   };
 }
 
 const Project = async ({ params }: ProjectPageProps) => {
   const { id } = await params;
-  const project: ProjectResponse | null = await getProjectById({ id });
+  const project: ProjectType | null = await getProjectById({ id });
 
   if (!project) {
     throw new Error("Project not found");
@@ -63,7 +59,7 @@ const Project = async ({ params }: ProjectPageProps) => {
 
   return (
     <Suspense fallback={<Spinner />}>
-      <ProjectInfo project={project.data} />
+      <ProjectInfo project={project} />
     </Suspense>
   );
 };

@@ -27,7 +27,7 @@ export interface SearchParams {
   query?: string;
   tag?: string;
   type?: "project" | "user";
-  page: number;
+  page?: number;
   limit?: number;
   sortBy?: string;
   sortOrder?: "asc" | "desc";

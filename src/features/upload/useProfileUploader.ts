@@ -4,32 +4,27 @@ import { useUpdateUserProfile } from "@/features/user/useUpdateProfile";
 import { User } from "@/types/user";
 import { toast } from "@/hooks/use-toast";
 import imageCompression from "browser-image-compression";
+import { getFileUrl } from "@/lib/getFileUrl";
 
 export const useProfileUploader = (
   setImage: (url: string | null) => void,
   setUser: (user: User) => void,
-  type: "avatar" | "cover" // Add type for conditional payload
+  type: "avatar" | "cover"
 ) => {
   const [loading, setLoading] = useState(false);
-  const { getUploadUrl, uploadFile } = useUploadFiles();
+  const { getUploadUrls, uploadFiles } = useUploadFiles();
   const { updateProfile } = useUpdateUserProfile();
 
-  const handleImageUpload = async (file: File) => {
-    // Validate file type
-    if (!file.type.includes("image")) {
-      toast({
-        title: "Invalid file type",
-        description: "Please upload an image file.",
-        variant: "destructive",
-      });
-      return;
-    }
-    const MAX_FILE_SIZE = type === "cover" ? 5 * 1024 * 1024 : 3 * 1024 * 1024;
-    // Step 1: Check file size (limit 4MB for banner)
-    if (file.size > MAX_FILE_SIZE) {
+  const handleFileUpload = async (files: File[]) => {
+    if (files.length === 0) return;
+    const isImage = files[0].type.includes("image");
+    const MAX_SIZE = type === "cover" ? 5 * 1024 * 1024 : 3 * 1024 * 1024;
+
+    // Step 1: Validate files
+    if (files.some((file) => file.size > MAX_SIZE)) {
       toast({
         title: "File too large",
-        description: `Please upload a file smaller than ${
+        description: `Each file must be smaller than ${
           type === "cover" ? "5MB" : "3MB"
         }.`,
         variant: "destructive",
@@ -37,93 +32,70 @@ export const useProfileUploader = (
       return;
     }
 
-    let compressedFile = file;
-    if (file.type.includes("image")) {
+    let processedFiles = files;
+
+    // Step 2: Compress images (if applicable)
+    if (isImage) {
       try {
         const compressionOptions = {
-          maxSizeMB: type === "cover" ? 5 : 3, // Larger size for banner
-          maxWidthOrHeight: type === "cover" ? 3200 : 800, // Larger dimensions for banner
+          maxSizeMB: type === "cover" ? 5 : 3,
+          maxWidthOrHeight: type === "cover" ? 3200 : 800,
           useWebWorker: true,
         };
-        compressedFile = await imageCompression(file, compressionOptions);
+        processedFiles = await Promise.all(
+          files.map((file) => imageCompression(file, compressionOptions))
+        );
       } catch (error) {
         toast({
-          title: "Error compressing image",
-          description:
-            "There was an error compressing the image. Please try again.",
+          title: "Compression Error",
+          description: "Failed to compress files. Try again.",
           variant: "destructive",
         });
-        console.error("Error compressing image:", error);
-        return null;
+        console.error("Compression error:", error);
+        return;
       }
     }
 
     try {
       setLoading(true);
-      const metadata = {
-        filename: compressedFile.name,
-        contentType: compressedFile.type,
-      };
-      const uploadResult = await getUploadUrl(metadata);
+      // Step 3: Get upload URLs
+      const uploadUrls = await getUploadUrls(processedFiles);
+      if (!uploadUrls) throw new Error("Failed to get upload URLs.");
 
-      if (!uploadResult) {
-        toast({
-          title: "Failed to get upload URL",
-          description:
-            "There was an issue fetching the upload URL. Please try again.",
-          variant: "destructive",
-        });
-        setLoading(false);
-        return;
-      }
+      // Step 4: Upload files
+      const uploadData = uploadUrls.map((url, i) => ({
+        uploadUrl: url.uploadUrl,
+        file: processedFiles[i],
+      }));
 
-      const { uploadUrl, key } = uploadResult;
-      const uploadData = await uploadFile(uploadUrl, compressedFile);
+      const uploadResults = await uploadFiles(uploadData);
+      if (!uploadResults) throw new Error("File uploads failed.");
 
-      if (uploadData.ok) {
-        const imageUrl = `https://${process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${key}`;
-        const payload = {
-          profile: {
-            [type]: imageUrl, // Dynamically set avatar or cover
-          },
-        };
+      const imageUrl: string = getFileUrl(uploadUrls[0].key);
+      const payload = { profile: { [type]: imageUrl } };
 
-        const response = await updateProfile(payload);
-        if (!response.success || !response?.data) {
-          console.error("Failed to update profile", response);
-          toast({
-            title: "Failed to update profile",
-            description:
-              "There was an issue updating your profile. Please try again.",
-            variant: "destructive",
-          });
-          setLoading(false);
-          return;
-        }
+      const response = await updateProfile(payload);
+      if (!response.success || !response?.data)
+        throw new Error("Profile update failed.");
+      setImage(imageUrl);
+      setUser(response.data);
 
-        setImage(imageUrl);
-        setUser(response.data);
-
-        toast({
-          title: `${type === "cover" ? "Banner" : "Profile photo"} updated`,
-          description: `Your ${
-            type === "cover" ? "banner" : "profile photo"
-          } has been updated successfully.`,
-          variant: "default",
-        });
-      }
-    } catch (error) {
-      console.error("Error uploading file:", error);
       toast({
-        title: "An error occurred",
-        description:
-          "There was an error during the upload process. Please try again later.",
+        title: `${type === "cover" ? "Banner" : "Profile photo"} updated`,
+        description: "Successfully updated your profile.",
+        variant: "default",
+      });
+    } catch (error) {
+      toast({
+        title: "Upload Error",
+        description: error.message || "Something went wrong.",
         variant: "destructive",
       });
+      console.error("Upload error:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  return { handleImageUpload, loading };
+  return { handleFileUpload, loading };
 };

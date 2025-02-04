@@ -5,14 +5,15 @@ import ExternalProfileInfo from './ExternalProfileInfo'
 import ProfileMenu from './ProfileMenu'
 import ProfileProjects from './ProfileProjects'
 import Statistics from './Statistics'
-import { ProjectMini } from '@/types/project'
+import { MiniProject } from '@/types/project'
 import { User } from '@/types/user'
 import ExternalProfileBanner from './ExternalProfileBanner'
 import UserProfileBanner from './UserProfileBanner'
+import Bookmarks from './Bookmarks'
 
 interface ProfileDataProps {
     display: string;
-    projects: ProjectMini[] | null;
+    projects: MiniProject[] | null;
     user?: User;
 }
 
@@ -35,13 +36,16 @@ const ProfileData: React.FC<ProfileDataProps> = ({ display, projects, user }) =>
                     )}
                 </div>
                 <div className="lg:col-span-4 place-items-center lg:place-items-start w-full">
-                    <ProfileMenu />
-                 
+                    <ProfileMenu user={user || null} />
+
                     {display === "projects" && (
                         <ProfileProjects projects={projects} />
                     )}
                     {display === "stats" && (
                         <Statistics user={user ? user : null} />
+                    )}
+                    {display === "bookmarks" && !user && (
+                        <Bookmarks />
                     )}
                 </div>
             </div>

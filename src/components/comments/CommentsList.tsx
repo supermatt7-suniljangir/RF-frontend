@@ -1,5 +1,5 @@
 "use client";
-import { IComment } from '@/types/comments';
+import { IComment } from '@/types/others';
 import React, { useState, useEffect } from 'react';
 import Comment from './Comment';
 import { Button } from '../ui/button';

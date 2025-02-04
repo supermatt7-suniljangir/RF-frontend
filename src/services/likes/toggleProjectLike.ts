@@ -1,4 +1,3 @@
-"use client";
 import ApiService from "@/api/wrapper/axios-wrapper";
 import axios from "axios";
 

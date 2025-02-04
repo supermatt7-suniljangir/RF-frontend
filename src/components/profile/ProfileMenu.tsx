@@ -7,11 +7,13 @@ import {
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import useIsExternalProfile from "@/hooks/useIsExternalProfile";
+import { User } from "@/types/user";
 
-export default function ProfileMenu() {
+export default function ProfileMenu({ user }: { user: User | null }) {
   const searchParams = useSearchParams();
   const display = searchParams.get("display");
-
+  const isExternalProfile = useIsExternalProfile(user) || false;
   if (!display) {
     redirect("?display=projects");
   }
@@ -19,11 +21,13 @@ export default function ProfileMenu() {
   const navItems = [
     { href: "?display=projects", label: "Projects" },
     { href: "?display=stats", label: "Statistics" },
-    { href: "?display=bookmarks", label: "Bookmarks" },
     { href: "?display=appreciations", label: "Appreciations" },
     { href: "?display=drafts", label: "Drafts (2)" },
   ];
 
+  if (!isExternalProfile) {
+    navItems.push({ href: "?display=bookmarks", label: "Bookmarks" });
+  }
   return (
     <NavigationMenu className="space-x-4 text-muted-foreground w-full overflow-auto flex flex-nowrap p-8 justify-start">
       {navItems.map((item) => (

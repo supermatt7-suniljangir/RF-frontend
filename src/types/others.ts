@@ -1,4 +1,4 @@
-import { Profile } from "./user";
+import { IStats, MiniProject, ProjectType } from "./project";
 
 export interface IComment {
   _id?: string;
@@ -12,6 +12,13 @@ export interface IComment {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface Itool {
+  _id: string;
+  name: string;
+  icon: string;
+}
+
 export interface ILike {
   _id?: string;
   likedBy: {
@@ -25,7 +32,7 @@ export interface ILike {
 export interface IBookmark {
   _id?: string;
   userId: string;
-  project: string;
+  project: MiniProject;
   createdAt: Date;
 }
 
@@ -34,4 +41,9 @@ export interface IFollow {
   follower: string;
   following: string;
   createdAt: Date;
+}
+
+export interface ProjectOperationResponse {
+  success: boolean;
+  data: ProjectType;
 }

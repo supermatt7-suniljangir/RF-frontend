@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import MiniUserInfo from "../common/MiniUserInfo";
 import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
-import { postCommentApi } from "@/services/comments/postComment";
+import { postComment } from "@/services/comments/postComment";
 import { useRouter } from "next/navigation";
 
 interface PostCommentProps {
@@ -26,7 +26,7 @@ const PostComment: React.FC<PostCommentProps> = ({ projectId }) => {
     const onSubmit = async (data: { comment: string }) => {
         setIsPosting(true);
         const { comment } = data;
-        await postCommentApi({ projectId, content: comment });
+        await postComment({ projectId, content: comment });
         router.refresh();
         reset();
         setIsPosting(false);
@@ -37,8 +37,8 @@ const PostComment: React.FC<PostCommentProps> = ({ projectId }) => {
             {user && (
                 <MiniUserInfo
                     id={user._id}
-                    fullName={user.fullName}
-                    avatar={user.profile.avatar}
+                    fullName={user.fullName.split(" ")[0]}
+                    avatar={user.profile?.avatar || null}
                     styles="w-auto pr-4"
                 />
             )}

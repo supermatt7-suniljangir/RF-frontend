@@ -2,62 +2,61 @@ import { useState } from "react";
 import ApiService, { ApiResponse } from "@/api/wrapper/axios-wrapper";
 import { UploadFileResponse } from "@/types/upload";
 
-
-
 export function useUploadFiles() {
-  const [loading, setLoading] = useState<boolean>(false);
-  const getUploadUrl = async (metadata: {
-    [key: string]: string;
-  }): Promise<UploadFileResponse | null> => {
+  const [loading, setLoading] = useState(false);
+
+  const getUploadUrls = async (
+    files: File[]
+  ): Promise<UploadFileResponse[] | null> => {
     try {
       setLoading(true);
       const apiService = ApiService.getInstance();
-      const url = "/upload/file";
-      const response: ApiResponse<UploadFileResponse> = await apiService.post(
+      const url = "/upload/files"; // Adjust your API endpoint
+      const metadata = files.map((file) => ({
+        filename: file.name,
+        contentType: file.type,
+      }));
+      const response: ApiResponse<UploadFileResponse[]> = await apiService.post(
         url,
-        metadata
+        { files: metadata }
       );
-      if (!response?.data?.key || !response.data.uploadUrl) {
-        console.error("Failed to get upload URL");
-        throw new Error("Failed to get upload URL");
-      }
+      if (!response?.data?.length)
+        throw new Error("Failed to get upload URLs.");
       return response.data;
     } catch (error) {
-      console.error("Error fetching upload URL:", error);
+      console.error("Error fetching upload URLs:", error);
       return null;
     } finally {
       setLoading(false);
     }
   };
 
-  const uploadFile = async (
-    uploadUrl: string,
-    file: File
+  const uploadFiles = async (
+    uploadData: { uploadUrl: string; file: File }[]
   ) => {
     try {
       setLoading(true);
 
-      const fileUploadResponse = await fetch(uploadUrl, {
-        method: "PUT",
-        body: file,
-        headers: {
-          "Content-Type": file.type,
-        },
-      });
-   
-      if (!fileUploadResponse.ok) {
-        console.error("File upload failed");
-        return null;
-      }
+      const results = await Promise.all(
+        uploadData.map(({ uploadUrl, file }) =>
+          fetch(uploadUrl, {
+            method: "PUT",
+            body: file,
+            headers: { "Content-Type": file.type },
+          })
+        )
+      );
 
-      return fileUploadResponse;
+      const failedUploads = results.filter((res) => !res.ok);
+      if (failedUploads.length) throw new Error("Some uploads failed.");
+      return results;
     } catch (error) {
-      console.error("Error uploading file:", error);
+      console.error("Error uploading files:", error);
       return null;
     } finally {
       setLoading(false);
     }
   };
 
-  return { getUploadUrl, uploadFile, loading };
+  return { getUploadUrls, uploadFiles, loading };
 }

@@ -1,7 +1,7 @@
 
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import { ProjectMini } from "@/types/project";
+import { MiniProject } from "@/types/project";
 import ProfileData from "@/components/profile/ProfileData";
 import { Suspense } from "react";
 import Spinner from "@/app/loading";
@@ -18,7 +18,7 @@ export default async function Profile({
   if (!authToken) {
     redirect("/login");
   }
-  const projects: ProjectMini[] = await getUserProjectsApi();
+  const projects: MiniProject[] = await getUserProjectsApi();
   if (!projects) {
     throw new Error("Failed to fetch user projects");
   }

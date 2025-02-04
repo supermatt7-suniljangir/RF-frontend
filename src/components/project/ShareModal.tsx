@@ -33,7 +33,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
 }) => {
     if (!project) return null;
     const { _id, title, thumbnail, creator: { fullName, avatar } } = project;
-    const projectUrl = `${window?.location.origin}/projects/${_id}`;
+    const projectUrl = `${window?.location.origin}/project/${_id}`;
     const [copied, setCopied] = React.useState(false);
     const handleCopyLink = async () => {
         try {

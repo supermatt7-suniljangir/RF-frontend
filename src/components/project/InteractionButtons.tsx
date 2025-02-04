@@ -1,9 +1,12 @@
-// components/ProjectHeader/InteractionButtons.tsx
 "use client";
-import { useState } from "react";
-import { Heart, Bookmark } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import LikeButton from "./LikeButton";
+import { checkBookmarkStatus } from "@/services/bookmarks/hasUserBookmarkedTheProject";
+import { toggleBookmarkProject } from "@/services/bookmarks/toggleBookmark";
+import { toast } from "@/hooks/use-toast";
+import { revalidateRoute } from "@/lib/revalidatePath";
+import { useUser } from "@/contexts/UserContext";
 
 interface InteractionButtonsProps {
   projectId: string;
@@ -11,13 +14,37 @@ interface InteractionButtonsProps {
 
 export default function InteractionButtons({ projectId }: InteractionButtonsProps) {
   const [isSaved, setIsSaved] = useState(false);
+  const { user, isLoading } = useUser();
+  const [isSavingBookmark, setIsSavingBookmark] = useState(false);
+  useEffect(() => {
+    const checkSaveStatus = async () => {
+      if (isLoading || !user) return;
+      const response = await checkBookmarkStatus(projectId);
+      setIsSaved(response);
+    }
+    checkSaveStatus();
+  }, [projectId, user]);
+
+
+  const handleSave = async () => {
+    const response = await toggleBookmarkProject(projectId);
+    if (!response) {
+      toast({
+        title: "Error",
+        description: "An error occurred while performing the operation.",
+        variant: "destructive",
+      });
+    };
+    setIsSaved((prev) => !prev);
+    revalidateRoute('/profile');
+  }
+
   return (
     <div className="flex items-center gap-3">
-
-      <LikeButton projectId={projectId} size={"small"} />
       <Button
+        disabled={isSavingBookmark || isLoading || !user}
         variant="outline"
-        onClick={() => setIsSaved(!isSaved)}
+        onClick={handleSave}
         className="hover:bg-secondary w-10 h-10 rounded-full bg-secondary"
       >
         <Bookmark
@@ -30,3 +57,4 @@ export default function InteractionButtons({ projectId }: InteractionButtonsProp
     </div>
   );
 }
+

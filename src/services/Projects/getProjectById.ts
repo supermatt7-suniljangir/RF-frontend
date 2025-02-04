@@ -1,3 +1,4 @@
+import { URL } from "@/api/config/configs";
 import { ProjectType } from "@/types/project";
 
 interface ProjectResponse {
@@ -7,22 +8,25 @@ interface ProjectResponse {
 
 interface GetProjectByIdArgs {
   id: string;
-  cacheSettings?: "no-store" | "reload" | "force-cache" | "default"; 
+  cacheSettings?: "no-store" | "reload" | "force-cache" | "default";
 }
 
 export const getProjectById = async ({
   id,
-  cacheSettings = "force-cache",
-}: GetProjectByIdArgs): Promise<ProjectResponse | null> => {
+  cacheSettings = "default",
+}: GetProjectByIdArgs): Promise<ProjectType | null> => {
   try {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/projects/${id}`;
+    const url = `${URL}/projects/${id}`;
 
     const response = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-      cache: cacheSettings ? cacheSettings : "force-cache", // Use the provided cache setting
+      next: {
+        revalidate: 60 * 15,
+      },
+      cache: cacheSettings ? cacheSettings : "default", // Use the provided cache setting
     });
 
     if (!response.ok) {
@@ -37,7 +41,7 @@ export const getProjectById = async ({
       return null;
     }
 
-    return data;
+    return data.data;
   } catch (error) {
     console.error("Error fetching project by ID:", error);
     return null;

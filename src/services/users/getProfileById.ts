@@ -1,4 +1,3 @@
-
 import { User } from "@/types/user";
 import { URL } from "@/api/config/configs";
 
@@ -10,13 +9,15 @@ interface ProfileResponse {
 // Wrap the fetch function in React's cache
 export const getProfileById = async (userId: string): Promise<User | null> => {
   try {
-  const url = `${URL}/users/${userId}`;
+    const url = `${URL}/users/${userId}`;
     const response = await fetch(url, {
       method: "GET",
+      next: {
+        revalidate: 60 * 15,
+      },
       headers: {
         "Content-Type": "application/json",
       },
-      cache: "force-cache", // Explicitly use caching
     });
 
     if (!response.ok) {
@@ -27,7 +28,10 @@ export const getProfileById = async (userId: string): Promise<User | null> => {
     const data: ProfileResponse = await response.json();
 
     if (!data.success) {
-      console.error("Failed to fetch user profile, API returned success false", data);
+      console.error(
+        "Failed to fetch user profile, API returned success false",
+        data
+      );
       return null;
     }
 

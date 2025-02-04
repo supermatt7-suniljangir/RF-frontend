@@ -15,8 +15,8 @@ const CreatorInfo: React.FC<CreatorInfoProps> = ({ creator }) => {
                 </div>
                 <h2 className='text-xl font-semibold'>{creator.fullName}</h2>
                 <p className='text-lg'>{creator.profession}</p>
-                <div className='space-x-4 text-sm'><span>{creator.followersCount} followers</span>
-                    <span>{creator.projects.length} projects</span>
+                <div className='space-x-4 text-sm'><span>{creator.followersCount || 0} followers</span>
+                    <span>{creator?.projects?.length || 0} projects</span>
                 </div>
             </Link>
         </div>

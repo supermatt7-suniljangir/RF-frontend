@@ -8,30 +8,32 @@ import Link from "next/link";
 import { MiniProject } from "@/types/project";
 import { useUser } from "@/contexts/UserContext";
 import MiniUserInfo from "./MiniUserInfo";
+import { cn } from "@/lib/utils";
 interface ProjectCardProps {
   project: MiniProject;
   renderUser?: boolean;
+  styles?: string;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, renderUser = true }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ project, renderUser = true, styles }) => {
   const { user } = useUser();
   const [hovered, setHovered] = useState<boolean>(false);
   const isOwner = user?._id === project?.creator?._id;
   return (
     <Card
-      className={"w-full max-w-[380px] h-auto relative p-0 rounded-none"}
+      className={cn("w-full max-w-[380px] h-auto relative p-0 rounded-none", styles)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <Link href={`/project/${project._id}`}>
+      <Link href={`/project/${project._id}`} className="w-full">
         <div className="relative h-64 overflow-hidden rounded-none ">
           <Image
-            src={Project2}
+            src={project?.thumbnail || Project2}
             alt={project.title}
             fill
             className="h-full w-full object-cover"
           />
-          {hovered && (
+          {hovered || styles?.includes("pointer-events-none") && (
             <CardHeader className="absolute w-full h-36 bottom-0 bg-gradient-to-t from-black via-black/60 to-transparent group-hover:opacity-100 transition-opacity duration-300">
               <CardTitle className="absolute bottom-4 left-4 text-white text-lg font-medium">
                 {project.title}
@@ -57,7 +59,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, renderUser = true })
           </div>
         </div>
       </CardContent>
-    </Card>
+    </Card >
   );
 };
 

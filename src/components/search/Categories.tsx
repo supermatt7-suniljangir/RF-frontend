@@ -2,18 +2,9 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { categories } from "@/lib/categories";
 
-const categories: string[] = [
-  "Graphic Design",
-  "UI/UX Design",
-  "Illustration",
-  "Photography",
-  "Web Design",
-  "3D Design",
-  "Branding",
-  "Art Direction",
-  "Animation",
-];
+
 
 export default function CategorySelector() {
   const router = useRouter();
@@ -42,7 +33,7 @@ export default function CategorySelector() {
         onValueChange={handleCategoryChange}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Category"/>
+          <SelectValue placeholder="Category" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="All">All</SelectItem>
