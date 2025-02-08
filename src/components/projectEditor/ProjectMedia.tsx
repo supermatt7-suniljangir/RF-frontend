@@ -11,12 +11,14 @@ const ProjectMedia = () => {
     const { media, removeMedia } = useEditor();
     return (
         <div className="w-full">
-            {media.map((item, index) => (
+            {media?.map((item, index) => (
                 <div key={index} className="p-2 md:p-0 relative">
                     <Button onClick={() => removeMedia(item)} variant='destructive' className='absolute p-2 h-auto w-auto  top-2 right-2 z-10'> <Trash2 className="w-6 h-6" /></Button>
                     {item.type === "image" ? (
                         <div className="relative">
                             <Image
+                                sizes="(max-width: 640px) 100vw, 640px"
+
                                 src={item.url}
                                 alt={`Media ${index + 1}`}
                                 className="rounded h-auto w-full"

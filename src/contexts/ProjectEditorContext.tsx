@@ -1,62 +1,15 @@
 "use client";
-
-import useTools from "@/features/tools/useTools";
 import { toast } from "@/hooks/use-toast";
-import { Itool } from "@/types/others";
-import { ICopyright, Imedia, IStats, License, ProjectType, ProjectUploadType, tempMedia, Thumbnail } from "@/types/project";
+import { Itool, ProjectOperationResponse } from "@/types/others";
+import { ICopyright, Imedia, IStats, License, ProjectStatus, ProjectType, ProjectUploadType, TempMedia, Thumbnail } from "@/types/project";
 import { MiniUser } from "@/types/user";
-import React, { createContext, useState, useContext, ReactNode, useRef } from "react";
+import React, { createContext, useState, useContext, ReactNode, useRef, useEffect } from "react";
 import { useUser } from "./UserContext";
-import Project from "@/app/(project)/project/[id]/page";
+import { useCloudUploader } from "@/features/upload/useFileUploader";
+import { ProjectEditorContextType, ProjectMetadata, UIState } from "@/types/contexts";
+import { useProjectUpload } from "@/features/project/useProjectUpload";
+import { useRouter } from "next/navigation";
 
-
-
-export type ProjectMetadata = {
-    title: string;
-    description: string;
-    shortDescription: string;
-    thumbnail: Thumbnail;
-    category: string;
-    status: "draft" | "published";
-    projectUrl?: string;
-    featured?: boolean;
-    stats?: IStats;
-};
-
-export type UIState = {
-    isImageLoading: boolean;
-    isDescOpen: boolean;
-    isUploading: boolean;
-    showProjectDesc: boolean;
-};
-
-interface UploadableProject {
-    projectData: ProjectUploadType;
-    cloudUploadData: { uploadMedia: File[] | []; uploadThumbnail: File | "" };
-}
-
-interface ProjectEditorContextType {
-    mediaContainerRef?: React.RefObject<HTMLDivElement>;
-    media: Imedia[];
-    tags: string[];
-    updateTags: (tags: string[]) => void;
-    projectMetadata: ProjectMetadata;
-    uiState: UIState;
-    tools: Itool[];
-    copyRight: ICopyright;
-    editorStage: 0 | 1 | 2;
-    collaborators: MiniUser[];
-    updateCollaborators: (collaborators: MiniUser[]) => void;
-    updateEditorStage: (stage: 0 | 1 | 2) => void;
-    updateTools: (tools: Itool[]) => void;
-    updateCopyRight: (copyRight: Partial<ICopyright>) => void;
-    updateUIState: (updates: Partial<UIState>) => void;
-    removeMedia: (mediaItem: Imedia) => void;
-    updateMedia: (media: Imedia[]) => void;
-    updateProjectMetadata: (data: Partial<ProjectMetadata>) => void;
-    uploadProject: () => Promise<void>;
-    getUploadableProject: () => UploadableProject;
-}
 
 const UploadContext = createContext<ProjectEditorContextType | undefined>(undefined);
 
@@ -66,13 +19,15 @@ interface UploadProviderProps {
 }
 
 export const EditorProvider: React.FC<UploadProviderProps> = ({ children, initialData }) => {
+    const router = useRouter();
+    const { createNew, publishing, updateExisting } = useProjectUpload();
     const { user } = useUser();
-
+    const [media, setMedia] = useState<(Imedia | TempMedia)[]>(initialData?.media || []);
+    const { handleProjectImagesUpload } = useCloudUploader()
     const mediaContainerRef = useRef<HTMLDivElement>(null);
     const [editorStage, setEditorStage] = useState<0 | 1 | 2>(0);
     const [tags, setTags] = useState<string[]>(initialData?.tags || []);
-    const [media, setMedia] = useState<Imedia[] | tempMedia[]>(initialData?.media || []);
-    const [tools, setTools] = useState<Itool[]>(initialData?.tools || [{ name: "Figma", _id: "1", icon: "figma" }]);
+    const [tools, setTools] = useState<Itool[]>(initialData?.tools || []);
     const [collaborators, setCollaborators] = useState<MiniUser[]>(initialData?.collaborators || []);
     const [copyRight, setCopyRight] = useState<ICopyright>(initialData?.copyright || {
         allowsDownload: false,
@@ -80,20 +35,21 @@ export const EditorProvider: React.FC<UploadProviderProps> = ({ children, initia
         license: License.All_Rights_Reserved,
     });
 
+
     const [projectMetadata, setProjectMetadata] = useState<ProjectMetadata>({
-        title: initialData?.title || "sdjfasdkjfasjf;kasdjf;sdakjfsd",
-        description: initialData?.description || "sdfjasdfhaksjdfhsjadhfkljsdhsdfsdfdsfdsdffklsd",
-        shortDescription: initialData?.shortDescription || "asdfhalsdfhslkjasdhfajshsdsdsdfd",
-        category: initialData?.category || "Illustration",
-        status: initialData?.status || "draft",
+        title: initialData?.title || "",
+        description: initialData?.description || "",
+        shortDescription: initialData?.shortDescription || "",
+        category: initialData?.category || "",
+        status: initialData?.status || ProjectStatus.DRAFT,
         thumbnail: {
-            url: initialData?.thumbnail || "",
+            url: initialData?.thumbnail ? initialData.thumbnail : media.find((item) => item.type === "image")?.url || "",
             file: undefined,
+            type: "image",
         },
         featured: initialData?.featured || false,
         projectUrl: initialData?.projectUrl || "",
         stats: initialData?.stats || { views: 0, likes: 0, comments: 0 },
-
     });
 
     const [uiState, setUIState] = useState<UIState>({
@@ -110,6 +66,7 @@ export const EditorProvider: React.FC<UploadProviderProps> = ({ children, initia
         const validateMedia = (type: "image" | "video", max: number, errorMsg: string) => {
             const currentCount = type === "image" ? imageFiles.length : videoFiles.length;
             if (currentCount > max) {
+
                 toast({ variant: "destructive", title: "Error", description: errorMsg, duration: 4000 });
                 return false;
             }
@@ -123,17 +80,17 @@ export const EditorProvider: React.FC<UploadProviderProps> = ({ children, initia
             return;
         }
         setMedia(combinedMedia);
-        setMedia(combinedMedia);
         setTimeout(() => {
             mediaContainerRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
         }, 0);
-
     };
+
 
     const updateEditorStage = (stage: 0 | 1 | 2) => {
         setEditorStage(stage);
     };
-    const getUploadableProject = () => {
+
+    const getUploadableProject = (status: ProjectStatus) => {
         const projectData: ProjectUploadType = {
             ...(initialData?._id && { _id: initialData._id }),
             title: projectMetadata.title,
@@ -141,30 +98,34 @@ export const EditorProvider: React.FC<UploadProviderProps> = ({ children, initia
             shortDescription: projectMetadata.shortDescription,
             thumbnail: projectMetadata.thumbnail.url,
             media: media.map((item) => {
-                const { file, ...rest } = item as tempMedia;
+                const { file, ...rest } = item as TempMedia;
                 return rest as Imedia;
             }),
             creator: user._id,
             collaborators: collaborators.map((collab) => collab._id),
             tags,
-            tools,
+            tools: tools.map((tool) => tool._id) as any,
             category: projectMetadata.category,
             stats: projectMetadata.stats,
-            featured: projectMetadata.featured,
-            publishedAt: new Date(),
-            updatedAt: new Date(),
-            status: projectMetadata.status,
-            projectUrl: projectMetadata.projectUrl,
+            featured: projectMetadata.featured || false,
+            status: status ? status : projectMetadata.status,
+            projectUrl: projectMetadata.projectUrl || "",
             copyright: copyRight,
+            publishedAt: Date.now(),
+        };
+
+        const isWebStorageUrl = (url: string) => {
+            return url.startsWith('blob:') || url.startsWith('data:');
         };
 
         const cloudUploadData: {
-            uploadMedia: File[] | [];
-            uploadThumbnail: File | "";
+            uploadMedia: TempMedia[];
+            uploadThumbnail: Thumbnail;
         } = {
-            uploadMedia: media.filter((item) => (item as tempMedia)?.file).map((item) => (item as tempMedia).file as File),
-            uploadThumbnail: projectMetadata?.thumbnail?.file,
-        }
+            uploadMedia: media
+                .filter((item: TempMedia) => isWebStorageUrl(item.url) && item?.file),
+            uploadThumbnail: projectMetadata?.thumbnail || undefined,
+        };
 
         return { projectData, cloudUploadData };
 
@@ -200,51 +161,69 @@ export const EditorProvider: React.FC<UploadProviderProps> = ({ children, initia
 
 
 
-    const uploadProject = async () => {
+    const uploadProject = async (status: ProjectStatus) => {
         try {
             updateUIState({ isUploading: true });
-            // Your upload logic here
+            const { projectData, cloudUploadData } = getUploadableProject(status);
+            let updatedMedia = projectData.media.filter((item) => !item.url.startsWith("blob:")); // Remove blobs
+            const isEditing = !!initialData?._id;
+            if (!projectData.category || !projectData.title || projectData.media.length < 1) {
+                toast({ variant: "destructive", title: "Error", description: "Incomplete project information", duration: 4000 });
+                return;
+            }
+
+            const imagesToUpload = cloudUploadData.uploadMedia.filter(item => item.type.includes("image"));
+            const uploadThumbnail = cloudUploadData.uploadThumbnail;
+            if (uploadThumbnail.file) imagesToUpload.push(uploadThumbnail as any);
+
+            if (imagesToUpload.length > 0) {
+                const uploadedMedia = await handleProjectImagesUpload(imagesToUpload);
+
+                if (!uploadedMedia || uploadedMedia.length === 0) {
+                    toast({ variant: "destructive", title: "Error", description: "Failed to upload project images.", duration: 4000 });
+                    return;
+                }
+
+                console.log("uploadedMedia", uploadedMedia);
+                updatedMedia = [...updatedMedia, ...uploadedMedia] as any; // Merging only valid media URLs
+            }
+
+            projectData.media = updatedMedia;
+            projectData.thumbnail = updatedMedia.find((item) => item.type === "image")?.url || updatedMedia[0].url;
+
+            if (!projectData.thumbnail) {
+                toast({ variant: "destructive", title: "Error", description: "Project thumbnail is required.", duration: 4000 });
+                return;
+            }
+
+            let res: ProjectOperationResponse;
+            if (isEditing) {
+                res = await updateExisting(projectData);
+            } else {
+                res = await createNew(projectData);
+            }
+
+            console.log(res);
+            if (!res) return;
+
+            router.push(`/project/${res.data._id}`);
         } catch (error) {
             console.error("Upload error:", error);
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "An error occurred while uploading the project. Please try again.",
+                duration: 4000,
+            });
         } finally {
             updateUIState({ isUploading: false });
         }
     };
 
 
-
-
-    // handle cloud upload
-    const handleCloudUPload = () => {
-        const { projectData, cloudUploadData } = getUploadableProject();
-        const { uploadMedia, uploadThumbnail } = cloudUploadData;
-        const uploadPromises = uploadMedia.map((media) => uploadToCloudinary(media));
-        if (uploadThumbnail) {
-            uploadPromises.push(uploadToCloudinary(uploadThumbnail));
-        }
-        try {
-            const uploadedMedia = await Promise.all(uploadPromises);
-            const uploadedThumbnail = uploadedMedia.find((media) => media.type === "thumbnail");
-            const uploadedImages = uploadedMedia.filter((media) => media.type === "image");
-            const uploadedVideos = uploadedMedia.filter((media) => media.type === "video");
-            const uploadedData = {
-                ...projectData,
-                thumbnail: uploadedThumbnail?.url || projectData.thumbnail,
-                media: [...uploadedImages, ...uploadedVideos, ...projectData.media],
-            };
-            await uploadProject(uploadedData);
-        } catch (error) {
-            console.error("Cloud upload error:", error)
-        }
-    }
-
-
-
-
     return (
         <UploadContext.Provider
             value={{
-                getUploadableProject,
                 collaborators,
                 updateCollaborators,
                 tags, updateTags,
@@ -262,7 +241,7 @@ export const EditorProvider: React.FC<UploadProviderProps> = ({ children, initia
                 removeMedia,
                 updateMedia,
                 updateProjectMetadata,
-                uploadProject,
+                uploadProject
             }}
         >
             {children}

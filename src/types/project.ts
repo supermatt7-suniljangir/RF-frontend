@@ -23,6 +23,10 @@ export interface ICopyright {
   commercialUse: boolean;
 }
 
+export enum ProjectStatus {
+  DRAFT = "draft",
+  PUBLISHED = "published",
+}
 // Main Project Type
 export interface ProjectType {
   _id?: string;
@@ -41,7 +45,7 @@ export interface ProjectType {
   publishedAt: Date;
   createdAt?: Date;
   updatedAt?: Date;
-  status: "draft" | "published";
+  status: ProjectStatus;
   projectUrl?: string;
   copyright: ICopyright;
 }
@@ -60,20 +64,21 @@ export interface ProjectUploadType {
   category: string;
   stats: IStats;
   featured: boolean;
-  publishedAt: Date;
+  publishedAt: number;
   createdAt?: Date;
   updatedAt?: Date;
-  status: "draft" | "published";
+  status: ProjectStatus;
   projectUrl?: string;
   copyright: ICopyright;
 }
 
-export interface tempMedia extends Imedia {
+export interface TempMedia extends Imedia {
   file?: File;
 }
 export interface Thumbnail {
   url: string;
   file?: File;
+  type: "image";
 }
 
 export interface MiniProject {
@@ -85,6 +90,6 @@ export interface MiniProject {
   stats: IStats;
   featured: boolean;
   publishedAt: Date;
-  status: "draft" | "published";
+  status: ProjectStatus;
   category: string;
 }

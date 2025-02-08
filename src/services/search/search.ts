@@ -41,7 +41,6 @@ export const fetchUsers = async (
 
   const response = await fetch(url, {
     method: "GET",
-    cache: cacheSettings || "force-cache",
     next: {
       revalidate: 5 * 60,
     },
@@ -69,7 +68,6 @@ export const fetchProjects = async (
       revalidate: 5 * 60,
     },
     method: "GET",
-    cache: "force-cache",
   });
 
   if (!response.ok) {

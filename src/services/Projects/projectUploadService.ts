@@ -8,20 +8,14 @@ import { ProjectOperationResponse } from "@/types/others";
 export const createNewProject = async (
   data: ProjectUploadType
 ): Promise<ProjectOperationResponse | null> => {
-  if (data) {
-    toast({
-      title: "Error",
-      description: "No data provided",
-      variant: "destructive",
-    });
-    return null;
-  }
   const apiService = ApiService.getInstance();
   try {
     const response = await apiService.post<ProjectOperationResponse>(
-      `/projects/`
+      `/projects/`,
+      data
     );
-    if (response.status === 200) {
+
+    if (response.status === 201) {
       toast({
         title: "Success",
         description: "Project created successfully",

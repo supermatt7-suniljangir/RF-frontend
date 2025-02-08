@@ -1,18 +1,25 @@
 "use client";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useEditor } from '@/contexts/ProjectEditorContext';
 import { Card } from '@/components/ui/card';
 import ProjectThumbnail from './ProjectThumbnail';
 import ProjectWindowSidebar from './ProjectWindowSidebar';
+import Spinner from '@/app/loading';
+import { ProjectStatus } from '@/types/project';
 const ProjectWindow: React.FC = () => {
     const {
         editorStage,
         updateEditorStage,
+        uiState: { isUploading },
+        uploadProject
     } = useEditor();
+
+
     const onClose = () => updateEditorStage(1);
     const isOpen = editorStage === 2;
+
     return (
         <div className='w-full'>
             <Dialog open={isOpen} onOpenChange={onClose} >
@@ -33,11 +40,11 @@ const ProjectWindow: React.FC = () => {
                             <Button variant='ghost' className='rounded-none w-24' onClick={onClose}>
                                 Cancel
                             </Button>
-                            <Button variant='ghost' className='bg-muted text-muted-foreground rounded-none w-24'>
-                                Save Draft
+                            <Button variant='ghost' onClick={() => uploadProject(ProjectStatus.DRAFT)} className='bg-muted text-muted-foreground rounded-none w-24'>
+                                {isUploading ? <Spinner /> : "Save Draft"}
                             </Button>
-                            <Button variant="secondary" className='rounded-none w-24' onClick={onClose}>
-                                Publish
+                            <Button variant="secondary" className='rounded-none w-24' onClick={() => uploadProject(ProjectStatus.PUBLISHED)} disabled={isUploading}>
+                                {isUploading ? "Publishing" : "Publish"}
                             </Button>
                         </div>
                     </div>

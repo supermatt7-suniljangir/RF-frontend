@@ -4,9 +4,10 @@ import BuildComponents from './BuildComponents'
 import ProjectMedia from './ProjectMedia'
 import ProjectMetadata from './ProjectMetadata'
 import { useEditor } from '@/contexts/ProjectEditorContext'
+import Spinner from '@/app/loading';
 
 const EditorContainer = () => {
-    const { uiState: { isDescOpen }, media, updateEditorStage, updateUIState, mediaContainerRef } = useEditor();
+    const { uiState: { isDescOpen, isUploading }, media, updateEditorStage, updateUIState, mediaContainerRef } = useEditor();
     useEffect(() => {
         if (media.length > 0) {
             updateEditorStage(1);
@@ -17,8 +18,7 @@ const EditorContainer = () => {
             updateUIState({ isDescOpen: false });
         }
     }, [media]);
-
-
+    if (isUploading) return <Spinner />
     return (
         <div className='w-full flex'>
             <div className='w-1/5 sticky top-0 left-0 h-screen'>

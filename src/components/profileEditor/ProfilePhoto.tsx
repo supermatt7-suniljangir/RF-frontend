@@ -9,14 +9,14 @@ import { useProfileUploader } from "@/features/upload/useProfileUploader";
 const ProfilePhoto: React.FC = () => {
   const { user, setUser } = useUser();
   const [image, setImage] = useState<string | null>(user?.profile?.avatar || null);
-  const { handleImageUpload, loading } = useProfileUploader(setImage, setUser, "avatar");
+  const { handleFileUpload, loading } = useProfileUploader(setImage, setUser, "avatar");
 
   // Use react-dropzone for handling drag and drop or file selection
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: async (acceptedFiles) => {
       const file = acceptedFiles[0];
       if (file) {
-        await handleImageUpload(file);
+        await handleFileUpload([file]);
       }
     },
   });

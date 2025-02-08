@@ -11,7 +11,7 @@ export function useUploadFiles() {
     try {
       setLoading(true);
       const apiService = ApiService.getInstance();
-      const url = "/upload/files"; // Adjust your API endpoint
+      const url = "/upload/files"; 
       const metadata = files.map((file) => ({
         filename: file.name,
         contentType: file.type,
