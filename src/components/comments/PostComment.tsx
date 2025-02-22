@@ -27,7 +27,6 @@ const PostComment: React.FC<PostCommentProps> = ({ projectId }) => {
         setIsPosting(true);
         const { comment } = data;
         await postComment({ projectId, content: comment });
-        router.refresh();
         reset();
         setIsPosting(false);
     };

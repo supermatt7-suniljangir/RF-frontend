@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import { useEditor } from "@/contexts/ProjectEditorContext";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { Imedia } from "@/types/project";
+import { Imedia, TempMedia } from "@/types/project";
 import { toast } from "@/hooks/use-toast";
 import ProjectWindow from "./EditorWindow/ProjectWindow";
 import Copyright from "./Copyright";
@@ -58,8 +58,8 @@ const BuildComponents = () => {
             })),
         ];
 
-        updateMedia(mediaFiles as Imedia[]);
-        event.target.value = ""; // Clear the input
+        updateMedia(mediaFiles as TempMedia[]);
+        event.target.value = ""; 
     };
 
     const handleContinue = () => {
@@ -113,14 +113,7 @@ const BuildComponents = () => {
                     className="w-5/6 rounded-none"
                 >
                     Continue
-                </Button>
-                <Button
-                    variant="ghost"
-                    disabled={media.length < 1}
-                    className="w-5/6 bg-muted text-muted-foreground rounded-none"
-                >
-                    Save Draft
-                </Button>
+                </Button>            
                 {/* Final Step Modal */}
                 <ProjectWindow />
             </CardContent>

@@ -27,16 +27,8 @@ export default function InteractionButtons({ projectId }: InteractionButtonsProp
 
 
   const handleSave = async () => {
-    const response = await toggleBookmarkProject(projectId);
-    if (!response) {
-      toast({
-        title: "Error",
-        description: "An error occurred while performing the operation.",
-        variant: "destructive",
-      });
-    };
+     await toggleBookmarkProject(projectId);
     setIsSaved((prev) => !prev);
-    revalidateRoute('/profile');
   }
 
   return (

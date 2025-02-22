@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Delete } from 'lucide-react'
 import MiniUserInfo from '@/components/common/MiniUserInfo'
 import { useEditor } from '@/contexts/ProjectEditorContext'
-import { fetchUsers } from '@/services/search/search'
+import SearchService from '@/services/search/search'
 import { MiniUser } from '@/types/user'
 
 const ProjectCollaborators: React.FC = () => {
@@ -63,12 +63,11 @@ const ProjectCollaborators: React.FC = () => {
         // Debounce the search
         searchTimeoutRef.current = setTimeout(async () => {
             try {
-                const users = await fetchUsers(
+                const users = await SearchService.fetchUsers(
                     { query, limit: 20, page: 1 },
                     "no-store",
                     controller.signal
                 )
-
                 // Only update if the request wasn't aborted
                 if (!controller.signal.aborted) {
                     setUserSearchResults(users.data || [])

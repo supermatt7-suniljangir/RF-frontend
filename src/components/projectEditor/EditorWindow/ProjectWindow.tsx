@@ -40,7 +40,7 @@ const ProjectWindow: React.FC = () => {
                             <Button variant='ghost' className='rounded-none w-24' onClick={onClose}>
                                 Cancel
                             </Button>
-                            <Button variant='ghost' onClick={() => uploadProject(ProjectStatus.DRAFT)} className='bg-muted text-muted-foreground rounded-none w-24'>
+                            <Button variant='ghost' disabled={isUploading} onClick={() => uploadProject(ProjectStatus.DRAFT)} className='bg-muted text-muted-foreground rounded-none w-24'>
                                 {isUploading ? <Spinner /> : "Save Draft"}
                             </Button>
                             <Button variant="secondary" className='rounded-none w-24' onClick={() => uploadProject(ProjectStatus.PUBLISHED)} disabled={isUploading}>

@@ -45,7 +45,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, renderUser = true, s
       <CardContent className="px-4 py-1 mt-1">
         <div className="flex justify-between">
           {!isOwner && renderUser && (
-            <MiniUserInfo id={project?.creator?._id} avatar={project?.creator?.avatar} styles="w-3/4" fullName={project?.creator?.fullName} />
+            <MiniUserInfo id={project?.creator?._id} avatar={project?.creator?.profile?.avatar} styles="w-3/4" fullName={project?.creator?.fullName} />
           )}
           <div className="flex space-x-4 justify-between flex-grow">
             <div className="flex items-center space-x-1">

@@ -1,13 +1,14 @@
 
 "use client";
 import React, { useEffect } from "react";
-import { ProjectMetadata, useEditor } from "@/contexts/ProjectEditorContext";
+import {  useEditor } from "@/contexts/ProjectEditorContext";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Trash2 } from "lucide-react";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import { Input } from "../ui/input";
+import { ProjectMetadata } from "@/types/contexts";
 
 
 

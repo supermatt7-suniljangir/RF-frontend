@@ -9,7 +9,7 @@ import Spinner from '@/app/loading';
 const EditorContainer = () => {
     const { uiState: { isDescOpen, isUploading }, media, updateEditorStage, updateUIState, mediaContainerRef } = useEditor();
     useEffect(() => {
-        if (media.length > 0) {
+        if (media.length > 0 && media.some((item) => item.type === 'image')) {
             updateEditorStage(1);
             updateUIState({ isDescOpen: true });
         }

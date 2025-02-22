@@ -29,9 +29,10 @@ export interface Social {
 export interface MiniUser {
   _id: string;
   fullName: string;
-  avatar?: string;
-  profession?: string;
-  followersCount?: number;
-  projects?: string[];
-  availableForHire?: boolean;
+  email: string;
+  profile: {
+    availableForHire: boolean;
+    avatar: string;
+    profession: string;
+  };
 }

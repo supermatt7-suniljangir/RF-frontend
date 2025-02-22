@@ -3,13 +3,15 @@ import React from 'react'
 import UserProfileInfo from './UserProfileInfo'
 import ExternalProfileInfo from './ExternalProfileInfo'
 import ProfileMenu from './ProfileMenu'
-import ProfileProjects from './ProfileProjects'
+import PublishedProjects from './PublishedProjects'
 import Statistics from './Statistics'
 import { MiniProject } from '@/types/project'
 import { User } from '@/types/user'
 import ExternalProfileBanner from './ExternalProfileBanner'
 import UserProfileBanner from './UserProfileBanner'
 import Bookmarks from './Bookmarks'
+import DraftProjects from './DraftProjects'
+import AppreciatedProjects from './AppreciatedProjects'
 
 interface ProfileDataProps {
     display: string;
@@ -39,13 +41,19 @@ const ProfileData: React.FC<ProfileDataProps> = ({ display, projects, user }) =>
                     <ProfileMenu user={user || null} />
 
                     {display === "projects" && (
-                        <ProfileProjects projects={projects} />
+                        <PublishedProjects projects={projects} />
                     )}
                     {display === "stats" && (
                         <Statistics user={user ? user : null} />
                     )}
                     {display === "bookmarks" && !user && (
                         <Bookmarks />
+                    )}
+                    {display === "drafts" && !user && (
+                        <DraftProjects projects={projects} />
+                    )}
+                    {display === "appreciations" && (
+                        <AppreciatedProjects user={user ? user : null} />
                     )}
                 </div>
             </div>

@@ -1,28 +1,23 @@
+"use client";
 import ApiService from "@/api/wrapper/axios-wrapper";
+import { toast } from "@/hooks/use-toast";
+import { ApiResponse } from "@/lib/ApiResponse";
 import axios from "axios";
-
-// Define the expected response type
-interface ToggleBookmarkResponse {
-  success: boolean;
-  message: string;
-}
 
 export const toggleBookmarkProject = async (
   projectId: string
-): Promise<{ message: string } | null> => {
+): Promise<boolean> => {
   const apiService = ApiService.getInstance();
 
   try {
-    const response = await apiService.put<ToggleBookmarkResponse>(
-      `/bookmarks/toggle/${projectId}`
+    const response = await apiService.put<ApiResponse>(
+      `/bookmarks/${projectId}/toggle`
     );
-    // Validate the response structure
-    if (response.data.success) {
-      return { message: response.data.message };
-    } else {
-      console.error("Unexpected response:", response.data);
-      return null;
+    if (!response.data.success && ![200, 201].includes(response.status)) {
+      console.error("Error toggling bookmark:", response.data.message);
+      throw new Error(response.data.message);
     }
+    return response.data.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error(
@@ -32,7 +27,11 @@ export const toggleBookmarkProject = async (
     } else {
       console.error("An unexpected error occurred:", error as Error);
     }
-
-    return null; // Return null in case of an error
+    toast({
+      title: "Error Toggling Bookmark",
+      description: error.message,
+      variant: "destructive",
+    });
+    return false;
   }
 };

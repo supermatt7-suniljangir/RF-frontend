@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { ProjectMini } from "@/types/project";
+import { MiniProject } from "@/types/project";
 import ProfileData from "@/components/profile/ProfileData";
 import { Suspense } from "react";
 import Spinner from "@/app/loading";
@@ -58,7 +58,7 @@ const Profile: React.FC<ProfileProps> = async ({ params, searchParams }) => {
   if (!user) {
     throw new Error("User not found");
   }
-  const projects: ProjectMini[] = await getUserProjectsApi(id);
+  const projects: MiniProject[] = await getUserProjectsApi(id);
 
   return (
     <Suspense fallback={<Spinner />}>

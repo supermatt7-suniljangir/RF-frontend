@@ -17,13 +17,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ user }) => {
             <Link href={`/profile/${user._id}`}>
                 <CardHeader className="flex flex-col items-center p-2">
                     <div className="w-20 h-20 relative">
-                        <Image src={user?.avatar || placeholder} alt="Profile" className="relative w-24 h-24 rounded-full object-cover mb-2" fill />
+                        <Image src={user?.profile?.avatar || placeholder} alt="Profile" className="relative w-24 h-24 rounded-full object-cover mb-2" fill />
                     </div>
                     <CardTitle>{user.fullName}</CardTitle>
-                    <CardDescription>{user.profession || "No Profession Set"}</CardDescription>
+                    <CardDescription>{user?.profile?.profession || "No Profession Set"}</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center p-2">
-                    <p>Available for hire: <b>{user?.availableForHire ? "Yes" : "No"}</b></p>
+                    <p>Available for hire: <b>{user?.profile?.availableForHire ? "Yes" : "No"}</b></p>
                 </CardContent>
                 <CardFooter className="flex justify-center p-2">
                     {currentUser?._id !== user._id && <Button

@@ -11,13 +11,11 @@ export interface PaginationMetadata {
 }
 
 export interface UserSearchResponse {
-  message: string;
   pagination: PaginationMetadata;
   data: MiniUser[];
 }
 
 export interface ProjectSearchResponse {
-  message: string;
   pagination: PaginationMetadata;
   data: MiniProject[];
 }

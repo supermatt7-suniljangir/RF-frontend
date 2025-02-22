@@ -5,6 +5,7 @@ import React from "react";
 import Spinner from "@/app/loading";
 import { Metadata } from "next";
 import { getProjectById } from "@/services/Projects/getProjectById";
+import { ApiResponse } from "@/lib/ApiResponse";
 
 
 interface ProjectPageProps {
@@ -15,14 +16,14 @@ export async function generateMetadata(
   { params }: ProjectPageProps,
 ): Promise<Metadata> {
   const { id } = await params;
-  const project: ProjectType | null = await getProjectById({ id });
-  if (!project) {
+  const projectRes: ApiResponse = await getProjectById({ id });
+  if (!projectRes.success || !projectRes.data) {
     return {
       title: "Project Not Found",
       description: "The requested project could not be found",
     };
   }
-
+  const project = projectRes.data as ProjectType;
   return {
     title: project.title,
     description: project?.description,
@@ -51,11 +52,11 @@ export async function generateMetadata(
 
 const Project = async ({ params }: ProjectPageProps) => {
   const { id } = await params;
-  const project: ProjectType | null = await getProjectById({ id });
-
-  if (!project) {
-    throw new Error("Project not found");
+  const projectRes: ApiResponse = await getProjectById({ id });
+  if (!projectRes.success || !projectRes.data) {
+    throw new Error(`project not found: ${projectRes.message}`);
   }
+  const project = projectRes.data as ProjectType;
 
   return (
     <Suspense fallback={<Spinner />}>

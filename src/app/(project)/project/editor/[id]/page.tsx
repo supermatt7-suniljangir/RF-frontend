@@ -1,5 +1,6 @@
 import Spinner from '@/app/loading';
 import ProjectEditor from '@/components/projectEditor/ProjectEditor';
+import { ApiResponse } from '@/lib/ApiResponse';
 
 import { getProjectById } from '@/services/Projects/getProjectById';
 import { ProjectType } from '@/types/project';
@@ -11,18 +12,17 @@ interface ProjectPageProps {
 
 const Editor: React.FC<ProjectPageProps> = async ({ params }) => {
   const { id } = await params;
-  let initialData: ProjectType | null = null;
+  let projectRes: ApiResponse;
 
   if (id !== "new") {
-    initialData = await getProjectById({ id }); // Fetch project data by ID
-
-    if (!initialData) throw new Error("failed to load the project");
+    projectRes = await getProjectById({ id });
+    if (!projectRes?.success || !projectRes?.data) throw new Error(`project not found: ${projectRes.message}`);
   }
 
   return (
     <div className='w-full relative'>
       <Suspense fallback={<Spinner />}>
-        <ProjectEditor initialData={initialData} />
+        <ProjectEditor initialData={projectRes?.data || null} />
       </Suspense>
     </div>
   );

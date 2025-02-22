@@ -1,87 +1,50 @@
+"use client";
+
 import ApiService from "@/api/wrapper/axios-wrapper";
 import { toast } from "@/hooks/use-toast";
-import axios from "axios";
+import { ApiResponse } from "@/lib/ApiResponse";
 import { revalidateRoute } from "@/lib/revalidatePath";
-import { ProjectType, ProjectUploadType } from "@/types/project";
-import { ProjectOperationResponse } from "@/types/others";
+import { ProjectUploadType } from "@/types/project";
 
-export const createNewProject = async (
-  data: ProjectUploadType
-): Promise<ProjectOperationResponse | null> => {
-  const apiService = ApiService.getInstance();
-  try {
-    const response = await apiService.post<ProjectOperationResponse>(
-      `/projects/`,
-      data
-    );
+class ProjectUploadService {
+  private api = ApiService.getInstance();
 
-    if (response.status === 201) {
-      toast({
-        title: "Success",
-        description: "Project created successfully",
-        variant: "default",
-      });
-      revalidateRoute(`/profile`);
-      return response.data;
+  async createProject(data: ProjectUploadType): Promise<ApiResponse> {
+    const response = await this.api.post<ApiResponse>("/projects/", data);
+    if (response.status !== 201 || !response.data.success) {
+      throw new Error(`Failed to create project. Status: ${response.status}`);
     }
-    return null;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error(
-        "Failed to create project:",
-        error.response?.data || error.message
-      );
-      toast({
-        title: "Error",
-        description: error.response?.data || error.message,
-        variant: "destructive",
-      });
-    } else {
-      console.error("An unexpected error occurred:", error as Error);
-    }
-  }
-};
-
-export const updateProject = async (
-  data: ProjectUploadType
-): Promise<ProjectOperationResponse | null> => {
-  if (!data && !data._id) {
     toast({
-      title: "Error",
-      description: "No data provided or project ID missing",
-      variant: "destructive",
+      title: "Success",
+      description: "Project created successfully",
+      variant: "default",
     });
-    return null;
+    revalidateRoute("/profile");
+    return response.data;
   }
-  const apiService = ApiService.getInstance();
-  try {
-    const response = await apiService.put<ProjectOperationResponse>(
+
+  async updateProject(data: ProjectUploadType): Promise<ApiResponse> {
+    if (!data?._id) {
+      throw new Error("Project ID is required for update");
+    }
+
+    const response = await this.api.put<ApiResponse>(
       `/projects/${data._id}`,
       data
     );
-    if (response.status === 200) {
-      toast({
-        title: "Success",
-        description: "Project updated successfully",
-        variant: "default",
-      });
-      revalidateRoute(`/profile`);
-      return response.data;
+
+    if (response.status !== 200 || !response.data.success) {
+      throw new Error(`Failed to update project: ${response.data.message}`);
     }
-    return null;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error(
-        "Failed to update project:",
-        error.response?.data || error.message
-      );
-      toast({
-        title: "Error",
-        description: error.response?.data || error.message,
-        variant: "destructive",
-      });
-    } else {
-      console.error("An unexpected error occurred:", error as Error);
-    }
+    toast({
+      title: "Success",
+      description: "Project updated successfully",
+      variant: "default",
+    });
+
+    revalidateRoute("/profile");
+    return response.data;
   }
-};
+}
+
+export const projectUploadService = new ProjectUploadService();

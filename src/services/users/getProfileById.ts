@@ -1,13 +1,9 @@
 import { User } from "@/types/user";
 import { URL } from "@/api/config/configs";
-
-interface ProfileResponse {
-  success: boolean;
-  data: User;
-}
+import { ApiResponse } from "@/lib/ApiResponse";
 
 // Wrap the fetch function in React's cache
-export const getProfileById = async (userId: string): Promise<User | null> => {
+export const getProfileById = async (userId: string): Promise<User> => {
   try {
     const url = `${URL}/users/${userId}`;
     const response = await fetch(url, {
@@ -20,24 +16,15 @@ export const getProfileById = async (userId: string): Promise<User | null> => {
       },
     });
 
-    if (!response.ok) {
+    const data: ApiResponse = await response.json();
+
+    if (!response.ok || !data.success) {
       console.error("Failed to fetch user profile:", response.statusText);
-      return null;
+      throw new Error(data.message || "Failed to fetch user profile");
     }
-
-    const data: ProfileResponse = await response.json();
-
-    if (!data.success) {
-      console.error(
-        "Failed to fetch user profile, API returned success false",
-        data
-      );
-      return null;
-    }
-
     return data.data;
   } catch (error) {
     console.error("Error fetching user profile:", error);
-    return null;
+    throw error;
   }
 };

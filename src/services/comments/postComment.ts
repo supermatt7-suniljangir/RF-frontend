@@ -1,7 +1,7 @@
 import ApiService from "@/api/wrapper/axios-wrapper";
 import { toast } from "@/hooks/use-toast";
-import { revalidateRoute } from "@/lib/revalidatePath";
-import { IComment } from "@/types/others";
+import { ApiResponse } from "@/lib/ApiResponse";
+import { revalidateTags } from "@/lib/revalidateTags";
 import axios from "axios";
 
 interface Comment {
@@ -9,55 +9,35 @@ interface Comment {
   content: string;
 }
 
-interface PostCommentResponse {
-  success: boolean;
-  message: string;
-  data: IComment; // Assuming the API returns the newly created comment object
-}
-
 export const postComment = async ({
   projectId,
   content,
-}: Comment): Promise<PostCommentResponse | null> => {
+}: Comment): Promise<void> => {
   if (!projectId || !content) {
     toast({
       title: "Error",
       description: "Project ID or content is missing",
       variant: "destructive",
     });
-    return null;
+    return;
   }
 
   const apiService = ApiService.getInstance();
 
   try {
-    const response = await apiService.post<PostCommentResponse>(
+    const response = await apiService.post<ApiResponse>(
       `/comments/${projectId}`,
       {
         content,
       }
     );
-
     // Check if success flag in response data is true
-    if (response.data.success) {
-      toast({
-        title: "success",
-        description: "Comment posted successfully",
-        variant: "default",
-      });
-      revalidateRoute(`/project/${projectId}`); // Revalidate the route after posting a comment
-      return response.data;
-    } else {
-      // If success is false, display error toast
-      toast({
-        title: "Error",
-        description: response.data.message || "Failed to post comment",
-        variant: "destructive",
-      });
-      return null;
+    if (!response.data.success || response.status !== 201) {
+      throw new Error(response.data.message);
     }
+    revalidateTags(`comments-${projectId}`);
+   
   } catch (error) {
-    // Catching unexpected errors and displaying the error message
     if (axios.isAxiosError(error)) {
       console.error(
         "Failed to post comment:",
@@ -71,6 +51,5 @@ export const postComment = async ({
     } else {
       console.error("An unexpected error occurred:", error as Error);
     }
-    return null;
   }
 };

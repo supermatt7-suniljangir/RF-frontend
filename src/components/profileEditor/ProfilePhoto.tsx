@@ -4,19 +4,19 @@ import { useUser } from "@/contexts/UserContext";
 import Image from "next/image";
 import { useDropzone } from "react-dropzone"; // Assuming you're using this for file drops
 import Spinner from "@/app/loading";
-import { useProfileUploader } from "@/features/upload/useProfileUploader";
+import { useProfileFilesUploader } from "@/features/cloudUpload/useProfileFilesUploader";
 
 const ProfilePhoto: React.FC = () => {
   const { user, setUser } = useUser();
   const [image, setImage] = useState<string | null>(user?.profile?.avatar || null);
-  const { handleFileUpload, loading } = useProfileUploader(setImage, setUser, "avatar");
+  const { handleProfileFileUpload, loading } = useProfileFilesUploader(setImage, setUser, "avatar");
 
   // Use react-dropzone for handling drag and drop or file selection
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: async (acceptedFiles) => {
       const file = acceptedFiles[0];
       if (file) {
-        await handleFileUpload([file]);
+        await handleProfileFileUpload([file]);
       }
     },
   });

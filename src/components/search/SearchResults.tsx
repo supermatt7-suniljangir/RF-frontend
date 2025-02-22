@@ -17,7 +17,7 @@ const SearchResults = () => {
     // const pathname = usePathname();
     // const isSearchPage = pathname === "/search";
     const searchParams = useSearchParams();
-    const { searchUsers, searchProjects, error, isLoading } = useSearch();
+    const { searchUsers, searchProjects, isLoading, error } = useSearch();
     const query = searchParams.get("query");
     const tag = searchParams.get("tag");
     const type = searchParams.get("type") as "project" | "user";
@@ -39,52 +39,53 @@ const SearchResults = () => {
     });
 
     useEffect(() => {
-        if (resultsRef.current) {
-            resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-
-        if (!category && !type && !query && !tag) {
-            // Use searchProjects but don't pass any query, tag, or category
-            searchProjects({ page, sortBy, sortOrder, filter, limit: 1 })
-                .then((response) => {
-                    if (!response || !response.pagination || !response.data) return;
+        const fetchData = async () => {
+            try {
+                if (resultsRef.current) {
+                    resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+                // Fetch all projects if no query or filters
+                if (!category && !type && !query && !tag) {
+                    // Fetch all projects without filters
+                    const response = await searchProjects({ page, sortBy, sortOrder, filter, limit: 9 });
+                    if (!response?.pagination || !response?.data) return;
                     setProjects(response.data);
                     setPagination(response.pagination);
-                })
-                .catch((error) => {
-                    console.error("Error fetching projects:", error);
-                    toast({
-                        variant: "destructive",
-                        title: "Error fetching projects",
-                        description: error.message || "Failed to fetch projects.",
-                    });
-                });
-        } else if (type !== "user" && (query || category || tag)) {
-            searchProjects({ page, query, sortBy, sortOrder, category, tag, filter, limit:1 })
-                .then((response) => {
-                    if (!response || !response.pagination || !response.data) return;
-                    setProjects(response.data);
                     setUsers([]);
+                }
+
+                // fetch projects
+                else if (type !== "user" && (query || category || tag)) {
+                    // Fetch filtered projects
+                    const response = await searchProjects({ page, query, sortBy, sortOrder, category, tag, filter, limit: 9 });
+                    if (!response?.pagination || !response?.data) return;
+                    setProjects(response.data);
                     setPagination(response.pagination);
-                });
-        } else if (type === "user" && query) {
-            searchUsers({ page, query, sortBy, sortOrder, filter })
-                .then((response) => {
-                    if (!response || !response.pagination || !response.data) return;
+                    setUsers([]);
+                }
+                // fetch users
+                else if (type === "user" && query) {
+                    // Fetch users
+                    const response = await searchUsers({ page, query, sortBy, sortOrder, filter, limit: 9 });
+                    if (!response?.pagination || !response?.data) return;
                     setUsers(response.data);
-                    setProjects([]);
                     setPagination(response.pagination);
-                })
-                .catch((error) => {
-                    console.error("Error fetching users:", error);
-                    toast({
-                        variant: "destructive",
-                        title: "Error fetching users",
-                        description: error.message || "Failed to fetch users.",
-                    });
+                    setProjects([]);
+                }
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                toast({
+                    variant: "destructive",
+                    title: "Error fetching data",
+                    description: error.message || "Failed to fetch data.",
                 });
-        }
+            }
+        };
+
+        fetchData();
     }, [query, type, category, page, tag, sortBy, sortOrder, filter]);
+
 
 
     const renderResults = () => {

@@ -8,7 +8,7 @@ import { Wallpaper } from "lucide-react";
 import Image from "next/image";
 import { useUser } from "@/contexts/UserContext";
 import Spinner from "@/app/loading";
-import { useProfileUploader } from "@/features/upload/useProfileUploader";
+import { useProfileFilesUploader } from "@/features/cloudUpload/useProfileFilesUploader";
 
 
 export default function UserProfileBanner() {
@@ -16,7 +16,7 @@ export default function UserProfileBanner() {
   const [bannerImage, setBannerImage] = useState<string | null>(
     user?.profile?.cover || null
   );
-  const { handleFileUpload, loading: isUpdating } = useProfileUploader(
+  const { handleProfileFileUpload, loading: isUpdating } = useProfileFilesUploader(
     setBannerImage,
     setUser,
     "cover"
@@ -25,8 +25,6 @@ export default function UserProfileBanner() {
   useEffect(() => {
     if (user?.profile?.cover) {
       setBannerImage(user.profile.cover);
-    } else {
-      setBannerImage(null);
     }
   }, [bannerImage, user]);
 
@@ -37,7 +35,7 @@ export default function UserProfileBanner() {
     onDrop: async (acceptedFiles) => {
       const file = acceptedFiles[0];
       if (!file) return;
-      await handleFileUpload([file]);
+      await handleProfileFileUpload([file]);
     },
   } as DropzoneOptions);
 

@@ -10,7 +10,7 @@ import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import { useUser } from "@/contexts/UserContext";
-import { useUpdateUserProfile } from "@/features/user/useUpdateProfile";
+import { useUpdateUserProfile } from "@/features/profile/useUpdateProfile";
 import { toast } from "@/hooks/use-toast";
 import Spinner from "@/app/loading";
 import { User, Social } from "@/types/user";

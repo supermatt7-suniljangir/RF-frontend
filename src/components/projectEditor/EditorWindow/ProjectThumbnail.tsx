@@ -56,7 +56,7 @@ const ProjectThumbnail: React.FC = () => {
 
         const thumbnailUrl = URL.createObjectURL(file);
         updateProjectMetadata({
-            thumbnail: { url: thumbnailUrl, file },
+            thumbnail: { url: thumbnailUrl, file, type:"image/thumbnail"},
         });
         event.target.value = "";
     };

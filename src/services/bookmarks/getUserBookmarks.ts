@@ -14,29 +14,28 @@ export const getUserBookmarks = async (): Promise<IBookmark[]> => {
   const cookieHeader = cookieStore.toString();
   const url = `${URL}/bookmarks/`;
 
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-    next: {
-      revalidate: 60 * 15,
-    },
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: cookieHeader, // Send cookies to backend for authentication
-    },
-  });
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      credentials: "include",
+      next: {
+        revalidate: 60 * 15,
+      },
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookieHeader,
+      },
+    });
 
-  if (!response.ok) {
-    console.error("Failed to fetch bookmarks:", response.statusText);
+    const result: GetBookmarksResponse = await response.json();
+    if (!response.ok || !result.success) {
+      console.error("Failed to fetch bookmarks:", response.statusText);
+      throw new Error(result.message);
+    }
+
+    return result.data;
+  } catch (error) {
+    console.error("Failed to fetch bookmarks:", error);
     return [];
   }
-
-  const result: GetBookmarksResponse = await response.json();
-  if (!result.success) {
-    console.error("Failed to fetch bookmarks:", result.message);
-    return [];
-  }
-  console.log(result);
-
-  return result.data;
 };

@@ -43,7 +43,4 @@ export interface IFollow {
   createdAt: Date;
 }
 
-export interface ProjectOperationResponse {
-  success: boolean;
-  data: ProjectType;
-}
+

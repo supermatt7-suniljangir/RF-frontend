@@ -1,7 +1,7 @@
 import ApiService from "@/api/wrapper/axios-wrapper";
 import { toast } from "@/hooks/use-toast";
+import { revalidateTags } from "@/lib/revalidateTags";
 import axios from "axios";
-import { revalidateRoute } from "@/lib/revalidatePath";
 
 // Delete a comment from a project
 interface DeleteCommentProps {
@@ -22,41 +22,30 @@ export const deleteComment = async ({
       description: "Project ID or Comment ID is missing",
       variant: "destructive",
     });
-    return null;
+    return;
   }
   const apiService = ApiService.getInstance();
   try {
     const response = await apiService.delete<DeleteCommentResponse>(
       `/comments/${projectId}/${commentId}`
     );
-    console.log(response);
-    if (response.status === 200) {
-      toast({
-        title: "Success",
-        description: "Comment deleted successfully",
-        variant: "default",
-      });
-      revalidateRoute(`/project/${projectId}`);
-    } else {
-      toast({
-        title: "Error",
-        description: response.error || "Failed to delete comment",
-        variant: "destructive",
-      });
+    if (response.status !== 200 || !response.data.success) {
+      throw new Error(response.data.message);
     }
+    revalidateTags(`comments-${projectId}`);
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error(
         "Failed to delete comment:",
         error.response?.data || error.message
       );
-      toast({
-        title: "Error",
-        description: error.response?.data || error.message,
-        variant: "destructive",
-      });
     } else {
       console.error("An unexpected error occurred:", error as Error);
     }
+    toast({
+      title: "Error Deleting Comment",
+      description: error.message,
+      variant: "destructive",
+    });
   }
 };

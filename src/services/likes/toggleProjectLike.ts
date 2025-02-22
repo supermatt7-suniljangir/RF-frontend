@@ -1,28 +1,26 @@
-import ApiService from "@/api/wrapper/axios-wrapper";
-import axios from "axios";
 
-// Define the expected response type
-interface ToggleLikeResponse {
-  success: boolean;
-  message: string;
-}
+import ApiService from "@/api/wrapper/axios-wrapper";
+import { ApiResponse } from "@/lib/ApiResponse";
+import { revalidateTags } from "@/lib/revalidateTags";
+import axios from "axios";
+import { revalidateTag } from "next/cache";
 
 export const toggleLikeProject = async (
   projectId: string
-): Promise<boolean | null> => {
+): Promise<boolean> => {
   const apiService = ApiService.getInstance();
 
   try {
-    const response = await apiService.put<ToggleLikeResponse>(
-      `/likes/toggle/${projectId}`
+    const response = await apiService.put<ApiResponse>(
+      `/likes/${projectId}/toggle`
     );
     // Validate the response structure
-    if (response.data.success) {
-      return response.data.success;
-    } else {
-      console.error("Unexpected response:", response.data);
-      return null;
+    if (!response.data.success || response.status !== 200) {
+      console.error("Error toggling like:", response.data.message);
+      throw new Error(response.data.message);
     }
+    revalidateTags("likedProjects");
+    return response.data.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error(
@@ -32,7 +30,6 @@ export const toggleLikeProject = async (
     } else {
       console.error("An unexpected error occurred:", error as Error);
     }
-
-    return null; // Return null in case of an error
+    return false;
   }
 };

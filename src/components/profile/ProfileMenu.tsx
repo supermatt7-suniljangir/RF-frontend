@@ -17,16 +17,14 @@ export default function ProfileMenu({ user }: { user: User | null }) {
   if (!display) {
     redirect("?display=projects");
   }
-
   const navItems = [
     { href: "?display=projects", label: "Projects" },
     { href: "?display=stats", label: "Statistics" },
     { href: "?display=appreciations", label: "Appreciations" },
-    { href: "?display=drafts", label: "Drafts (2)" },
   ];
-
   if (!isExternalProfile) {
     navItems.push({ href: "?display=bookmarks", label: "Bookmarks" });
+    navItems.push({ href: "?display=drafts", label: "Drafts" });
   }
   return (
     <NavigationMenu className="space-x-4 text-muted-foreground w-full overflow-auto flex flex-nowrap p-8 justify-start">

@@ -42,7 +42,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         setIsLoading(false);
       }
     };
-
     fetchInitialData();
   }, []);
 

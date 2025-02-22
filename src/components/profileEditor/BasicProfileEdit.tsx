@@ -7,7 +7,7 @@ import ProfilePhoto from "@/components/profileEditor/ProfilePhoto";
 import { useForm } from "react-hook-form";
 import { User } from "@/types/user";
 import { useUser } from "@/contexts/UserContext";
-import { useUpdateUserProfile } from "@/features/user/useUpdateProfile";
+import { useUpdateUserProfile } from "@/features/profile/useUpdateProfile";
 import { toast } from "@/hooks/use-toast";
 import Spinner from "@/app/loading";
 import { redirect } from "next/navigation";

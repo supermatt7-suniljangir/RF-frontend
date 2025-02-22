@@ -1,10 +1,6 @@
 import { URL } from "@/api/config/configs";
+import { ApiResponse } from "@/lib/ApiResponse";
 import { ProjectType } from "@/types/project";
-
-interface ProjectResponse {
-  data: ProjectType;
-  success: boolean;
-}
 
 interface GetProjectByIdArgs {
   id: string;
@@ -14,7 +10,7 @@ interface GetProjectByIdArgs {
 export const getProjectById = async ({
   id,
   cacheSettings = "default",
-}: GetProjectByIdArgs): Promise<ProjectType | null> => {
+}: GetProjectByIdArgs): Promise<ApiResponse> => {
   try {
     const url = `${URL}/projects/${id}`;
 
@@ -26,24 +22,17 @@ export const getProjectById = async ({
       next: {
         revalidate: 60 * 15,
       },
-      cache: cacheSettings ? cacheSettings : "default", // Use the provided cache setting
     });
+    const data: ApiResponse = await response.json();
 
-    if (!response.ok) {
+    if (!response.ok || !data.success) {
       console.error("Failed to fetch project by ID:", response.statusText);
-      return null;
+      throw new Error(data.message);
     }
 
-    const data: ProjectResponse = await response.json();
-
-    if (!data.success) {
-      console.error("API returned success: false", data);
-      return null;
-    }
-
-    return data.data;
+    return data;
   } catch (error) {
     console.error("Error fetching project by ID:", error);
-    return null;
+    throw error;
   }
 };

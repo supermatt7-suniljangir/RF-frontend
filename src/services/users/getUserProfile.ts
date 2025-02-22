@@ -1,5 +1,6 @@
 "use server";
 import { URL } from "@/api/config/configs";
+import { ApiResponse } from "@/lib/ApiResponse";
 import { User } from "@/types/user";
 import { cookies } from "next/headers";
 
@@ -10,16 +11,16 @@ interface CacheSettings {
 interface UserProfileResponse {
   user: User | null;
   status: number;
+  message: string;
 }
 
-// This function wraps the getUserProfile function and returns both the status and user
 export const getUserProfile = async ({
   cacheSettings,
 }: CacheSettings): Promise<UserProfileResponse> => {
   try {
     const cookieStore = await cookies();
     const cookieHeader = cookieStore.toString();
-    const url = `${URL}/users/`;
+    const url = `${URL}/users/profile`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -28,16 +29,31 @@ export const getUserProfile = async ({
         "Content-Type": "application/json",
         Cookie: cookieHeader,
       },
-      cache: cacheSettings || "force-cache",
+      next: {
+        revalidate: 60 * 60,
+      },
+      cache: cacheSettings || "default",
     });
-
-    if (!response.ok) {
-      return { user: null, status: response.status };
+    const result: ApiResponse = await response.json();
+    if (!response.ok || !result.success) {
+      return {
+        user: null,
+        status: response.status,
+        message: result.message || "Failed to fetch user profile",
+      };
     }
-    const data: User = await response.json();
-    return { user: data, status: response.status };
+
+    return {
+      user: result.data || null,
+      status: response.status,
+      message: result.message,
+    };
   } catch (error) {
     console.error("Profile fetch error:", error);
-    return { user: null, status: 500 };
+    return {
+      user: null,
+      status: 500,
+      message: "Internal server error",
+    };
   }
 };

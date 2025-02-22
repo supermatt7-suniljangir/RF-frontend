@@ -1,24 +1,23 @@
-import { useState } from "react";
-import { fetchProjects, fetchUsers } from "@/services/search/search";
+import SearchService from "@/services/search/search";
 import {
   SearchParams,
   UserSearchResponse,
   ProjectSearchResponse,
 } from "@/types/common";
+import { useState } from "react";
 
 export const useSearch = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   const searchUsers = async (params: SearchParams) => {
     setIsLoading(true);
-    setError(null);
     try {
-      const data: UserSearchResponse = await fetchUsers(params);
-      if (!data.data || !data) return null;
+      const data: UserSearchResponse = await SearchService.fetchUsers(params);
       return data;
     } catch (err) {
-      setError(err.message || "Failed to fetch users.");
+      setError(err.message);
+      console.error(err);
+      throw err;
     } finally {
       setIsLoading(false);
     }
@@ -26,21 +25,21 @@ export const useSearch = () => {
 
   const searchProjects = async (params: SearchParams) => {
     setIsLoading(true);
-    setError(null);
     try {
-      const data: ProjectSearchResponse = await fetchProjects(params);
-      if (!data || !data.data) return null;
+      const data: ProjectSearchResponse = await SearchService.fetchProjects(params);
       return data;
     } catch (err) {
-      setError(err.message || "Failed to fetch projects.");
+      setError(err.message);
+      console.error(err);
+      throw err;
     } finally {
       setIsLoading(false);
     }
   };
 
   return {
-    isLoading,
     error,
+    isLoading,
     searchUsers,
     searchProjects,
   };

@@ -1,6 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Heart, ThumbsUp } from "lucide-react";
+import React, { useEffect, useState, useCallback } from "react";
+import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
@@ -23,38 +23,49 @@ const LikeButton: React.FC<LikeButtonProps> = ({
 }) => {
     const { user, isLoading } = useUser();
     const [isLiked, setIsLiked] = useState<boolean>(false);
-    const [likes, setLikes] = useState<number>(initialLikes); // Dynamic likes count
+    const [likes, setLikes] = useState<number>(initialLikes);
     const [updating, setUpdating] = useState<boolean>(false);
 
     useEffect(() => {
-        const checkLikeStatus = async () => {
-            if(isLoading || !user) return;
-            const response = await hasUserLikedProject(projectId);
-            setIsLiked(response);
-        };
-        checkLikeStatus();
-    }, [projectId]);
+        let isMounted = true;
 
-    const onClickHandler = async () => {
+        const checkLikeStatus = async () => {
+            if (!user) return;
+            try {
+                const response = await hasUserLikedProject(projectId);
+                if (isMounted) {
+                    setIsLiked(response);
+                }
+            } catch (err) {
+                console.error("Failed to fetch like status", err);
+            }
+        };
+
+        checkLikeStatus();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [user, projectId, isLoading]);
+
+    const onClickHandler = useCallback(async () => {
         if (updating) return;
         setUpdating(true);
-        const response = await toggleLikeProject(projectId);
 
-        if (!response) {
+        try {
+            await toggleLikeProject(projectId);
+            setIsLiked((prev) => !prev);
+            setLikes((prevLikes) => (isLiked ? prevLikes - 1 : prevLikes + 1));
+        } catch (err) {
             toast({
-                title: "Error",
-                description: "An error occurred while performing the operation.",
+                title: "Failed to toggle like",
+                description: "Please try again later.",
                 variant: "destructive",
             });
+        } finally {
             setUpdating(false);
-            return;
         }
-
-        const newLikedState = !isLiked;
-        setIsLiked(newLikedState);
-        setLikes((prevLikes) => (newLikedState ? prevLikes + 1 : prevLikes - 1));
-        setUpdating(false);
-    };
+    }, [projectId, updating]);
 
     return (
         <div className="flex flex-col items-center space-y-2">

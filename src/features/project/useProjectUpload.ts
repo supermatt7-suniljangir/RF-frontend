@@ -1,26 +1,32 @@
-// useProjectUpload.js
 "use client";
+
 import { useState } from "react";
 import { ProjectUploadType } from "@/types/project";
-import { createNewProject, updateProject } from "@/services/Projects/projectUploadService";
-import { ProjectOperationResponse } from "@/types/others";
+import { projectUploadService } from "@/services/Projects/projectUploadService";
+import { toast } from "@/hooks/use-toast";
 
 export const useProjectUpload = () => {
   const [publishing, setPublishing] = useState(false);
 
-  const handleProjectOperation = async (
-    operation: (data: ProjectUploadType) => Promise<ProjectOperationResponse | null>,
-    data: ProjectUploadType,
-    errorMessage: string
-  ) => {
+  const createNew = async (data: ProjectUploadType) => {
     setPublishing(true);
     try {
-      const response = await operation(data);
-      if (!response?.success) throw new Error(errorMessage);
+      const response = await projectUploadService.createProject(data);
       return response;
-    } catch (err) {
-      console.error(err);
-      return null;
+    } catch (error) {
+      throw error;
+    } finally {
+      setPublishing(false);
+    }
+  };
+
+  const updateExisting = async (data: ProjectUploadType) => {
+    setPublishing(true);
+    try {
+      const response = await projectUploadService.updateProject(data);
+      return response;
+    } catch (error) {
+      throw error;
     } finally {
       setPublishing(false);
     }
@@ -28,7 +34,7 @@ export const useProjectUpload = () => {
 
   return {
     publishing,
-    createNew: (data: ProjectUploadType) => handleProjectOperation(createNewProject, data, "Failed to create project."),
-    updateExisting: (data: ProjectUploadType) => handleProjectOperation(updateProject, data, "Failed to update project."),
+    createNew,
+    updateExisting,
   };
 };

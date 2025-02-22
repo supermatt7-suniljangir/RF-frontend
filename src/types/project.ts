@@ -55,7 +55,7 @@ export interface ProjectUploadType {
   title: string;
   description: string;
   shortDescription: string;
-  thumbnail: string;
+  thumbnail: Thumbnail | string;
   media: Imedia[];
   creator: string; // User ID
   collaborators?: string[]; // Array of user IDs
@@ -78,7 +78,7 @@ export interface TempMedia extends Imedia {
 export interface Thumbnail {
   url: string;
   file?: File;
-  type: "image";
+  type: "image/thumbnail";
 }
 
 export interface MiniProject {
