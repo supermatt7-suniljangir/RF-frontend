@@ -11,16 +11,15 @@ const CreatorInfo: React.FC<CreatorInfoProps> = ({ creator }) => {
         <div className="border relative w-full md:w-1/3 py-8 md:p-8 ">
             <Link href={`/profile/${creator._id}`} className='flex justify-center items-center flex-col gap-2 h-full'>
                 <div className='relative w-36 h-36 border border- rounded-full flex flex-col'>
-                    <Image src={creator.avatar} alt={creator.fullName} className='rounded-full object-cover' fill />
+                    <Image src={creator.profile.avatar} alt={creator.fullName} className='rounded-full object-cover' fill />
                 </div>
                 <h2 className='text-xl font-semibold'>{creator.fullName}</h2>
-                <p className='text-lg'>{creator.profession}</p>
+                <p className='text-lg'>{creator.profile.profession}</p>
                 <div className='space-x-4 text-sm'><span>{creator.followersCount || 0} followers</span>
-                    <span>{creator?.projects?.length || 0} projects</span>
                 </div>
             </Link>
         </div>
     )
 }
 
-export default CreatorInfo;
+export default React.memo(CreatorInfo);

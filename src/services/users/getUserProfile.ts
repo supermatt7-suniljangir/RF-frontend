@@ -32,7 +32,6 @@ export const getUserProfile = async ({
       next: {
         revalidate: 60 * 60,
       },
-      cache: cacheSettings || "default",
     });
     const result: ApiResponse = await response.json();
     if (!response.ok || !result.success) {

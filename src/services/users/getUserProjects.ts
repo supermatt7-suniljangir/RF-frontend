@@ -19,7 +19,7 @@ export const getUserProjectsApi = async (
       },
       headers: {
         "Content-Type": "application/json",
-        Cookie: `auth_token=${authToken || ""}`,
+        Cookie: `auth_token=${authToken}`,
       },
     });
 

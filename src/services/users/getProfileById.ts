@@ -9,6 +9,7 @@ export const getProfileById = async (userId: string): Promise<User> => {
     const response = await fetch(url, {
       method: "GET",
       next: {
+        tags: [`userProfile-${userId}`],
         revalidate: 60 * 15,
       },
       headers: {
@@ -17,7 +18,6 @@ export const getProfileById = async (userId: string): Promise<User> => {
     });
 
     const data: ApiResponse = await response.json();
-
     if (!response.ok || !data.success) {
       console.error("Failed to fetch user profile:", response.statusText);
       throw new Error(data.message || "Failed to fetch user profile");

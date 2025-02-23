@@ -32,7 +32,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
     project,
 }) => {
     if (!project) return null;
-    const { _id, title, thumbnail, creator: { fullName, avatar } } = project;
+    const { _id, title, thumbnail, creator: { fullName, profile } } = project;
     const projectUrl = `${window?.location.origin}/project/${_id}`;
     const [copied, setCopied] = React.useState(false);
     const handleCopyLink = async () => {
@@ -53,7 +53,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-md p-6">
+            <DialogContent className="p-6 w-full md:w-1/2 flex items-center flex-col">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-semibold text-center">
                         Share Project
@@ -87,28 +87,27 @@ const ShareModal: React.FC<ShareModalProps> = ({
                     </div>
 
                     {/* Project link section */}
-                    <div className="space-y-2">
+
+                    <div className="flex gap-2 w-full">
                         <label className="text-sm text-muted-foreground flex items-center gap-2">
                             <Link2 className="w-4 h-4" />
-                            Project Link
+
                         </label>
-                        <div className="flex gap-2">
-                            <Input
-                                value={projectUrl}
-                                readOnly
-                            />
-                            <Button
-                                variant="outline"
-                                className="flex-shrink-0"
-                                onClick={handleCopyLink}
-                            >
-                                {copied ? (
-                                    <Check className="w-4 h-4" />
-                                ) : (
-                                    <Copy className="w-4 h-4" />
-                                )}
-                            </Button>
-                        </div>
+                        <Input
+                            value={projectUrl}
+                            readOnly
+                        />
+                        <Button
+                            variant="outline"
+                            className="flex-shrink-0"
+                            onClick={handleCopyLink}
+                        >
+                            {copied ? (
+                                <Check className="w-4 h-4" />
+                            ) : (
+                                <Copy className="w-4 h-4" />
+                            )}
+                        </Button>
                     </div>
                 </div>
 

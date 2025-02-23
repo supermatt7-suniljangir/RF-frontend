@@ -6,6 +6,8 @@ export interface User {
   email: string;
   fullName: string;
   profile?: Profile;
+  followingCount: number;
+  followersCount: number;
 }
 
 export interface Profile {
@@ -30,6 +32,8 @@ export interface MiniUser {
   _id: string;
   fullName: string;
   email: string;
+  followingCount: number;
+  followersCount: number;
   profile: {
     availableForHire: boolean;
     avatar: string;

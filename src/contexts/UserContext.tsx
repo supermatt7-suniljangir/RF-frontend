@@ -1,4 +1,5 @@
 "use client";
+
 import { User } from "@/types/user";
 import { createContext, useState, useContext, useEffect } from "react";
 import React from "react";
@@ -13,6 +14,7 @@ interface UserContextType {
   setIsLoading: (isLoading: boolean) => void;
   setUser: (user: User | null) => void;
   logout: () => void;
+  refreshUser: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -21,39 +23,47 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    const fetchInitialData = async () => {
-      try {
-        const { status, user } = await getUserProfile({ cacheSettings: "reload" });
-        if (status === 401) {
-          await logout();
-          toast({
-            title: "Your Session is Expired",
-            description: "plese login again to continue"
-          })
-          router.push("/login");
-        }
-        if (user) {
-          setUser(user);
-        }
-      } catch (error) {
-        console.error("Failed to fetch user profile:", error);
-      } finally {
-        setIsLoading(false);
+
+  const fetchUser = async () => {
+    try {
+      const { status, user } = await getUserProfile({ cacheSettings: "reload" });
+      if (status === 401) {
+        await logout();
+        toast({
+          title: "Your Session is Expired",
+          description: "Please login again to continue",
+        });
+        router.push("/login");
+        return;
       }
-    };
-    fetchInitialData();
+      setUser(user || null);
+    } catch (error) {
+      console.error("Failed to fetch user profile:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
   }, []);
 
+  const refreshUser = async () => {
+    setIsLoading(true);
+    await fetchUser();
+  };
 
   const logout = async () => {
     await logoutHook();
     setUser(null);
+    setTimeout(() => {
+      router.push("/login"); // Navigate after the component updates
+    }, 0);
   };
 
   return (
     <UserContext.Provider
-      value={{ user, setUser, logout, isLoading, setIsLoading }}
+      value={{ user, setUser, logout, isLoading, setIsLoading, refreshUser }}
     >
       {children}
     </UserContext.Provider>

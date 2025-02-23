@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react'
+import React, { useState } from 'react'
 import {
     Popover,
     PopoverContent,
@@ -43,4 +43,4 @@ const Collaborators: React.FC<CollaboratorsProps> = ({ collaborators, creator })
         </Popover>
     );
 };
-export default Collaborators;
+export default React.memo(Collaborators);

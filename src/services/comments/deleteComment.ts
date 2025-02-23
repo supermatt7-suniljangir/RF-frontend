@@ -1,3 +1,4 @@
+"use client";
 import ApiService from "@/api/wrapper/axios-wrapper";
 import { toast } from "@/hooks/use-toast";
 import { revalidateTags } from "@/lib/revalidateTags";
@@ -32,7 +33,7 @@ export const deleteComment = async ({
     if (response.status !== 200 || !response.data.success) {
       throw new Error(response.data.message);
     }
-    revalidateTags(`comments-${projectId}`);
+    revalidateTags([`comments-${projectId}`]);
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error(

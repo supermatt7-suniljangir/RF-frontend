@@ -19,6 +19,7 @@ export const getUserBookmarks = async (): Promise<IBookmark[]> => {
       method: "GET",
       credentials: "include",
       next: {
+        tags: ["bookmarks"],
         revalidate: 60 * 15,
       },
       headers: {

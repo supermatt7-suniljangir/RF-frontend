@@ -13,7 +13,6 @@ const DraftProjects: React.FC<ProfileProjectProps> = ({ projects }) => {
       {publishProjects?.length > 0 ? publishProjects?.map((project) => (
         <ProjectCard key={project._id} project={project} />
       )) : <p className="text-muted-foreground">No draft projects</p>}
-      <CreateProjectCard />
     </div>
   );
 };

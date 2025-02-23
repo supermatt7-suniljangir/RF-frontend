@@ -45,7 +45,7 @@ export default function UserProfileBanner() {
     <CardContent className="w-full p-0 relative">
       <div
         {...getRootProps()}
-        className="flex items-center w-full p-0 justify-center h-56 md:h-64 cursor-pointer relative"
+        className="flex items-center w-full p-0 justify-center h-[60vh] md:h-96 cursor-pointer relative"
       >
         {isLoading || isUpdating ? <Spinner /> : bannerImage ? (
           <Image

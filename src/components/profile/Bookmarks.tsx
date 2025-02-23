@@ -8,7 +8,7 @@ const Bookmarks = async () => {
     const projects = bookmarks.map((bookmark) => bookmark.project);
 
     return (
-        <div className="flex flex-wrap gap-4 justify-center md:justify-start w-full">
+        <div className="flex flex-wrap gap-4 justify-center  w-full">
             {projects.length > 0 ? (
                 projects.map((project) => (
                     <ProjectCard key={project._id} project={project} />

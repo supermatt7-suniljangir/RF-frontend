@@ -17,6 +17,7 @@ import { useUser } from "@/contexts/UserContext";
 import { User } from "@/types/user";
 import { redirect, usePathname } from "next/navigation";
 import ProfilePlaceholder from "@/media/user.png";
+import FollowDetails from "./FollowDetails";
 
 export default function ExternalProfileInfo({ user }: { user: User }) {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -59,6 +60,7 @@ export default function ExternalProfileInfo({ user }: { user: User }) {
                         </Link>
                     </div>
                 )}
+                <FollowDetails user={user} />
             </div>
 
             {user.profile?.availableForHire && (

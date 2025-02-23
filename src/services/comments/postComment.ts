@@ -35,7 +35,7 @@ export const postComment = async ({
     if (!response.data.success || response.status !== 201) {
       throw new Error(response.data.message);
     }
-    revalidateTags(`comments-${projectId}`);
+    revalidateTags([`comments-${projectId}`]);
    
   } catch (error) {
     if (axios.isAxiosError(error)) {

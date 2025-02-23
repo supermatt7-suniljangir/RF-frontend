@@ -52,7 +52,7 @@ const MobileNav = () => {
               <Link href={"/search"}>
                 <Search className="h-5 w-5" />
               </Link>
-             
+
               <Button
                 variant="ghost"
                 size="icon"
@@ -223,7 +223,11 @@ const DesktopNav = () => {
 
 const Navbar = () => {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
-  return isDesktop ? <DesktopNav /> : <MobileNav />;
+  // Prevent rendering glitches during logout
+  if (!isDesktop) {
+    return <MobileNav />;
+  }
+  return <DesktopNav />;
 };
 
 export default Navbar;

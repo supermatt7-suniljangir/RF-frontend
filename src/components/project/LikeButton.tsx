@@ -51,17 +51,18 @@ const LikeButton: React.FC<LikeButtonProps> = ({
     const onClickHandler = useCallback(async () => {
         if (updating) return;
         setUpdating(true);
-
+        const isLikedUpdated = !isLiked;
+        setIsLiked(isLikedUpdated);
+        setLikes((prev) => (isLikedUpdated ? prev + 1 : prev - 1));
         try {
-            await toggleLikeProject(projectId);
-            setIsLiked((prev) => !prev);
-            setLikes((prevLikes) => (isLiked ? prevLikes - 1 : prevLikes + 1));
+            const liked = await toggleLikeProject(projectId);
         } catch (err) {
             toast({
                 title: "Failed to toggle like",
                 description: "Please try again later.",
                 variant: "destructive",
             });
+            setIsLiked((prev) => !prev);
         } finally {
             setUpdating(false);
         }

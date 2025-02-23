@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { checkBookmarkStatus } from "@/services/bookmarks/hasUserBookmarkedTheProject";
 import { toggleBookmarkProject } from "@/services/bookmarks/toggleBookmark";
 import { toast } from "@/hooks/use-toast";
-import { revalidateRoute } from "@/lib/revalidatePath";
 import { useUser } from "@/contexts/UserContext";
 
 interface InteractionButtonsProps {
@@ -27,8 +26,23 @@ export default function InteractionButtons({ projectId }: InteractionButtonsProp
 
 
   const handleSave = async () => {
-     await toggleBookmarkProject(projectId);
-    setIsSaved((prev) => !prev);
+    const isSavedUpdated = !isSaved;
+    try {
+      setIsSaved(isSavedUpdated);
+      setIsSavingBookmark(true);
+      await toggleBookmarkProject(projectId);
+    }
+    catch (error) {
+      toast({
+        title: "Error",
+        description: "An error occurred while saving the project",
+        variant: "destructive"
+      });
+      setIsSaved((prev) => !prev);
+    }
+    finally {
+      setIsSavingBookmark(false);
+    }
   }
 
   return (

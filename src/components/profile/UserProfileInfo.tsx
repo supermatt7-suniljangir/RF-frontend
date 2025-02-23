@@ -9,6 +9,7 @@ import { useUser } from "@/contexts/UserContext";
 import Spinner from "@/app/loading";
 import { redirect } from "next/navigation";
 import ProfilePlaceholder from "@/media/user.png";
+import FollowDetails from "./FollowDetails";
 export default function UserProfileInfo() {
   const { user: authUser, isLoading } = useUser();
   if (isLoading) return <Spinner />;
@@ -49,6 +50,7 @@ export default function UserProfileInfo() {
             </Link>
           </div>
         )}
+        <FollowDetails />
       </div>
 
       <Link href="/profile/editor" className="w-full">
