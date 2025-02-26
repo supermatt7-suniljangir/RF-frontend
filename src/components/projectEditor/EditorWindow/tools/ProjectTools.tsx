@@ -1,15 +1,15 @@
 "use client";
 import { Card, CardContent } from '@/components/ui/card';
-import { useEditor } from '@/contexts/ProjectEditorContext';
 import useTools from '@/features/tools/useTools';
 import React, { useCallback } from 'react';
 
 // Import components from their respective files
 import ToolSelector from './ToolSelector';
 import SelectedTools from './SelectedTools';
+import { useProjectContext } from '@/contexts/ProjectContext';
 
 const ProjectTools = () => {
-    const { tools: selectedTools, updateTools } = useEditor();
+    const { tools: selectedTools, updateTools } = useProjectContext();
     const { tools: availableTools, error } = useTools();
 
     const handleSelectTool = useCallback((tool) => {

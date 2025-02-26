@@ -26,7 +26,7 @@ const ProjectHeader = ({ project }: ProjectHeaderProps) => {
           }
         </div>
         <div className="flex items-center gap-4">
-          <InteractionButtons projectId={project._id} />
+          <InteractionButtons project={project} />
         </div>
       </div>
     </div>

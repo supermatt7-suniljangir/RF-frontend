@@ -1,11 +1,11 @@
 "use client";
 import React from "react";
-import { useEditor } from "@/contexts/ProjectEditorContext";
+import { useProjectContext } from "@/contexts/ProjectContext";
 
 
 const ProgressBar = () => {
     // Import editorStage from your hook
-    const { editorStage } = useEditor();
+    const { editorStage } = useProjectContext();
 
     // Calculate the progress percentage based on the stage (33% per stage)
     const totalStages = 2;

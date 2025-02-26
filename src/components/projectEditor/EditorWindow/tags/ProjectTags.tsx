@@ -1,15 +1,15 @@
 "use client";
 import React, { useState, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
-import { useEditor } from '@/contexts/ProjectEditorContext';
 
 import { toast } from '@/hooks/use-toast';
 import TagInput from './TagInput';
 import SuggestedTags from './SuggestedTags';
+import { useProjectContext } from '@/contexts/ProjectContext';
 
 const ProjectTags = () => {
     const [inputTag, setInputTag] = useState<string>("");
-    const { tags, updateTags } = useEditor();
+    const { tags, updateTags } = useProjectContext();
     const regex = /^[a-zA-Z0-9. ]+$/;
 
     const handleAddTag = useCallback((tag: string) => {

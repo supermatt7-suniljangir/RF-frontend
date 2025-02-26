@@ -40,7 +40,7 @@ const ProjectBottomDetails: React.FC<CasinoMetricsProps> = ({ project }) => {
         </Card>
 
         {/* tools and creators */}
-        <div className='space-y-2 relative py-4'>
+        {project?.tools.length > 0 && <div className='space-y-2 relative py-4'>
           <h4 className='text-balance font-semibold text-center'>Tools</h4>
           <div className=' flex gap-2 justify-center flex-wrap'>
             {project.tools?.map((tool, index) => (
@@ -53,9 +53,9 @@ const ProjectBottomDetails: React.FC<CasinoMetricsProps> = ({ project }) => {
                 </CardContent>
               </Card>
             ))}
-            <div></div>
+
           </div>
-        </div>
+        </div>}
       </div>
     </div>
   );

@@ -1,19 +1,21 @@
-
 "use client";
 import React, { useEffect } from "react";
-import { useEditor } from "@/contexts/ProjectEditorContext";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Trash2 } from "lucide-react";
-import { Card, CardContent } from "../ui/card";
-import { Button } from "../ui/button";
-import { Textarea } from "../ui/textarea";
-import { Input } from "../ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { ProjectMetadata } from "@/types/contexts";
-
-
+import { useProjectContext } from "@/contexts/ProjectContext";
 
 const ProjectDescInputs: React.FC = () => {
-    const { uiState: { isDescOpen }, updateProjectMetadata, projectMetadata, updateEditorStage } = useEditor();
+    const {
+        uiState: { isDescOpen },
+        updateProjectMetadata,
+        projectMetadata,
+        updateEditorStage,
+    } = useProjectContext();
+
     const {
         register,
         reset,
@@ -21,10 +23,8 @@ const ProjectDescInputs: React.FC = () => {
         formState: { errors },
     } = useForm<ProjectMetadata>();
 
-
-    // reset form when projectMetadata changes
     useEffect(() => {
-        if (projectMetadata.title) {
+        if (projectMetadata?.title) {
             reset({
                 title: projectMetadata.title,
                 shortDescription: projectMetadata.shortDescription,
@@ -33,18 +33,22 @@ const ProjectDescInputs: React.FC = () => {
         }
     }, [projectMetadata, reset]);
 
-
-    // Update state when form is submitted
     const onSubmit: SubmitHandler<ProjectMetadata> = (data) => {
         updateProjectMetadata(data);
     };
+
     if (!isDescOpen) return null;
 
     return (
-        <Card className="relative rounded-none py-10 px-4">
-            <h2 className="text-center text-lg font-semibold">Project Details</h2>
-            <CardContent className="mt-8 space-y-8 text-muted-foreground">
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <Card className="relative py-8 px-6 sm:px-10 md:px-16 lg:px-20 shadow-md rounded-none">
+            <h2 className="text-center text-2xl font-semibold mb-6">
+                Project Details
+            </h2>
+            <CardContent className="space-y-6">
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="space-y-6"
+                >
                     <div>
                         <Input
                             {...register("title", {
@@ -58,8 +62,8 @@ const ProjectDescInputs: React.FC = () => {
                                     message: "Title cannot exceed 40 characters",
                                 },
                             })}
-                            placeholder="Enter a Title for your project"
-                            className="resize-none w-full rounded-none"
+                            placeholder="Project Title"
+                            className="w-full rounded-none"
                         />
                         {errors.title && (
                             <p className="text-red-500 text-sm mt-1">
@@ -74,15 +78,15 @@ const ProjectDescInputs: React.FC = () => {
                                 required: "Short summary is required",
                                 minLength: {
                                     value: 10,
-                                    message: "Short summary must be at least 10 characters",
+                                    message: "Summary must be at least 10 characters",
                                 },
                                 maxLength: {
                                     value: 200,
-                                    message: "Short summary cannot exceed 200 characters",
+                                    message: "Summary cannot exceed 200 characters",
                                 },
                             })}
-                            placeholder="Enter a short summary of your project"
-                            className="resize-none w-full"
+                            placeholder="Short Summary of Your Project"
+                            className="w-full resize-none rounded-none"
                             rows={3}
                         />
                         {errors.shortDescription && (
@@ -105,23 +109,37 @@ const ProjectDescInputs: React.FC = () => {
                                     message: "Description cannot exceed 500 characters",
                                 },
                             })}
-                            placeholder="Enter a description of your project"
-                            className="resize-none w-full"
+                            placeholder="Detailed Project Description"
+                            className="w-full resize-none"
                             rows={6}
                         />
                         {errors.description && (
-                            <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+                            <p className="text-red-500 text-sm mt-1">
+                                {errors.description.message}
+                            </p>
                         )}
                     </div>
 
-                    <Button type="submit" className="w-auto px-10 rounded-none mx-auto block">
-                        Save
-                    </Button>
-                    {projectMetadata.title && (
+                    <div className="flex justify-center space-x-4 mt-6">
                         <Button
-                            onClick={() => updateEditorStage(2)}
-                            variant="secondary"
-                            className="w-auto px-10 rounded-none mx-auto block">Continue</Button>)}
+                            type="submit"
+                            className="px-8 py-2 rounded-none"
+                        >
+                            Save
+                        </Button>
+                        {projectMetadata.title && (
+                            <Button
+                                onClick={() =>{
+                                    console.log('fuck you');
+                                    updateEditorStage(2)
+                                }}
+                                variant="secondary"
+                                className="px-8 py-2 rounded-none"
+                            >
+                                Continue
+                            </Button>
+                        )}
+                    </div>
                 </form>
             </CardContent>
         </Card>

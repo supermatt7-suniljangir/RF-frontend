@@ -2,15 +2,15 @@
 import React, { useCallback, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { useEditor } from '@/contexts/ProjectEditorContext'
 import { MiniUser } from '@/types/user'
 import CollaboratorSearch from './CollaboratorsSearch'
 import CollaboratorsList from './CollaboratorsList'
+import { useProjectContext } from '@/contexts/ProjectContext'
 
 
 const ProjectCollaborators: React.FC = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false)
-    const { collaborators, updateCollaborators } = useEditor()
+    const { collaborators, updateCollaborators } = useProjectContext()
 
     const handleAddCollaborator = useCallback((user: MiniUser) => {
         // Check if user is already a collaborator

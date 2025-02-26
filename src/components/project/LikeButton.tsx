@@ -57,7 +57,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({
 
         try {
             const liked = await toggleLikeProject(projectId);
-            setLikes((prevLikes) => (liked ? prevLikes + 1 : prevLikes - 1));
+            setLikes((prevLikes) => (liked ? prevLikes + 1 : Math.max(0, prevLikes - 1)));
         } catch (err) {
             // Revert on error
             setIsLiked(previousLiked);

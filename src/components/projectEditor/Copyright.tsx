@@ -1,11 +1,11 @@
 "use client";
 import { Switch } from "@/components/ui/switch"; // shadcn switch
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // shadcn select
-import { useEditor } from "@/contexts/ProjectEditorContext";
 import { License } from "@/types/project";
+import { useProjectContext } from "@/contexts/ProjectContext";
 
 export default function Copyright() {
-    const { copyRight: { license, allowsDownload, commercialUse }, updateCopyRight } = useEditor()
+    const { copyRight: { license, allowsDownload, commercialUse }, updateCopyRight } = useProjectContext()
 
     const handleLicenseChange = (value: License) => {
         updateCopyRight({ license: value });

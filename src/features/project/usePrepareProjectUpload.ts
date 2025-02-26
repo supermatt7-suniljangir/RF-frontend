@@ -6,28 +6,30 @@ import { useProjectUpload } from "@/features/project/useProjectUpload";
 import { useRouter } from "next/navigation";
 import { ApiResponse } from "@/lib/ApiResponse";
 import { ProjectMetadata } from "@/types/contexts";
+import { useProjectContext } from "@/contexts/ProjectContext";
+import { useMediaUpload } from "@/contexts/MediaContext";
 
-export const useProjectUploadHandler = (initialData?: any) => {
+export const useProjectUploadHandler = (projectID?: string) => {
   const router = useRouter();
   const { createNew, updateExisting } = useProjectUpload();
   const { handleProjectFilesUpload } = useProjectFilesUploader();
+  const isUpdating = !!projectID;
+  // Access context directly in the hook instead of receiving as parameters
+  const { updateProjectMetadata, updateUIState } = useProjectContext();
+  const { newMedia, updateNewMedia, updateNewThumbnail } = useMediaUpload();
 
-  const handleProjectUpload = async (
-    projectData: ProjectUploadType,
-    cloudUploadData: { uploadMedia: TempMedia[]; uploadThumbnail: any },
-    setMedia: (media: any) => void,
-    updateMetadata: (metadata: ProjectMetadata) => void,
-    updateUIState: (state: { isUploading: boolean }) => void
-  ) => {
+  const handleProjectUpload = async (projectData: ProjectUploadType) => {
     try {
       let currentThumbnail = projectData.thumbnail as Thumbnail;
       let uploadedMedia = [];
       updateUIState({ isUploading: true });
+
+      // Filter out blob URLs from initial media
       let updatedMedia = projectData.media.filter(
         (item) => !item.url.startsWith("blob:")
       );
-      const isEditing = !!initialData?._id;
 
+      // Validation
       if (
         !projectData.category ||
         !projectData.title ||
@@ -42,21 +44,29 @@ export const useProjectUploadHandler = (initialData?: any) => {
         return;
       }
 
-      const filesToUpload = cloudUploadData.uploadMedia.filter(
-        (item) => item.type.includes("image") || item.type.includes("video")
+      // Prepare files for cloud upload (only new media with blob URLs)
+      const filesToUpload = newMedia.filter(
+        (item) =>
+          item.url.startsWith("blob:") &&
+          (item.type.includes("image") || item.type.includes("video")) &&
+          item.file
       );
-      let uploadThumbnail = cloudUploadData.uploadThumbnail;
-      let isThumbnailUpload =
-        uploadThumbnail &&
-        uploadThumbnail.url.startsWith("blob:") &&
-        uploadThumbnail.file
-          ? true
-          : false;
 
+      // Check if thumbnail needs upload (only if it's a blob URL)
+      const uploadThumbnail =
+        currentThumbnail &&
+        currentThumbnail.url.startsWith("blob:") &&
+        currentThumbnail.file
+          ? currentThumbnail
+          : undefined;
+
+      const isThumbnailUpload = !!uploadThumbnail;
+
+      // Upload files to cloud if needed
       if (filesToUpload.length > 0 || isThumbnailUpload) {
         uploadedMedia = await handleProjectFilesUpload(
           filesToUpload,
-          isThumbnailUpload ? uploadThumbnail : undefined
+          uploadThumbnail
         );
 
         if (!uploadedMedia || uploadedMedia.length === 0) {
@@ -68,40 +78,39 @@ export const useProjectUploadHandler = (initialData?: any) => {
           });
           return;
         }
+
+        // Add uploaded media to existing media
         updatedMedia = [
           ...updatedMedia,
           ...uploadedMedia.filter((item) => item.type !== "image/thumbnail"),
         ] as any;
-        setMedia(updatedMedia);
       }
 
+      // Update project data with uploaded media
       projectData.media = updatedMedia;
-      let uploadedthumbnail = uploadedMedia.find(
-        (Item) => Item.type === ("image/thumbnail" as any)
+
+      // Handle thumbnail logic
+      let uploadedThumbnail = uploadedMedia.find(
+        (item) => item.type === ("image/thumbnail" as any)
       );
 
-      // if it is, check if it was uploaded
-      if (
-        uploadedthumbnail ||
-        (uploadThumbnail && currentThumbnail.url.startsWith("blob:"))
-      ) {
-        // if it was uploaded, update the projectData.thumbnail
-        projectData.thumbnail = uploadedthumbnail.url as any;
+      if (uploadedThumbnail) {
+        // Use newly uploaded thumbnail
+        projectData.thumbnail = uploadedThumbnail.url as any;
       } else if (
         !currentThumbnail.url &&
-        !uploadedthumbnail &&
         updatedMedia.some((item) => item.type === "image")
       ) {
+        // Fall back to first image if no thumbnail specified
         projectData.thumbnail = updatedMedia.find(
           (item) => item.type === "image"
         ).url as any;
-      }
-
-      // if it wasn't uploaded, use the original projectData.thumbnail
-      else {
+      } else {
+        // Use existing thumbnail URL
         projectData.thumbnail = currentThumbnail.url as any;
       }
 
+      // Validate thumbnail
       if (!projectData.thumbnail) {
         toast({
           variant: "destructive",
@@ -111,21 +120,19 @@ export const useProjectUploadHandler = (initialData?: any) => {
         });
         return;
       }
-      updateMetadata({
-        thumbnail: {
-          url: projectData.thumbnail,
-          file: null,
-          type: "image/thumbnail",
-        } as Thumbnail,
-      } as ProjectMetadata);
 
-      const res: ApiResponse = isEditing
+      // Send to API
+      const res: ApiResponse = isUpdating
         ? await updateExisting(projectData)
         : await createNew(projectData);
+
       if (!res?.success) return;
+
+      // Navigate to project page
       router.push(`/project/${res.data._id}`);
     } catch (error) {
       console.error("Project Upload Error:", error);
+      console.log("Project Data:", projectData.media, projectData.thumbnail);
       toast({
         variant: "destructive",
         title: "Error",
@@ -133,6 +140,13 @@ export const useProjectUploadHandler = (initialData?: any) => {
           "An error occurred while uploading the project. Please try again.",
         duration: 3000,
       });
+      updateNewThumbnail({
+        url: projectData.thumbnail as string,
+        file: undefined,
+        type: "image/thumbnail",
+      });
+      // Reset new media
+      updateNewMedia(projectData.media as TempMedia[]);
     } finally {
       updateUIState({ isUploading: false });
     }

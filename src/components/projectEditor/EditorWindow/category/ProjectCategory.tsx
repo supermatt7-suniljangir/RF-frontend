@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { categories } from '@/lib/categories';
-import { useEditor } from '@/contexts/ProjectEditorContext';
+import { useProjectContext } from '@/contexts/ProjectContext';
 
 const ProjectCategory: React.FC = () => {
-    const { projectMetadata, updateProjectMetadata } = useEditor();
+    const { projectMetadata, updateProjectMetadata } = useProjectContext();
     const selectedCategory = projectMetadata.category || "";
     const handleCategorySelect = (category: string) => {
         if (selectedCategory === category) {
