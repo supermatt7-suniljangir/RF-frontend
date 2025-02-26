@@ -6,14 +6,17 @@ import imageCompression from "browser-image-compression";
 import { getFileUrl } from "@/lib/getFileUrl";
 import { TempMedia, Thumbnail } from "@/types/project";
 import { Config } from "@/config/config";
-import { filesUploadService } from "@/services/filesUpload/useFilesUploadService";
+import FilesUploadService from "@/services/clientServices/filesUpload/FilesUploadService";
 import { UploadFileResponse } from "@/types/upload";
 
 const validateFiles = (files: TempMedia[]) => {
   const { MAX_IMAGE_SIZE, MAX_FILES, MAX_VIDEO_SIZE } = Config.FILE_LIMITS;
 
   //  check if any file is anything other than image or video
-  if (files.filter((f) => !f.type.includes("image") && !f.type.includes("video")).length > 0) {
+  if (
+    files.filter((f) => !f.type.includes("image") && !f.type.includes("video"))
+      .length > 0
+  ) {
     throw new Error("Only images and videos are allowed.");
   }
 
@@ -60,7 +63,6 @@ const uploadProjectFiles = async (
   thumbnail?: Thumbnail
 ) => {
   try {
-
     if (files.length === 0 && !thumbnail) {
       throw new Error("No files to upload");
     }
@@ -72,14 +74,14 @@ const uploadProjectFiles = async (
     }
     const uploadUrls: UploadFileResponse[] =
       processedFiles.length > 0
-        ? await filesUploadService.getUploadUrls(
+        ? await FilesUploadService.getUploadUrls(
             processedFiles.map((item) => item.file)
           )
         : [];
     // Check if a thumbnail is provided and get a separate signed URL
     let thumbnailUrl: UploadFileResponse | null = null;
     if (thumbnail) {
-      let SignedThumbnailUrl = await filesUploadService.getUploadUrls([
+      let SignedThumbnailUrl = await FilesUploadService.getUploadUrls([
         thumbnail.file,
       ]);
       thumbnailUrl = SignedThumbnailUrl[0];
@@ -102,7 +104,7 @@ const uploadProjectFiles = async (
     }
 
     // Upload all files
-    await filesUploadService.uploadFiles(uploadData);
+    await FilesUploadService.uploadFiles(uploadData);
 
     // Prepare the response
     const uploadedFiles = uploadUrls.map((item) => ({

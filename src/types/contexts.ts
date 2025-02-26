@@ -4,6 +4,7 @@ import {
   Imedia,
   IStats,
   ProjectStatus,
+  TempMedia,
   Thumbnail,
 } from "./project";
 import { MiniUser } from "./user";
@@ -47,4 +48,18 @@ export interface ProjectEditorContextType {
   updateMedia: (media: Imedia[]) => void;
   updateProjectMetadata: (data: Partial<ProjectMetadata>) => void;
   uploadProject: (status: ProjectStatus) => Promise<void>;
+}
+
+export interface MediaContextType {
+  
+  existingMedia: Imedia[];
+  newMedia: TempMedia[];
+  thumbnail: Thumbnail | null;
+  setExistingMedia: (media: Imedia[]) => void;
+  setNewMedia: (media: TempMedia[]) => void;
+  setThumbnail: (thumbnail: Thumbnail | null) => void;
+  removeMedia: (url: string) => void;
+  addNewMedia: (media: TempMedia[]) => void;
+  resetNewMedia: () => void;
+  mediaContainerRef: React.RefObject<HTMLDivElement>;
 }

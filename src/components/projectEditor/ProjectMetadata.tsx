@@ -1,7 +1,7 @@
 
 "use client";
 import React, { useEffect } from "react";
-import {  useEditor } from "@/contexts/ProjectEditorContext";
+import { useEditor } from "@/contexts/ProjectEditorContext";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Trash2 } from "lucide-react";
 import { Card, CardContent } from "../ui/card";
@@ -102,7 +102,7 @@ const ProjectDescInputs: React.FC = () => {
                                 },
                                 maxLength: {
                                     value: 500,
-                                    message: "Description cannot exceed 200 characters",
+                                    message: "Description cannot exceed 500 characters",
                                 },
                             })}
                             placeholder="Enter a description of your project"

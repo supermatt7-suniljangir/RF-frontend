@@ -1,5 +1,5 @@
 "use client";
-// import React from "react";
+
 import { useForm } from "react-hook-form";
 import {
   Card,
@@ -16,7 +16,8 @@ import useGoogleLogin from "@/features/auth/useGoogleLogin";
 import { useUser } from "@/contexts/UserContext";
 import { useAuth } from "@/features/auth/useLogin";
 import Link from "next/link";
-import { redirect, usePathname } from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import Spinner from "@/app/loading";
 
 interface FormInputs {
@@ -27,11 +28,13 @@ interface FormInputs {
 }
 
 const AuthForm = () => {
-  const urlParams = new URLSearchParams(window?.location?.search);
-  const redirectPath = urlParams.get("redirect");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectPath = searchParams.get("redirect") || "/";
   const pathname = usePathname();
   const isLogin = pathname === "/login";
   const { isLoading, user } = useUser();
+
   const {
     register,
     handleSubmit,
@@ -40,16 +43,24 @@ const AuthForm = () => {
   } = useForm<FormInputs>({
     mode: "onChange",
   });
+
   const { handleGoogleSuccess, handleGoogleError } = useGoogleLogin();
   const { auth } = useAuth();
-
   const password = watch("password");
 
+  // Handle redirect if user is already logged in
+  useEffect(() => {
+    if (user) {
+      router.push(redirectPath);
+    }
+  }, [user, router, redirectPath]);
+
   const onSubmit = async (data: FormInputs) => {
-   await auth(data);
+    await auth(data);
   };
-  if (user) redirect(redirectPath ? redirectPath : "/");
-  if (isLoading) return <Spinner />
+
+  if (isLoading) return <Spinner />;
+
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
@@ -97,7 +108,7 @@ const AuthForm = () => {
 
           <div className="space-y-1">
             <Label htmlFor="email">
-              {pathname === "/login" ? "Username or Email" : "Email"}
+              {isLogin ? "Username or Email" : "Email"}
             </Label>
             <Input
               id="email"
@@ -172,7 +183,7 @@ const AuthForm = () => {
             Don&apos;t have an account?
             <Link
               href={
-                redirectPath
+                redirectPath !== "/"
                   ? `/register?redirect=${redirectPath}`
                   : "/register"
               }
@@ -185,7 +196,11 @@ const AuthForm = () => {
           <p className="text-sm text-muted-foreground">
             Already have an account?
             <Link
-              href={redirectPath ? `/login?redirect=${redirectPath}` : "/login"}
+              href={
+                redirectPath !== "/"
+                  ? `/login?redirect=${redirectPath}`
+                  : "/login"
+              }
               className="ml-1 font-semibold text-primary hover:underline"
             >
               Sign in

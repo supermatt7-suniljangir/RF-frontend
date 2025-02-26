@@ -1,10 +1,10 @@
 "use client";
 import { Card, CardContent } from '@/components/ui/card'
 import React from 'react'
-import ProjectTags from './ProjectTags'
-import ProjectTools from './ProjectTools';
-import ProjectCategories from './ProjectCategories';
-import ProjectCollaborators from './ProjectCollaborators';
+import ProjectTags from './tags/ProjectTags'
+import ProjectTools from './tools/ProjectTools';
+import ProjectCategory from './category/ProjectCategory';
+import ProjectCollaborators from './collaborators/ProjectCollaborators';
 
 const ProjectWindowSidebar = () => {
 
@@ -13,7 +13,7 @@ const ProjectWindowSidebar = () => {
             <CardContent className='p-4'>
                 <ProjectTags />
                 <ProjectTools />
-                <ProjectCategories />
+                <ProjectCategory />
                 <ProjectCollaborators />
             </CardContent>
         </Card>

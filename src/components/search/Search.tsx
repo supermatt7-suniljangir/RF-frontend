@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter, useSearchParams } from "next/navigation";
 import CategorySelector from "./Categories";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import SearchInput from "./SearchInput";
 
 // Define form input types
@@ -31,26 +31,27 @@ export default function SearchBar() {
 
   const router = useRouter();
 
-  // Form submit handler
-  const onSubmit: SubmitHandler<SearchFormInputs> = (data) => {
-    const query = data.query.trim();
-    const type = data.type;
-    if (!query) {
-      setError("query", { message: "Search query cannot be empty" });
-      return;
-    }
-
-    params.set("query", query);
-    params.set("type", type);
-    params.delete("page");
-    params.delete("filter");
-    params.delete("sortBy");
-    params.delete("sortOrder");
-    params.delete("tag");
-    params.delete("category");
-    router.push(`?${params.toString()}`);
-  };
-
+  // Form submit handler with useCallback
+  const onSubmit = useCallback<SubmitHandler<SearchFormInputs>>(
+    (data) => {
+      const query = data.query.trim();
+      const type = data.type;
+      if (!query) {
+        setError("query", { message: "Search query cannot be empty" });
+        return;
+      }
+      params.set("query", query);
+      params.set("type", type);
+      params.delete("page");
+      params.delete("filter");
+      params.delete("sortBy");
+      params.delete("sortOrder");
+      params.delete("tag");
+      params.delete("category");
+      router.push(`?${params.toString()}`);
+    },
+    [params, router, setError]
+  );
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col
      sm:flex-row sm:items-center md:justify-center items-center gap-4 w-full"

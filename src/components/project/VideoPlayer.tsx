@@ -1,7 +1,7 @@
 // VideoPlayer.tsx
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import Plyr from "plyr";
 import "plyr/dist/plyr.css";
@@ -100,4 +100,4 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     );
 };
 
-export default VideoPlayer;
+export default memo(VideoPlayer);

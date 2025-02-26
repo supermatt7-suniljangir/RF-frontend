@@ -1,12 +1,11 @@
+"use server";
 import { Suspense } from "react";
 import ProjectInfo from "@/components/project/Project";
 import { ProjectType } from "@/types/project";
 import React from "react";
 import Spinner from "@/app/loading";
 import { Metadata } from "next";
-import { getProjectById } from "@/services/Projects/getProjectById";
-import { ApiResponse } from "@/lib/ApiResponse";
-
+import { getProjectById } from "@/services/serverServices/project/getProjectById";
 
 interface ProjectPageProps {
   params: Promise<{ id: string }>;
@@ -16,18 +15,20 @@ export async function generateMetadata(
   { params }: ProjectPageProps,
 ): Promise<Metadata> {
   const { id } = await params;
-  const projectRes: ApiResponse = await getProjectById({ id });
-  if (!projectRes.success || !projectRes.data) {
+  const { success, data, message } = await getProjectById({ id });
+
+  if (!success || !data) {
+    console.error("Failed to generate metadata for project:", message);
     return {
       title: "Project Not Found",
       description: "The requested project could not be found",
     };
   }
-  const project = projectRes.data as ProjectType;
+
+  const project = data as ProjectType;
   return {
     title: project.title,
     description: project?.description,
-
     openGraph: {
       title: project.title,
       description: project.description,
@@ -52,11 +53,17 @@ export async function generateMetadata(
 
 const Project = async ({ params }: ProjectPageProps) => {
   const { id } = await params;
-  const projectRes: ApiResponse = await getProjectById({ id });
-  if (!projectRes.success || !projectRes.data) {
-    throw new Error(`project not found: ${projectRes.message}`);
+  const { success, data, message } = await getProjectById({ id });
+
+  if (!success || !data) {
+    return (
+      <div className="text-center w-full my-8 text-lg font-medium text-red-500">
+        {message || "Project not found"}
+      </div>
+    );
   }
-  const project = projectRes.data as ProjectType;
+
+  const project = data as ProjectType;
 
   return (
     <Suspense fallback={<Spinner />}>

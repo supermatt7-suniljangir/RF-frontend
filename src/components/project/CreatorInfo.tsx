@@ -22,4 +22,4 @@ const CreatorInfo: React.FC<CreatorInfoProps> = ({ creator }) => {
     )
 }
 
-export default React.memo(CreatorInfo);
+export default CreatorInfo;

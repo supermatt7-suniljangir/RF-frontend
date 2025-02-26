@@ -1,32 +1,51 @@
-// useGoogleLogin.ts
 "use client";
 import { CredentialResponse } from "@react-oauth/google";
 import { useAuth } from "./useLogin";
+import { toast } from "@/hooks/use-toast";
+import { useCallback } from "react";
 
-const useGoogleLogin = () => {
+interface GoogleLoginResult {
+  handleGoogleSuccess: (
+    credentialResponse: CredentialResponse
+  ) => Promise<void>;
+  handleGoogleError: () => void;
+  isLoading: boolean;
+}
+
+const useGoogleLogin = (): GoogleLoginResult => {
   const { auth, isLoading } = useAuth();
 
-  const handleGoogleSuccess = async (
-    credentialResponse: CredentialResponse
-  ) => {
-    const googleToken = credentialResponse.credential;
+  const handleGoogleSuccess = useCallback(
+    async (credentialResponse: CredentialResponse) => {
+      const googleToken = credentialResponse?.credential;
 
-    if (googleToken) {
-      // Await login to get the user and token
-      const loginResponse = await auth({ googleToken });
-      if (!loginResponse) {
-        console.error("Login failed");
+      if (!googleToken) {
+        toast({
+          title: "Authentication Error",
+          description: "No valid credentials received from Google",
+          variant: "destructive",
+        });
         return;
       }
-    } else {
-      console.error("No credential found in the response");
-    }
-  };
+      await auth({ googleToken });
+    },
+    [auth]
+  );
 
-  const handleGoogleError = () => {
-    console.error("Google Sign-In failed");
+  const handleGoogleError = useCallback(() => {
+    toast({
+      title: "Google Login Failed",
+      description:
+        "Authentication with Google was unsuccessful. Please try again.",
+      variant: "destructive",
+    });
+  }, []);
+
+  return {
+    handleGoogleSuccess,
+    handleGoogleError,
+    isLoading,
   };
-  return { handleGoogleSuccess, handleGoogleError, isLoading };
 };
 
 export default useGoogleLogin;

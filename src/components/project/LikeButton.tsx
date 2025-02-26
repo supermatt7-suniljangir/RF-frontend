@@ -1,18 +1,16 @@
 "use client";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, memo } from "react";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { toast } from "@/hooks/use-toast";
-import { toggleLikeProject } from "@/services/likes/toggleProjectLike";
-import { hasUserLikedProject } from "@/services/likes/hasUserLikedTheProject";
 import { useUser } from "@/contexts/UserContext";
+import { useLikeOperations } from "@/features/like/useLIkeOperations";
 
 interface LikeButtonProps {
     className?: string;
     projectId: string;
     size?: "small" | "large";
-    initialLikes: number; // Initial likes from server
+    initialLikes: number;
 }
 
 const LikeButton: React.FC<LikeButtonProps> = ({
@@ -22,51 +20,53 @@ const LikeButton: React.FC<LikeButtonProps> = ({
     initialLikes,
 }) => {
     const { user, isLoading } = useUser();
+    const { checkLikeStatus, toggleLikeProject } = useLikeOperations();
     const [isLiked, setIsLiked] = useState<boolean>(false);
     const [likes, setLikes] = useState<number>(initialLikes);
     const [updating, setUpdating] = useState<boolean>(false);
 
+    // Separate effect for initial like status check
     useEffect(() => {
-        let isMounted = true;
+        let isMounted = true; // Flag to track component mount status
+        if (!user) return;
 
-        const checkLikeStatus = async () => {
-            if (!user) return;
-            try {
-                const response = await hasUserLikedProject(projectId);
-                if (isMounted) {
-                    setIsLiked(response);
-                }
-            } catch (err) {
-                console.error("Failed to fetch like status", err);
+        const checkLikeStatusEffect = async () => {
+            const response = await checkLikeStatus(projectId);
+            if (isMounted) {
+                setIsLiked(response);
             }
         };
 
-        checkLikeStatus();
+        checkLikeStatusEffect();
 
         return () => {
-            isMounted = false;
+            isMounted = false; // Cleanup when the component unmounts
         };
-    }, [user, projectId, isLoading]);
+    }, [user, projectId]);
 
-    const onClickHandler = useCallback(async () => {
-        if (updating) return;
+
+    const onClickHandler = async () => {
+        if (updating || !user) return;
+
         setUpdating(true);
-        const isLikedUpdated = !isLiked;
-        setIsLiked(isLikedUpdated);
-        setLikes((prev) => (isLikedUpdated ? prev + 1 : prev - 1));
+        const previousLiked = isLiked;
+        const previousLikes = likes;
+
+        // Optimistic update
+        setIsLiked(!previousLiked);
+
         try {
             const liked = await toggleLikeProject(projectId);
+            setLikes((prevLikes) => (liked ? prevLikes + 1 : prevLikes - 1));
         } catch (err) {
-            toast({
-                title: "Failed to toggle like",
-                description: "Please try again later.",
-                variant: "destructive",
-            });
-            setIsLiked((prev) => !prev);
+            // Revert on error
+            setIsLiked(previousLiked);
+            setLikes(previousLikes);
         } finally {
             setUpdating(false);
         }
-    }, [projectId, updating]);
+    }
+
 
     return (
         <div className="flex flex-col items-center space-y-2">
@@ -95,4 +95,4 @@ const LikeButton: React.FC<LikeButtonProps> = ({
     );
 };
 
-export default LikeButton;
+export default memo(LikeButton);

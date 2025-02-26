@@ -7,7 +7,7 @@ import { getFileUrl } from "@/lib/getFileUrl";
 import { useUpdateUserProfile } from "@/features/profile/useUpdateProfile";
 import { User } from "@/types/user";
 import { Config } from "@/config/config";
-import { filesUploadService } from "@/services/filesUpload/useFilesUploadService";
+import FilesUploadService from "@/services/clientServices/filesUpload/FilesUploadService";
 
 export const useProfileFilesUploader = (
   setImage: (url: string | null) => void,
@@ -33,8 +33,8 @@ export const useProfileFilesUploader = (
         throw new Error("File must be an image.");
       }
 
-      const [uploadUrlData] = await filesUploadService.getUploadUrls([file]);
-      await filesUploadService.uploadFiles([
+      const [uploadUrlData] = await FilesUploadService.getUploadUrls([file]);
+      await FilesUploadService.uploadFiles([
         { uploadUrl: uploadUrlData.uploadUrl, file: file },
       ]);
 

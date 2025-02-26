@@ -71,18 +71,7 @@ const BasicInfoEdit: React.FC = () => {
 
     if (res && res.success) {
       setUser(res.data);
-      toast({
-        title: "Profile Updated",
-        description: "Your profile has been successfully updated",
-        variant: "default"
-      });
       redirect("/profile");
-    } else {
-      toast({
-        title: "Update Failed",
-        description: "Unable to update profile. Please try again later",
-        variant: "destructive"
-      });
     }
   };
 

@@ -10,10 +10,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import ShareModal from "./ShareModal";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { ProjectType } from "@/types/project";
 
-export default function ActionButtons({ project }: { project: ProjectType }) {
+ function ActionButtons({ project }: { project: ProjectType }) {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   if (isDesktop) {
@@ -60,3 +60,5 @@ export default function ActionButtons({ project }: { project: ProjectType }) {
     </>
   );
 }
+
+export default memo(ActionButtons);

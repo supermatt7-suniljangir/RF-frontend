@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
@@ -27,19 +27,20 @@ const SearchTags = () => {
   const [selectedTag, setSelectedTag] = useState<string | null>(
     params.get("tag") || ""
   );
-useEffect(() => {
+  useEffect(() => {
     setSelectedTag(params.get("tag") || "");
   }
-, [tag]);
-  const handleTagClick = (tag: string) => {
+    , [tag]);
+
+  const handleTagClick = useCallback((tag: string) => {
     // Clear all params when a tag is selected
     params.delete("query");
     params.delete("page");
     params.delete("filter"); // Example: Remove other filters
-    params.delete("sortBy");  // Example: Remove sorting
-    params.delete("sortOrder");  // Example: Remove sorting
-    params.delete("type");  // Example: Remove sorting
-    params.delete("category");  // Example: Remove sorting
+    params.delete("sortBy"); // Example: Remove sorting
+    params.delete("sortOrder"); // Example: Remove sorting
+    params.delete("type"); // Example: Remove sorting
+    params.delete("category"); // Example: Remove sorting
 
     if (selectedTag === tag) {
       setSelectedTag(null);
@@ -50,7 +51,8 @@ useEffect(() => {
     }
 
     router.replace(`?${params.toString()}`);
-  };
+  }, [params, router, selectedTag]);
+
 
   return (
     <div className="flex flex-wrap gap-2 justify-center">

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { memo } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -79,4 +79,4 @@ const SearchInput: React.FC<SearchInputs> = ({ errors, register }) => {
   );
 };
 
-export default SearchInput;
+export default memo(SearchInput);

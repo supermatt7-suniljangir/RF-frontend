@@ -1,13 +1,10 @@
 "use client";
 import React, { useEffect, useState, useCallback, useTransition } from "react";
-import { UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { toast } from "@/hooks/use-toast";
-import { checkFollowStatus } from "@/services/follow/checkFollowStatus";
-import { toggleFollowUser } from "@/services/follow/toggleFollowUser";
 import { useUser } from "@/contexts/UserContext";
 import { User } from "@/types/user";
+import { useFollowOperations } from "@/features/follow/useFollowOperations";
 
 interface FollowButtonProps {
     className?: string;
@@ -20,26 +17,27 @@ const FollowDetails: React.FC<FollowButtonProps> = ({
     user,
     className,
 }) => {
-    const { user: currentUser,refreshUser, isLoading } = useUser();
+    const { user: currentUser, isLoading } = useUser();
+    const { checkFollowStatus, toggleFollowUser } = useFollowOperations();
     const [isFollowing, setIsFollowing] = useState<boolean>(false);
-    const isExternalProfile: boolean = user ? true : false
     const [followersCount, setFollowersCount] = useState<number>(
-        user ? user.followersCount : currentUser?.followersCount
+        user?.followersCount ?? currentUser?.followersCount ?? 0
     );
     const [isPending, startTransition] = useTransition();
 
+    const isExternalProfile = Boolean(user);
 
+    // Initial follow status check
     useEffect(() => {
         let isMounted = true;
 
         const fetchFollowStatus = async () => {
             if (!currentUser || !isExternalProfile || !user?._id) return;
 
+            const response = await checkFollowStatus(user._id);
             if (isMounted) {
-                const response = await checkFollowStatus(user._id);
                 setIsFollowing(response);
             }
-
         };
 
         fetchFollowStatus();
@@ -47,57 +45,56 @@ const FollowDetails: React.FC<FollowButtonProps> = ({
         return () => {
             isMounted = false;
         };
-    }, [currentUser, user, isExternalProfile, isLoading]);
+    }, [currentUser, user, isExternalProfile, checkFollowStatus]);
 
-    const onClickHandler = useCallback(() => {
+    const handleFollowToggle = useCallback(async () => {
         if (isPending || isLoading || !currentUser || !user?._id) return;
 
         startTransition(async () => {
-            const optimisticFollowing = !isFollowing;
-            setIsFollowing(optimisticFollowing);
-            setFollowersCount((prev) => Math.max(0, prev + (optimisticFollowing ? 1 : -1)));
+            const previousFollowing = isFollowing;
+            const previousCount = followersCount;
+
+            // Optimistic update
+            setIsFollowing(!previousFollowing);
+            setFollowersCount((prev) => Math.max(0, prev + (!previousFollowing ? 1 : -1)));
 
             try {
                 await toggleFollowUser(user._id);
-                await refreshUser();
             } catch (err) {
-                setIsFollowing(!optimisticFollowing);
-                setFollowersCount((prev) => Math.max(0, prev - (optimisticFollowing ? 1 : -1)));
-                toast({
-                    title: "Failed to toggle follow status",
-                    description: "Please try again later.",
-                    variant: "destructive",
-                });
+                // Revert on error
+                setIsFollowing(previousFollowing);
+                setFollowersCount(previousCount);
             }
         });
-    }, [user, isFollowing, isPending, isLoading, currentUser]);
+    }, [user?._id, isFollowing, isPending, isLoading, currentUser, followersCount, toggleFollowUser]);
 
+    // Render current user's follow stats
     if (!isExternalProfile) {
         return (
             <div className="flex items-center">
                 <span className="text-sm text-muted-foreground">
-                    {followersCount} Followers • {currentUser?.followingCount || 0} Following
+                    {followersCount} Followers • {currentUser?.followingCount ?? 0} Following
                 </span>
             </div>
         );
     }
 
+    // Render external user's profile with follow button
     return (
         <div className="flex items-start flex-col relative h-auto space-y-2">
-          <div>
-          <span className="text-sm text-muted-foreground">
-                    {followersCount} Followers • {user?.followingCount || 0} Following
+            <div>
+                <span className="text-sm text-muted-foreground">
+                    {followersCount} Followers • {user?.followingCount ?? 0} Following
                 </span>
-          </div>
+            </div>
             <Button
-                onClick={onClickHandler}
+                onClick={handleFollowToggle}
                 disabled={isPending || isLoading || !currentUser}
                 variant="outline"
-                className="w-full"
+                className={cn("w-full", className)}
             >
-                <p >{isFollowing ? "Following" : "Follow"}</p>
+                {isFollowing ? "Following" : "Follow"}
             </Button>
-
         </div>
     );
 };

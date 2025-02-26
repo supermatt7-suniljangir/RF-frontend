@@ -3,8 +3,8 @@
 import { User } from "@/types/user";
 import { createContext, useState, useContext, useEffect } from "react";
 import React from "react";
-import { logout as logoutHook } from "@/services/users/logout";
-import { getUserProfile } from "@/services/users/getUserProfile";
+import { logout as logoutService } from "@/features/auth/logout";
+import { getUserProfile } from "@/services/serverServices/profile/getUserProfile";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 
@@ -26,8 +26,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchUser = async () => {
     try {
-      const { status, user } = await getUserProfile({ cacheSettings: "reload" });
-      if (status === 401) {
+      const { success, data } = await getUserProfile({ cacheSettings: "reload" });
+      if (!success) {
         await logout();
         toast({
           title: "Your Session is Expired",
@@ -36,7 +36,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         router.push("/login");
         return;
       }
-      setUser(user || null);
+      setUser(data || null);
     } catch (error) {
       console.error("Failed to fetch user profile:", error);
     } finally {
@@ -54,7 +54,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = async () => {
-    await logoutHook();
+    await logoutService();
     setUser(null);
     setTimeout(() => {
       router.push("/login"); // Navigate after the component updates

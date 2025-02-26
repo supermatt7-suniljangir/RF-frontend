@@ -1,7 +1,9 @@
+"use client";
 import { useState } from "react";
-import { User } from "@/types/user";
-import ApiService from "@/api/wrapper/axios-wrapper";
 import { ApiResponse } from "@/lib/ApiResponse";
+import { User } from "@/types/user";
+import UserProfileService from "@/services/clientServices/profile/ProfileService";
+import { toast } from "@/hooks/use-toast";
 
 export function useUpdateUserProfile() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -9,23 +11,21 @@ export function useUpdateUserProfile() {
   const updateProfile = async (
     payload: Partial<User>
   ): Promise<ApiResponse> => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const apiService = ApiService.getInstance();
-      const url = `/users/profile`;
-      const response= await apiService.put<ApiResponse>(
-        url,
-        payload
-      );
-
-      if (response.status !== 200 || !response.data.success) {
-        console.error("No response from API");
-        throw new Error("Failed to update user profile");
-      }
-      return response.data;
+      const res = await UserProfileService.updateProfile(payload);
+      toast({
+        title: "Success",
+        description: res.message,
+        duration: 5000,
+      });
+      return res;
     } catch (error) {
-
-      console.error("Error updating user profile:", error);
+      toast({
+        title: "Failed to update profile",
+        description: error.message || "An error occurred",
+        variant: "destructive",
+      });
       throw error;
     } finally {
       setLoading(false);

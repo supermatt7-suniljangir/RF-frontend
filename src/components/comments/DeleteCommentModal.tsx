@@ -1,8 +1,9 @@
+"use client";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from '../ui/dialog'; // Correct import
 import { Loader2 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Delete } from 'lucide-react';
-import React from 'react';
+import React, { memo } from 'react';
 
 interface DeleteCommentModalProps {
   isOpen: boolean;
@@ -56,4 +57,4 @@ const DeleteCommentModal: React.FC<DeleteCommentModalProps> = ({
   );
 };
 
-export default DeleteCommentModal;
+export default memo(DeleteCommentModal);

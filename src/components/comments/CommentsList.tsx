@@ -1,70 +1,62 @@
 "use client";
-import { IComment } from '@/types/others';
-import React, { useState, useEffect } from 'react';
-import Comment from './Comment';
-import { Button } from '../ui/button';
+import { IComment } from "@/types/others";
+import React, { useState, useCallback, memo } from "react";
+import Comment from "./Comment";
+import { Button } from "../ui/button";
 
 interface CommentsListProps {
-    comments: IComment[];
+  comments: IComment[];
 }
 
 const COMMENTS_PER_PAGE = 3;
 
 const CommentsList: React.FC<CommentsListProps> = ({ comments }) => {
-    const [displayCount, setDisplayCount] = useState(COMMENTS_PER_PAGE);
-    const [displayedComments, setDisplayedComments] = useState<IComment[]>([]);
+  const [displayCount, setDisplayCount] = useState(COMMENTS_PER_PAGE);
 
-    // Reset pagination when comments array changes (e.g., new comment added)
-    useEffect(() => {
-        setDisplayCount(COMMENTS_PER_PAGE);
-        setDisplayedComments(comments.slice(0, COMMENTS_PER_PAGE));
-    }, [comments]);
+  // Compute displayed comments directly
+  const displayedComments = comments.slice(0, displayCount);
 
-    const handleLoadMore = () => {
-        const newDisplayCount = displayCount + COMMENTS_PER_PAGE;
-        setDisplayCount(newDisplayCount);
-        setDisplayedComments(comments.slice(0, newDisplayCount));
-    };
+  // Handlers wrapped in useCallback to avoid unnecessary re-renders
+  const handleLoadMore = useCallback(() => {
+    setDisplayCount((prev) => prev + COMMENTS_PER_PAGE);
+  }, []);
 
-    if (!comments.length) return <div>No comments yet</div>;
+  const handleShowLess = useCallback(() => {
+    setDisplayCount(COMMENTS_PER_PAGE);
+  }, []);
 
-    return (
-        <div className="mt-4 py-2 border-t-2">
-            <div className="space-y-4">
-                {displayedComments.map((comment) => (
-                    <Comment key={comment._id} comment={comment} />
-                ))}
-            </div>
+  if (!comments.length) return <div>No comments yet</div>;
 
-            <div className='flex justify-center flex-col'>
-                {displayCount < comments.length && (
-                    <Button
-                        onClick={handleLoadMore}
-                        className="mt-4 px-4 w-full text-base bg-muted py-4 text-muted-foreground hover:text-primary-foreground"
-                    >
-                        Show More
-                    </Button>
-                )}
+  return (
+    <div className="mt-4 py-2 border-t-2">
+      <div className="space-y-4">
+        {displayedComments.map((comment) => (
+          <Comment key={comment._id} comment={comment} />
+        ))}
+      </div>
 
-                {displayCount > COMMENTS_PER_PAGE && (
-                    <Button
-                        variant='ghost'
-                        onClick={() => {
-                            setDisplayCount(COMMENTS_PER_PAGE);
-                            setDisplayedComments(comments.slice(0, COMMENTS_PER_PAGE));
-                        }}
-                        className="mt-4 block px-4 py-2 text-base"
-                    >
-                        Show Less
-                    </Button>
-                )}
+      <div className="flex justify-center flex-col">
+        {displayCount < comments.length && (
+          <Button
+            onClick={handleLoadMore}
+            className="mt-4 px-4 w-full text-base bg-muted py-4 text-muted-foreground hover:text-primary-foreground"
+          >
+            Show More
+          </Button>
+        )}
 
-
-
-
-            </div>
-        </div>
-    );
+        {displayCount > COMMENTS_PER_PAGE && (
+          <Button
+            variant="ghost"
+            onClick={handleShowLess}
+            className="mt-4 block px-4 py-2 text-base"
+          >
+            Show Less
+          </Button>
+        )}
+      </div>
+    </div>
+  );
 };
 
-export default CommentsList;
+export default memo(CommentsList);

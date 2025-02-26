@@ -1,19 +1,11 @@
 "use client";
-
 import { toast } from "@/hooks/use-toast";
-import {
-  Imedia,
-  ProjectStatus,
-  ProjectUploadType,
-  TempMedia,
-  Thumbnail,
-} from "@/types/project";
+import { ProjectUploadType, TempMedia, Thumbnail } from "@/types/project";
 import { useProjectFilesUploader } from "@/features/cloudUpload/useProjectFilesUploader";
 import { useProjectUpload } from "@/features/project/useProjectUpload";
 import { useRouter } from "next/navigation";
 import { ApiResponse } from "@/lib/ApiResponse";
 import { ProjectMetadata } from "@/types/contexts";
-import { Item } from "@radix-ui/react-navigation-menu";
 
 export const useProjectUploadHandler = (initialData?: any) => {
   const router = useRouter();
@@ -126,8 +118,6 @@ export const useProjectUploadHandler = (initialData?: any) => {
           type: "image/thumbnail",
         } as Thumbnail,
       } as ProjectMetadata);
-
-
 
       const res: ApiResponse = isEditing
         ? await updateExisting(projectData)

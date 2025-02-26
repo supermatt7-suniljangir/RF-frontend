@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { memo, useState } from "react";
 import {
     AtSign,
     Check,
@@ -19,7 +19,7 @@ import { redirect, usePathname } from "next/navigation";
 import ProfilePlaceholder from "@/media/user.png";
 import FollowDetails from "./FollowDetails";
 
-export default function ExternalProfileInfo({ user }: { user: User }) {
+ function ExternalProfileInfo({ user }: { user: User }) {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const { user: authUser } = useUser();
     const pathname = usePathname();
@@ -105,3 +105,5 @@ export default function ExternalProfileInfo({ user }: { user: User }) {
         </div>
     );
 }
+
+export default memo(ExternalProfileInfo);

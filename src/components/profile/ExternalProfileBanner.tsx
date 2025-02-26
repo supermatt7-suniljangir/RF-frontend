@@ -3,8 +3,9 @@
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Wallpaper } from "lucide-react";
+import React from "react";
 
-export default function ExternalProfileBanner({ cover }: { cover?: string }) {
+function ExternalProfileBanner({ cover }: { cover?: string }) {
   return (
     <Card className="w-full bg-muted mx-auto rounded-none">
       <CardContent className="w-full p-0 relative">
@@ -32,3 +33,4 @@ export default function ExternalProfileBanner({ cover }: { cover?: string }) {
     </Card>
   );
 }
+export default React.memo(ExternalProfileBanner);

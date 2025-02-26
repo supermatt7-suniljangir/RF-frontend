@@ -1,17 +1,15 @@
-
-
 import axios, {
   AxiosInstance,
   AxiosError,
   InternalAxiosRequestConfig,
   AxiosResponse,
-} from 'axios';
-import { ApiErrorLog, ApiErrorResponse } from '../types/api-types';
-import { logout } from '@/services/users/logout';
+} from "axios";
+import { ApiErrorLog, ApiErrorResponse } from "../types/api-types";
+import { logout } from "@/features/auth/logout";
 
 export const createAxiosInstance = (headers = {}): AxiosInstance => {
   const instance: AxiosInstance = axios.create({
-    baseURL: process.env.API_URL || 'http://localhost:5500/api',
+    baseURL: process.env.API_URL || "http://localhost:5500/api",
     withCredentials: true, // Important: This enables sending cookies in cross-origin requests
     headers: headers, // Pass custom headers if any
   });
@@ -38,7 +36,7 @@ export const createAxiosInstance = (headers = {}): AxiosInstance => {
 
       if (errorLog.status === 401) {
         await logout();
-        console.error('API Error:', errorLog);
+        console.error("API Error:", errorLog);
       }
       return Promise.reject(error);
     }

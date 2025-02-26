@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ProjectUploadType } from "@/types/project";
-import { projectUploadService } from "@/services/Projects/projectUploadService";
+import ProjectUploadService from "@/services/clientServices/projectUpload/ProjectUploadService";
 import { toast } from "@/hooks/use-toast";
 
 export const useProjectUpload = () => {
@@ -11,7 +11,14 @@ export const useProjectUpload = () => {
   const createNew = async (data: ProjectUploadType) => {
     setPublishing(true);
     try {
-      const response = await projectUploadService.createProject(data);
+      const response = await ProjectUploadService.createProject(data);
+      if (response.success) {
+        toast({
+          title: "Success",
+          description: "Project created successfully",
+          variant: "default",
+        });
+      }
       return response;
     } catch (error) {
       throw error;
@@ -23,7 +30,14 @@ export const useProjectUpload = () => {
   const updateExisting = async (data: ProjectUploadType) => {
     setPublishing(true);
     try {
-      const response = await projectUploadService.updateProject(data);
+      const response = await ProjectUploadService.updateProject(data);
+      if (response.success) {
+        toast({
+          title: "Success",
+          description: "Project updated successfully",
+          variant: "default",
+        });
+      }
       return response;
     } catch (error) {
       throw error;

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { MiniUser } from "@/types/user";
 import { useUser } from "@/contexts/UserContext";
 import { cn } from "@/lib/utils";
+import { memo } from "react";
 interface UserInfoProps {
   creator: MiniUser;
   styles?: string;
@@ -18,7 +19,7 @@ const CreatorMiniInfo: React.FC<UserInfoProps> = ({ creator, styles }) => {
         <div className="w-12 h-12 rounded-full overflow-hidden relative">
           <Image
             fill
-            src={creator?.avatar || rakesh}
+            src={creator?.profile.avatar || rakesh}
             alt="Creator avatar"
             className="w-full h-full object-cover"
           />
@@ -31,5 +32,5 @@ const CreatorMiniInfo: React.FC<UserInfoProps> = ({ creator, styles }) => {
     </Link>
   );
 };
-export default CreatorMiniInfo;
+export default memo(CreatorMiniInfo);
 // https://creativespotlight.s3.eu-north-1.amazonaws.com/media/6734d491aa911275db54e114/21f1b7ce-c936-4923-b54f-da7947178e99.jpg

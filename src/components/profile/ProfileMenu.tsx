@@ -9,8 +9,9 @@ import {
 import { cn } from "@/lib/utils";
 import useIsExternalProfile from "@/hooks/useIsExternalProfile";
 import { User } from "@/types/user";
+import { memo } from "react";
 
-export default function ProfileMenu({ user }: { user: User | null }) {
+ function ProfileMenu({ user }: { user: User | null }) {
   const searchParams = useSearchParams();
   const display = searchParams.get("display");
   const isExternalProfile = useIsExternalProfile(user) || false;
@@ -47,3 +48,5 @@ export default function ProfileMenu({ user }: { user: User | null }) {
     </NavigationMenu>
   );
 }
+
+export default memo(ProfileMenu);

@@ -1,6 +1,5 @@
 import Image from "next/image";
 import VideoPlayer from "./VideoPlayer"; // Import the client-side component
-import projectImage from "../../media/project-1.webp";
 
 interface Media {
   type: "image" | "video";

@@ -1,29 +1,29 @@
 "use client";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { checkBookmarkStatus } from "@/services/bookmarks/hasUserBookmarkedTheProject";
-import { toggleBookmarkProject } from "@/services/bookmarks/toggleBookmark";
-import { toast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
+import { useBookmarkOperations } from "@/features/bookmarks/useBookmarkOperations";
 
 interface InteractionButtonsProps {
   projectId: string;
 }
 
-export default function InteractionButtons({ projectId }: InteractionButtonsProps) {
+function InteractionButtons({ projectId }: InteractionButtonsProps) {
   const [isSaved, setIsSaved] = useState(false);
   const { user, isLoading } = useUser();
   const [isSavingBookmark, setIsSavingBookmark] = useState(false);
+
+  const { checkBookmarkStatus, toggleBookmarkProject } = useBookmarkOperations();
+
   useEffect(() => {
     const checkSaveStatus = async () => {
       if (isLoading || !user) return;
       const response = await checkBookmarkStatus(projectId);
       setIsSaved(response);
-    }
+    };
     checkSaveStatus();
-  }, [projectId, user]);
-
+  }, [projectId, user, isLoading, checkBookmarkStatus]);
 
   const handleSave = async () => {
     const isSavedUpdated = !isSaved;
@@ -31,19 +31,12 @@ export default function InteractionButtons({ projectId }: InteractionButtonsProp
       setIsSaved(isSavedUpdated);
       setIsSavingBookmark(true);
       await toggleBookmarkProject(projectId);
-    }
-    catch (error) {
-      toast({
-        title: "Error",
-        description: "An error occurred while saving the project",
-        variant: "destructive"
-      });
+    } catch (error) {
       setIsSaved((prev) => !prev);
-    }
-    finally {
+    } finally {
       setIsSavingBookmark(false);
     }
-  }
+  };
 
   return (
     <div className="flex items-center gap-3">
@@ -55,8 +48,8 @@ export default function InteractionButtons({ projectId }: InteractionButtonsProp
       >
         <Bookmark
           className={`w-5 h-5 ${isSaved
-            ? "fill-primary-foreground text-primary-foregfill-primary-foreground"
-            : "text-primary-foreground"
+              ? "fill-primary-foreground text-primary-foreground"
+              : "text-primary-foreground"
             }`}
         />
       </Button>
@@ -64,3 +57,4 @@ export default function InteractionButtons({ projectId }: InteractionButtonsProp
   );
 }
 
+export default memo(InteractionButtons);

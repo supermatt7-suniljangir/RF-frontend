@@ -1,11 +1,6 @@
 import { Itool } from "./others";
 import { MiniUser } from "./user";
 
-export interface Imedia {
-  type: "image" | "video";
-  url: string;
-}
-
 export interface IStats {
   views: number;
   likes: number;
@@ -70,6 +65,11 @@ export interface ProjectUploadType {
   status: ProjectStatus;
   projectUrl?: string;
   copyright: ICopyright;
+}
+
+export interface Imedia {
+  type: "image" | "video";
+  url: string;
 }
 
 export interface TempMedia extends Imedia {

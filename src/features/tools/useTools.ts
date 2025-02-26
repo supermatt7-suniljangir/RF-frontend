@@ -1,17 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
-import ApiService from "../../api/wrapper/axios-wrapper";
 import { Itool } from "@/types/others";
-import { URL } from "@/api/config/configs";
+import ToolService from "@/services/clientServices/tools/ToolsService";
 
 interface ToolError {
   message: string;
   status?: number;
-}
-
-interface IGetToolResponse {
-  data: Itool[];
-  success: boolean;
 }
 
 const useTools = () => {
@@ -19,31 +13,20 @@ const useTools = () => {
   const [error, setError] = useState<ToolError | null>(null);
   const [tools, setTools] = useState<Itool[]>([]);
   const [success, setSuccess] = useState<boolean>(false);
-  const apiService = ApiService.getInstance();
 
   const getTools = async (cacheSettings?: RequestCache) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const url = `${URL}/tools`;
-      const response = await fetch(url, {
-        method: "GET",
-        cache: cacheSettings || "force-cache",
-      });
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
-      const data: IGetToolResponse = await response.json();
-      setTools(data.data);
+      const toolsData = await ToolService.getTools(cacheSettings);
+      setTools(toolsData);
     } catch (error) {
       let errorMessage = "Failed to fetch tools";
       if (error instanceof Error) {
         errorMessage = error.message;
       }
-      setError({
-        message: errorMessage,
-      });
+      setError({ message: errorMessage });
     } finally {
       setIsLoading(false);
     }
@@ -54,11 +37,7 @@ const useTools = () => {
     setError(null);
 
     try {
-      const payload = { name, icon };
-      const response = await apiService.post("/api/tools", payload);
-      if (response.error || response.status !== 201 || !response.data) {
-        throw new Error(response.error);
-      }
+      const response = await ToolService.createTool(name, icon);
       setSuccess(true);
       // Optionally, refresh tools after creating a new one
       await getTools();
@@ -68,9 +47,7 @@ const useTools = () => {
       if (error instanceof Error) {
         errorMessage = error.message;
       }
-      setError({
-        message: errorMessage,
-      });
+      setError({ message: errorMessage });
     } finally {
       setIsLoading(false);
     }
@@ -80,10 +57,7 @@ const useTools = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await apiService.delete(`/api/tools/${toolId}`);
-      if (response.error || response.status !== 200 || !response.data) {
-        throw new Error(response.error);
-      }
+      const response = await ToolService.deleteTool(toolId);
       setSuccess(true);
       // Optionally, refresh tools after deleting one
       await getTools();
@@ -93,9 +67,7 @@ const useTools = () => {
       if (error instanceof Error) {
         errorMessage = error.message;
       }
-      setError({
-        message: errorMessage,
-      });
+      setError({ message: errorMessage });
     } finally {
       setIsLoading(false);
     }
