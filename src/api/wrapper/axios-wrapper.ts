@@ -1,4 +1,3 @@
-
 import { AxiosInstance, AxiosError } from "axios";
 import { createAxiosInstance } from "../config/axios-config";
 
@@ -6,6 +5,8 @@ export interface ApiResponse<T = any> {
   data: T | null;
   error?: string;
   status: number;
+  success: boolean;
+  networkError?: boolean;
 }
 
 export class ApiService {
@@ -30,17 +31,47 @@ export class ApiService {
     return {
       data: response.data,
       status: response.status,
+      success: true,
     };
   }
 
   private handleError(error: AxiosError): ApiResponse {
-    const errorMessage = (error.response?.data as any)?.message || error.message;
+    // Check if the error is a network error (no response from server)
+    if (
+      error.code === "ECONNABORTED" ||
+      !error.response ||
+      error.message.includes("Network Error")
+    ) {
+      return {
+        data: {
+          data: null,
+          message:
+            "Network error occurred. Please check your internet connection.",
+          success: false, // Using 0 to indicate network error
+        },
+        error:
+          "Network error: Unable to connect to the server. Please check your internet connection.",
+        status: 0, // Using 0 to indicate network error
+        success: false,
+        networkError: true,
+      };
+    }
+
+    // Handle server errors
+    const errorMessage =
+      (error.response?.data as any)?.message || error.message;
     const status = error.response?.status || 500;
 
     return {
-      data: null,
+      data: {
+        data: null,
+        message: errorMessage || "An unexpected error occurred",
+        success: false,
+      },
       error: errorMessage || "An unexpected error occurred",
       status,
+      success: false,
+      networkError: false,
     };
   }
 
