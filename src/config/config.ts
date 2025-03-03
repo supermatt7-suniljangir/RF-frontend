@@ -27,6 +27,10 @@ export type AppConfig = {
     RETRY_LIMIT: number;
     CHUNK_SIZE: number;
   };
+  URLS: {
+    API_URL: string;
+    SOCKET_URL: string;
+  };
 };
 
 export const Config: AppConfig = {
@@ -57,5 +61,9 @@ export const Config: AppConfig = {
   UPLOAD: {
     RETRY_LIMIT: 3,
     CHUNK_SIZE: 10 * 1024 * 1024, // 10MB per chunk
+  },
+  URLS: {
+    API_URL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api",
+    SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5500",
   },
 };

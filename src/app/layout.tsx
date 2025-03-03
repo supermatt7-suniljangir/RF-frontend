@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/contexts/ThemeProvider";
 import Navbar from "@/components/layout/Navbar";
 import QueryClientWrapper from "@/Providers/QueryClientWrapper";
 import GoogleAuthWrapper from "@/Providers/GoogleAuthWrapper";
+import { SocketProvider } from "@/contexts/SocketContext";
 
 export const metadata: Metadata = {
   title: "Valyarions",
@@ -24,8 +25,10 @@ export default function RootLayout({
           <QueryClientWrapper>
             <GoogleAuthWrapper>
               <UserProvider>
-                <Navbar />
+                <SocketProvider>
+                  <Navbar />
                 {children}
+                </SocketProvider>
               </UserProvider>
             </GoogleAuthWrapper>
           </QueryClientWrapper>
