@@ -1,4 +1,5 @@
-import { IStats, MiniProject, ProjectType } from "./project";
+import { MiniProject } from "./project";
+import { MiniUser } from "@/types/user";
 
 export interface IComment {
   _id?: string;
@@ -29,6 +30,7 @@ export interface ILike {
   projectId: string;
   createdAt: Date;
 }
+
 export interface IBookmark {
   _id?: string;
   userId: string;
@@ -43,4 +45,14 @@ export interface IFollow {
   createdAt: Date;
 }
 
+export interface Conversation {
+  user: MiniUser;
+  lastMessageAt: Date;
+}
 
+export interface Message {
+  text: string;
+  sender?: string;
+  recipient?: string;
+  _id?: string;
+}

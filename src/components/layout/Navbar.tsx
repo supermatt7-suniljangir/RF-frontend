@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useState } from "react";
 import {
@@ -21,13 +20,12 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   Search,
-  // Upload,
-  // Bell,
   Menu,
   X,
   LogInIcon,
   LogOutIcon,
   CircleUserRound,
+  Mail,
 } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { ModeToggle } from "./ModeToggle";
@@ -38,6 +36,7 @@ import Image from "next/image";
 const MobileNav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // const { user, logout } = useUser();
+  const { user } = useUser();
 
   return (
     <nav className="w-full border-b border-gray-200">
@@ -48,7 +47,7 @@ const MobileNav = () => {
             <a href="/" className="text-xl font-semibold">
               Logo
             </a>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4">
               <Link href={"/search"}>
                 <Search className="h-5 w-5" />
               </Link>
@@ -65,6 +64,11 @@ const MobileNav = () => {
                   <Menu className="h-5 w-5" />
                 )}
               </Button>
+              {user && (
+                <Link href={`/connect`}>
+                  <Mail />
+                </Link>
+              )}
               <ModeToggle />
             </div>
           </div>
@@ -196,8 +200,22 @@ const DesktopNav = () => {
             </Link>
 
             <Link href={"/profile"} className="inline-block w-6 h-6 relative">
-              {user?.profile?.avatar ? <Image src={user.profile.avatar} className="rounded-full object-cover" fill alt={user.fullName} /> : <CircleUserRound className="h-5 w-5" />}
+              {user?.profile?.avatar ? (
+                <Image
+                  src={user.profile.avatar}
+                  className="rounded-full object-cover"
+                  fill
+                  alt={user.fullName}
+                />
+              ) : (
+                <CircleUserRound className="h-5 w-5" />
+              )}
             </Link>
+            {user && (
+              <Link href={`/connect`}>
+                <Mail />
+              </Link>
+            )}
             <ModeToggle />
 
             {user ? (

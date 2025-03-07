@@ -1,8 +1,9 @@
 "use client";
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { io, Socket } from "socket.io-client";
-import { useUser } from "./UserContext";
-import { Config } from "@/config/config";
+import {createContext, useContext, useEffect, useState, ReactNode} from "react";
+import {io, Socket} from "socket.io-client";
+import {useUser} from "./UserContext";
+import {Config} from "@/config/config";
+import {revalidateTags} from "@/lib/revalidateTags";
 
 /**
  * The WebSocket server URL.
@@ -28,41 +29,56 @@ const SocketContext = createContext<Socket | null>(null);
  * @param {ReactNode} props.children - The child components.
  */
 interface SocketProviderProps {
-  children: ReactNode;
+    children: ReactNode;
 }
 
-export const SocketProvider = ({ children }: SocketProviderProps) => {
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const { user } = useUser(); // Get the user from UserContext
+export const SocketProvider = ({children}: SocketProviderProps) => {
+    const [socket, setSocket] = useState<Socket | null>(null);
+    const {user} = useUser(); // Get the user from UserContext
 
-  useEffect(() => {
-    if (user) {
-      // Initialize the WebSocket connection
-      const newSocket = io(Config.URLS.SOCKET_URL, {
-        withCredentials: true,
-        reconnection: true,
-        reconnectionAttempts: 5,
-        reconnectionDelay: 1000,
-      });
-      // Manually connect to the WebSocket server
-      newSocket.connect();
+    useEffect(() => {
+        if (user) {
+            // Initialize the WebSocket connection
+            const newSocket = io(Config.URLS.SOCKET_URL, {
+                withCredentials: true,
+                reconnection: true,
+                reconnectionAttempts: 5,
+                reconnectionDelay: 1000,
+            });
+            // Manually connect to the WebSocket server
+            newSocket.connect();
 
-      // Emit the "register" event with the user ID
-      newSocket.emit("register", user._id);
+            // Emit the "register" event with the user ID
+            newSocket.emit("register", user._id);
 
-      // Set the socket in state
-      setSocket(newSocket);
+            // Set the socket in state
+            setSocket(newSocket);
 
-      // Cleanup on unmount or when the user changes
-      return () => {
-        newSocket.disconnect();
-      };
-    }
-  }, [user]); // Re-run this effect only when the user changes
+            // Cleanup on unmount or when the user changes
+            return () => {
+                newSocket.disconnect();
+            };
+        }
+    }, [user]); // Re-run this effect only when the user changes
 
-  return (
-    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
-  );
+    useEffect(() => {
+        if (!socket || !user) return;
+
+        // Create a sync wrapper for async function
+        const listener = () => {
+            void revalidateTags(["conversations"]); // Ensures async function runs without affecting event system
+        };
+
+        socket.on("revalidateConversations", listener);
+        return () => {
+            socket.off("revalidateConversations", listener);
+        };
+    }, [socket, user]);
+
+
+    return (
+        <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
+    );
 };
 
 /**
@@ -71,5 +87,5 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
  * A custom hook to access the WebSocket connection from any component.
  */
 export const useSocket = () => {
-  return useContext(SocketContext);
+    return useContext(SocketContext);
 };

@@ -1,12 +1,9 @@
-import Chat from '@/components/connect/Chat'
-import React from 'react'
-
 const Connect = () => {
     return (
-        <div>
-            <Chat />
+        <div className="flex items-center justify-center w-full h-full text-gray-500">
+            Select a chat to start chatting.
         </div>
-    )
-}
+    );
+};
 
-export default Connect
+export default Connect;
