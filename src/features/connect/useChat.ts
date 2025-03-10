@@ -1,4 +1,4 @@
-import {useEffect, useRef} from "react";
+import {useEffect} from "react";
 import {toast} from "@/hooks/use-toast";
 import {ApiResponse} from "@/lib/ApiResponse";
 import ChatService from "@/services/clientServices/connect/ChatService";
@@ -9,7 +9,7 @@ import {useSocket} from "@/contexts/SocketContext";
 
 export const useChat = (userId: string) => {
     const {user: authUser} = useUser();
-    const socket = useSocket();
+    const {socket, ready} = useSocket(); // Destructure the ready flag here
     const {messages, replaceAllMessages, sendMessage, joinRoom} = useChatRoom();
 
     useEffect(() => {
@@ -20,77 +20,45 @@ export const useChat = (userId: string) => {
         const maxRetries = 5;
         let retryTimeout: NodeJS.Timeout;
 
-        const joinIfNeeded = async () => {
-            try {
-                console.log("Checking room status...");
-
-                const isReady = await Promise.race<boolean>([
-                    new Promise<boolean>((resolve) => {
-                        socket.emit("checkRoomStatus", userId, resolve);
-                    }),
-                    new Promise<boolean>((resolve) =>
-                        socket.once("ready", () => resolve(true))
-                    )
-                ]);
-
-                console.log("Room status:", isReady);
-
-                if (isReady && !joined) {
-                    console.log("Joining room...");
-                    joinRoom(userId);
-                    joined = true;
-                    retryCount = 0; // Reset retry count on success
-                } else if (!isReady && !joined) {
-                    // Handle false status with exponential backoff
-                    if (retryCount < maxRetries) {
-// Shorter delays for a more responsive chat experience
-                        const delay = Math.min(500 * Math.pow(1.5, retryCount), 3000); // Starts at 250ms, caps at 3s                        console.log(`Room not ready, retrying in ${delay}ms (retry ${retryCount + 1}/${maxRetries})`);
-
-                        retryCount++;
-                        retryTimeout = setTimeout(joinIfNeeded, delay);
-                    } else {
-                        console.error("Failed to join room after maximum retries");
-                        toast({
-                            variant: "destructive",
-                            title: "Connection Error",
-                            description: "Failed to join the chat room after multiple attempts. Please try again later."
-                        });
-                    }
+        const joinIfNeeded = () => {
+            console.log("Checking room status...");
+            // Now use the ready flag provided by socket context.
+            if (ready && !joined) {
+                console.log("Socket ready. Joining room...");
+                joinRoom(userId);
+                joined = true;
+                retryCount = 0; // Reset retry count on success
+            } else if (!joined) {
+                // Exponential backoff if not ready
+                if (retryCount < maxRetries) {
+                    const delay = Math.min(500 * Math.pow(1.5, retryCount), 3000);
+                    console.log(
+                        `Socket not ready, retrying in ${delay}ms (retry ${retryCount + 1}/${maxRetries})`
+                    );
+                    retryCount++;
+                    retryTimeout = setTimeout(joinIfNeeded, delay);
+                } else {
+                    console.error("Failed to join room after maximum retries");
+                    toast({
+                        variant: "destructive",
+                        title: "Connection Error",
+                        description: "Failed to join the chat room after multiple attempts. Please try again later.",
+                    });
                 }
-            } catch (error) {
-                console.error("Failed to check room status:", error);
-                toast({
-                    variant: "destructive",
-                    title: "Connection Error",
-                    description: error.message || "An unknown error occurred",
-                });
             }
         };
 
         // Initial attempt to join
         joinIfNeeded();
 
-        // Handle error events from socket
-        const handleError = (error) => {
-            console.error("Socket error:", error);
-            toast({
-                variant: "destructive",
-                title: "Connection Error",
-                description: error.message || "An unknown error occurred",
-            });
-        };
 
-        socket.on("error", handleError);
-
-        // Fetch chat history
+        // Fetch chat history (unchanged)
         const fetchChatHistory = async () => {
             try {
                 const response: ApiResponse = await ChatService.getChatHistory({userId});
-
                 if (!(response.success && response.data)) {
                     throw new Error(`Failed to fetch chat history: ${response.message}`);
                 }
-
                 const newMessages: Message[] = response.data.data;
                 replaceAllMessages(newMessages);
             } catch (error) {
@@ -104,19 +72,18 @@ export const useChat = (userId: string) => {
 
         fetchChatHistory();
 
-        // Cleanup function
         return () => {
             if (retryTimeout) {
                 clearTimeout(retryTimeout);
             }
-            socket.emit('leaveConversation');
+            socket.emit("leaveConversation");
             socket.off("error", handleError);
             joined = false;
         };
-    }, [authUser, userId, replaceAllMessages, joinRoom, socket]);
+    }, [authUser, userId, replaceAllMessages, joinRoom, socket, ready]);
 
     return {
         messages,
-        sendMessage: (recipientId = userId, text: string) => sendMessage(recipientId, text)
+        sendMessage: (recipientId = userId, text: string) => sendMessage(recipientId, text),
     };
 };

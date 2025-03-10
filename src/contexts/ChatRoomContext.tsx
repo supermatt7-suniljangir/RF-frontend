@@ -33,7 +33,7 @@ interface ChatRoomProviderProps {
 }
 
 export const ChatRoomProvider = ({children}: ChatRoomProviderProps) => {
-    const socket = useSocket();
+    const {socket} = useSocket();
     const {user} = useUser();
     const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
