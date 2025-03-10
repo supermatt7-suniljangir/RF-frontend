@@ -1,10 +1,11 @@
+
 "use client";
-import {createContext, ReactNode, useContext, useEffect, useRef, useState} from "react";
-import {io, Socket} from "socket.io-client";
-import {useUser} from "./UserContext";
-import {Config} from "@/config/config";
-import {revalidateTags} from "@/lib/revalidateTags";
-import {toast} from "@/hooks/use-toast";
+import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
+import { io, Socket } from "socket.io-client";
+import { useUser } from "./UserContext";
+import { Config } from "@/config/config";
+import { revalidateTags } from "@/lib/revalidateTags";
+import { toast } from "@/hooks/use-toast";
 
 interface SocketContextValue {
     socket: Socket | null;
@@ -17,96 +18,70 @@ interface SocketProviderProps {
     children: ReactNode;
 }
 
-export const SocketProvider = ({children}: SocketProviderProps) => {
+export const SocketProvider = ({ children }: SocketProviderProps) => {
     const [socket, setSocket] = useState<Socket | null>(null);
     const [socketReady, setSocketReady] = useState(false);
-    const {user} = useUser();
+    const { user } = useUser();
     const userIdRef = useRef<string | null>(null);
-
-    // Use a ref to track last ping time
     const lastPingTimeRef = useRef<number | null>(null);
     const initialConnectionMadeRef = useRef(false);
+    const reconnectingRef = useRef(false);
 
-    useEffect(() => {
-        // Create socket instance
+    // Helper to create a new socket connection
+    const connectSocket = () => {
+        if (reconnectingRef.current) return;
+
+        reconnectingRef.current = true;
         const socketInstance = io(Config.URLS.SOCKET_URL, {
             withCredentials: true,
-            reconnection: true,
-            reconnectionAttempts: 5,
-            reconnectionDelay: 3000,
+            reconnection: false, // Disable automatic reconnection, handle it manually
             timeout: 20000,
-            // Force a new connection on page refresh
             forceNew: true,
         });
 
         setSocket(socketInstance);
 
-        // Listen for the "ready" event from the server
         socketInstance.on("ready", () => {
-            console.log("Socket ready received");
             setSocketReady(true);
+            reconnectingRef.current = false;
         });
 
-        // Optionally, clear ready flag on disconnect
         socketInstance.on("disconnect", () => {
-            console.log("Socket disconnected");
             setSocketReady(false);
         });
 
-        // Clean up on unmount
+        socketInstance.on("connect_error", () => {
+            reconnectingRef.current = false;
+        });
+
+        return socketInstance;
+    };
+
+    // Effect 1: Initialize socket once
+    useEffect(() => {
+        const socketInstance = connectSocket();
+
         return () => {
-            console.log("Socket provider cleaning up");
-            socketInstance.disconnect();
+            socketInstance?.disconnect();
             setSocket(null);
             setSocketReady(false);
         };
     }, []);
 
-    // Registration effect
+    // Effect 2: Main socket event handlers
     useEffect(() => {
         if (!socket || !user) return;
 
-        if (userIdRef.current !== user._id) {
-            userIdRef.current = user._id;
+        const registerUser = () => {
+            if (socket?.connected && user._id) {
+                socket.emit("register", user._id);
+                userIdRef.current = user._id;
+            }
+        };
 
-            const registerUser = () => {
-                if (socket.connected) {
-                    socket.emit("register", user._id);
-                } else {
-                    console.log("Socket not connected, waiting...");
-                }
-            };
-
-            // Register if already connected
+        const handleConnect = () => {
             registerUser();
 
-            // Listen for connect event
-            const handleConnect = () => {
-                console.log("Socket connected event fired");
-                registerUser();
-            };
-
-            socket.on("connect", handleConnect);
-
-            return () => {
-                socket.off("connect", handleConnect);
-            };
-        }
-    }, [socket, user]);
-
-    // (Remaining effects unchanged)
-    useEffect(() => {
-        if (!user || !socket) return;
-        // Ping monitoring
-        socket.on("ping", () => {
-            console.log("ping called");
-            lastPingTimeRef.current = Date.now();
-        });
-
-        socket.on("connect", () => {
-            if (user?._id) {
-                socket.emit("register", user._id);
-            }
             if (initialConnectionMadeRef.current) {
                 toast({
                     title: "Connection Restored",
@@ -116,74 +91,80 @@ export const SocketProvider = ({children}: SocketProviderProps) => {
             } else {
                 initialConnectionMadeRef.current = true;
             }
-        });
+        };
 
-        socket.on("reconnect", () => {
-            if (user?._id) {
-                socket.emit("register", user._id);
-            }
-        });
+        const handleReconnect = () => {
+            registerUser();
+        };
 
-        socket.on("connect_error", () => {
+        const handleConnectError = () => {
             if (initialConnectionMadeRef.current) {
                 toast({
                     variant: "destructive",
                     title: "Connection Error",
                     duration: 3000,
-                    description: "Unable to connect to messaging server. Refreshing page...",
+                    description: "Unable to connect to messaging server. Retrying...",
                 });
                 setTimeout(() => {
-                    window.location.reload();
+                    socket.connect(); // Attempt manual reconnection
                 }, 3000);
             }
-        });
-
-        setSocket(socket);
-
-        return () => {
-            socket.disconnect();
-            setSocket(null);
         };
-    }, [user, socket]);
 
-    // Data revalidation effect
-    useEffect(() => {
-        if (!socket || !user) return;
         const handleRevalidation = () => {
             void revalidateTags(["conversations"]);
         };
 
+        const handlePing = () => {
+            lastPingTimeRef.current = Date.now();
+        };
+
+        // Register user immediately if possible
+        registerUser();
+
+        // Set up listeners
+        socket.on("connect", handleConnect);
+        socket.on("reconnect", handleReconnect);
+        socket.on("connect_error", handleConnectError);
         socket.on("revalidateConversations", handleRevalidation);
+        socket.on("ping", handlePing);
 
         return () => {
+            socket.off("connect", handleConnect);
+            socket.off("reconnect", handleReconnect);
+            socket.off("connect_error", handleConnectError);
             socket.off("revalidateConversations", handleRevalidation);
+            socket.off("ping", handlePing);
         };
     }, [socket, user]);
 
-    // Ping monitoring effect (refresh page if no ping received for 35 seconds)
+    // Effect 3: Health monitoring + offline handling
     useEffect(() => {
         if (!socket) return;
-        const intervalId = setInterval(() => {
+
+        const pingMonitoringInterval = setInterval(() => {
             const now = Date.now();
             const lastPing = lastPingTimeRef.current;
-            if (lastPing && now - lastPing > 35000 && socket.connected && initialConnectionMadeRef.current) {
+            if (
+                lastPing &&
+                now - lastPing > 45000 &&
+                socket.connected &&
+                initialConnectionMadeRef.current
+            ) {
                 toast({
                     variant: "destructive",
                     title: "Connection Lost",
                     duration: 3000,
-                    description: "Connection Timed out. Refreshing page...",
+                    description: "Connection timed out. Retrying...",
                 });
+
+                socket.disconnect();
                 setTimeout(() => {
-                    window.location.reload();
+                    socket.connect(); // Attempt manual reconnection
                 }, 3000);
             }
         }, 10000);
-        return () => clearInterval(intervalId);
-    }, [socket]);
 
-    // Online/offline status effect
-    useEffect(() => {
-        if (!socket) return;
         const handleOnline = () => {
             if (initialConnectionMadeRef.current) {
                 toast({
@@ -192,7 +173,7 @@ export const SocketProvider = ({children}: SocketProviderProps) => {
                     description: "Reconnecting to server...",
                 });
                 setTimeout(() => {
-                    window.location.reload();
+                    if (!socket.connected) socket.connect();
                 }, 3000);
             }
         };
@@ -210,13 +191,14 @@ export const SocketProvider = ({children}: SocketProviderProps) => {
         window.addEventListener("offline", handleOffline);
 
         return () => {
+            clearInterval(pingMonitoringInterval);
             window.removeEventListener("online", handleOnline);
             window.removeEventListener("offline", handleOffline);
         };
     }, [socket]);
 
     return (
-        <SocketContext.Provider value={{socket, ready: socketReady}}>
+        <SocketContext.Provider value={{ socket, ready: socketReady }}>
             {children}
         </SocketContext.Provider>
     );

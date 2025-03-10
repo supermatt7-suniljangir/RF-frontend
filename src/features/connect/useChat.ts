@@ -20,11 +20,9 @@ export const useChat = (userId: string) => {
         const maxRetries = 5;
         let retryTimeout: NodeJS.Timeout;
 
-        const joinIfNeeded = () => {
-            console.log("Checking room status...");
+        const joinConversation = () => {
             // Now use the ready flag provided by socket context.
             if (ready && !joined) {
-                console.log("Socket ready. Joining room...");
                 joinRoom(userId);
                 joined = true;
                 retryCount = 0; // Reset retry count on success
@@ -32,11 +30,9 @@ export const useChat = (userId: string) => {
                 // Exponential backoff if not ready
                 if (retryCount < maxRetries) {
                     const delay = Math.min(500 * Math.pow(1.5, retryCount), 3000);
-                    console.log(
-                        `Socket not ready, retrying in ${delay}ms (retry ${retryCount + 1}/${maxRetries})`
-                    );
+
                     retryCount++;
-                    retryTimeout = setTimeout(joinIfNeeded, delay);
+                    retryTimeout = setTimeout(joinConversation, delay);
                 } else {
                     console.error("Failed to join room after maximum retries");
                     toast({
@@ -49,7 +45,7 @@ export const useChat = (userId: string) => {
         };
 
         // Initial attempt to join
-        joinIfNeeded();
+        joinConversation();
 
 
         // Fetch chat history (unchanged)
@@ -77,7 +73,6 @@ export const useChat = (userId: string) => {
                 clearTimeout(retryTimeout);
             }
             socket.emit("leaveConversation");
-            socket.off("error", handleError);
             joined = false;
         };
     }, [authUser, userId, replaceAllMessages, joinRoom, socket, ready]);
