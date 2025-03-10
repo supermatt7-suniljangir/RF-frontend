@@ -3,7 +3,7 @@ import React, { memo } from "react";
 import ChatDisplay from "./ChatDisplay";
 import ChatInput from "./ChatInput";
 import { useUser } from "@/contexts/UserContext";
-import { useChat } from "@/services/clientServices/connect/useChat";
+import { useChat } from "@/features/connect/useChat";
 
 type ChatContainerProps = {
   userId: string;
@@ -18,7 +18,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ userId }) => {
   return (
     <div className="chat-container">
       <ChatDisplay messages={messages} />
-      <ChatInput sendMessage={(text: string): void => sendMessage(text)} />
+      <ChatInput sendMessage={(text: string): void => sendMessage(userId,text)} />
     </div>
   );
 };
