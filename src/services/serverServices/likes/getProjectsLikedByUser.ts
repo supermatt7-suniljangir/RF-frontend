@@ -1,6 +1,6 @@
 "use server";
 import { URL } from "@/api/config/configs";
-import { ApiResponse } from "@/lib/ApiResponse";
+import { ApiResponse } from "@/types/ApiResponse";
 import { cookies } from "next/headers";
 
 export const getProjectsLikedByUser = async ({

@@ -2,6 +2,7 @@
 import CreateProjectCard from "@/components/profile/CreateProjectCard";
 import SearchInput from "@/components/search/SearchInput";
 import SearchResults from "@/components/search/SearchResults";
+import React from "react";
 
 const HomePage: React.FC = async () => {
 

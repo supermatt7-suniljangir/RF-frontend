@@ -1,65 +1,67 @@
 "use client";
-import { useUser } from "@/contexts/UserContext";
-import React, { memo, useState } from "react";
-import { cn } from "@/lib/utils";
-import MiniUserInfo from "../common/MiniUserInfo";
-import { Button } from "../ui/button";
-import { useForm } from "react-hook-form";
-import { useCommentsOperations } from "@/features/comments/useCommentsOperations";
+import React, {memo, useState} from "react";
+import {useUser} from "@/contexts/UserContext";
+import {IComment} from "@/types/others";
+import {useCommentsOperations} from "@/features/comments/useCommentsOperations";
+import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
 
 interface PostCommentProps {
     projectId: string;
+    setComments: (update: (prev: IComment[]) => IComment[]) => void;
 }
 
-const PostComment: React.FC<PostCommentProps> = ({ projectId }) => {
-    const [isPosting, setIsPosting] = useState(false);
-    const { user } = useUser();
-    const { postComment } = useCommentsOperations();
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        reset,
-    } = useForm<{ comment: string }>();
+const PostComment: React.FC<PostCommentProps> = ({projectId, setComments}) => {
+    const [text, setText] = useState("");
+    const {user} = useUser();
+    const {postComment} = useCommentsOperations()
+    const handlePostComment = async () => {
+        if (!text.trim() || !user) return;
 
-    const onSubmit = async (data: { comment: string }) => {
-        setIsPosting(true);
-        const { comment } = data;
-        await postComment({ projectId, content: comment });
-        reset();
-        setIsPosting(false);
+        try {
+            // Make API call
+            const newComment = await postComment({projectId, content: text});
+
+            // ✅ Cast response to IComment type manually
+            const comment: IComment = {
+                _id: newComment._id,
+                content: text,
+                projectId,
+                author: {
+                    userId: user._id, // Assuming user object has _id field
+                    fullName: user.fullName,
+                    avatar: user?.profile?.avatar || undefined,
+                },
+                createdAt: new Date(newComment.createdAt),
+                updatedAt: new Date(newComment.updatedAt),
+            };
+
+            // ✅ Ensure type matches `setComments`
+            setComments((prev) => [comment, ...prev]);
+            setText(""); // Clear input
+        } catch (err) {
+            console.error("Failed to post comment", err);
+        }
     };
 
-    return user ? (
-        <div className="flex space-x-4 items-start">
-            {user && (
-                <MiniUserInfo
-                    id={user._id}
-                    fullName={user.fullName.split(" ")[0]}
-                    avatar={user.profile?.avatar || null}
-                    styles="w-auto pr-4"
-                />
-            )}
-            <div className="w-full">
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
-                    <textarea
-                        {...register("comment", { required: "Comment cannot be empty." })}
-                        className={cn("border-2 resize-none p-2 w-full")}
-                        placeholder="Show appreciation through kind words"
-                        rows={5}
-                    />
-                    {errors.comment && (
-                        <div className="text-red-500 text-sm">{errors.comment.message}</div>
-                    )}
-                    <Button type="submit" className="ml-auto relative block" disabled={isPosting}>
-                        Submit
-                    </Button>
-                </form>
-            </div>
+    return (
+        <div className="flex items-center gap-2 mt-2">
+            <Textarea
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="Add a comment..."
+                className="w-full h-24 resize-none bg-background text-foreground border border-input px-4 py-2 rounded-md focus:border-none focus:outline-none "
+            />
+            <Button
+                onClick={handlePostComment}
+                className="h-10 px-6 bg-primary text-white rounded-md hover:bg-primary/90"
+            >
+                Post
+            </Button>
         </div>
-    ) : (
-        <div className="text-center">Please login to post a comment</div>
     );
-};
+
+}
+
 
 export default memo(PostComment);

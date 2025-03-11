@@ -19,7 +19,6 @@ interface ChatRoomContextType {
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
     joinRoom: (recipientId: string) => void;
     sendMessage: (recipientId: string, text: string) => void;
-    leaveRoom: (recipientId: string) => void;
     // Exposed method to update messagesMap directly
     replaceAllMessages: (newMessages: Message[]) => void;
 }
@@ -77,13 +76,6 @@ export const ChatRoomProvider = ({children}: ChatRoomProviderProps) => {
         };
     }, [socket, user]);
 
-    // Helper method to rebuild messages array from Map
-    // const rebuildMessagesFromMap = useCallback(() => {
-    //     const messagesArray = Array.from(messagesMapRef.current.values());
-    //     // You could sort by timestamp here if needed
-    //     // messagesArray.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-    //     setMessages(messagesArray);
-    // }, []);
 
     // Method to replace all messages and reset the Map
     const replaceAllMessages = useCallback((newMessages: Message[]) => {
@@ -103,10 +95,9 @@ export const ChatRoomProvider = ({children}: ChatRoomProviderProps) => {
     useEffect(() => {
         if (!socket) return;
         const handleReceiveMessage = (data: Message) => {
-            console.log('message was received');
             if (data.conversationId === currentConversationId) {
-                console.log("Received message:", data);
-
+                console.log('data', data)
+                console.log('sender should is', user._id)
                 // Check if message already exists in our Map
                 if (!messagesMapRef.current.has(data._id)) {
                     // Add new message to Map
@@ -128,21 +119,12 @@ export const ChatRoomProvider = ({children}: ChatRoomProviderProps) => {
      */
     const sendMessage = useCallback(
         (recipientId: string, text: string) => {
-            console.log('conversation id', currentConversationId);
             if (!socket || !user?._id) return;
             socket.emit("sendMessage", {to: recipientId, text});
-            console.log('message was sent');
         },
         [socket, user?._id, currentConversationId]
     );
 
-    const leaveRoom = useCallback(
-        (recipientId: string) => {
-            socket.emit("leaveConversation", recipientId);
-            console.log('conversation was left');
-        },
-        [socket]
-    );
 
     return (
         <ChatRoomContext.Provider
@@ -150,7 +132,6 @@ export const ChatRoomProvider = ({children}: ChatRoomProviderProps) => {
                 currentConversationId,
                 messages,
                 joinRoom,
-                leaveRoom,
                 sendMessage,
                 setMessages,
                 replaceAllMessages

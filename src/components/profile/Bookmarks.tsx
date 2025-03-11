@@ -1,6 +1,6 @@
 import ProjectCard from "../common/ProjectCard";
 import { getUserBookmarks } from "@/services/serverServices/bookmarks/getUserBookmarks";
-import { ApiResponse } from "@/lib/ApiResponse";
+import { ApiResponse } from "@/types/ApiResponse";
 import { IBookmark } from "@/types/others";
 
 const Bookmarks = async () => {

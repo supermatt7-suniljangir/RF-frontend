@@ -1,6 +1,6 @@
 "use server";
 import { URL } from "@/api/config/configs";
-import { ApiResponse } from "@/lib/ApiResponse";
+import { ApiResponse } from "@/types/ApiResponse";
 import { IComment } from "@/types/others";
 
 export const fetchComments = async (

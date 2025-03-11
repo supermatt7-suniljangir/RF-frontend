@@ -1,6 +1,6 @@
 import ApiService from "@/api/wrapper/axios-wrapper";
 import { toast } from "@/hooks/use-toast";
-import { ApiResponse } from "@/lib/ApiResponse";
+import { ApiResponse } from "@/types/ApiResponse";
 import axios from "axios";
 
 export const logout = async (): Promise<void> => {

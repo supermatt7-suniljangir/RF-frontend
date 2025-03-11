@@ -26,7 +26,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ userId }) => {
   }
 
   return (
-    <div className="px-8 py-4 bg-secondary my-4 flex items-center justify-between border-b">
+    <div className="px-8 py-4 bg-secondary text-secondary-foreground my-4 flex items-center justify-between border-b sticky top-0 z-10">
       <Button
         onClick={() => router.back()}
         className="p-4 flex h-12 w-12 rounded-full items-center lg:hidden"

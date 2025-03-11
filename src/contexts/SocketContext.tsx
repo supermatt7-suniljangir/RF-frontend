@@ -1,11 +1,10 @@
-
 "use client";
-import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
-import { io, Socket } from "socket.io-client";
-import { useUser } from "./UserContext";
-import { Config } from "@/config/config";
-import { revalidateTags } from "@/lib/revalidateTags";
-import { toast } from "@/hooks/use-toast";
+import {createContext, ReactNode, useContext, useEffect, useRef, useState} from "react";
+import {io, Socket} from "socket.io-client";
+import {useUser} from "./UserContext";
+import {Config} from "@/config/config";
+import {revalidateTags} from "@/lib/revalidateTags";
+import {toast} from "@/hooks/use-toast";
 
 interface SocketContextValue {
     socket: Socket | null;
@@ -18,10 +17,10 @@ interface SocketProviderProps {
     children: ReactNode;
 }
 
-export const SocketProvider = ({ children }: SocketProviderProps) => {
+export const SocketProvider = ({children}: SocketProviderProps) => {
     const [socket, setSocket] = useState<Socket | null>(null);
     const [socketReady, setSocketReady] = useState(false);
-    const { user } = useUser();
+    const {user} = useUser();
     const userIdRef = useRef<string | null>(null);
     const lastPingTimeRef = useRef<number | null>(null);
     const initialConnectionMadeRef = useRef(false);
@@ -112,7 +111,8 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
         };
 
         const handleRevalidation = () => {
-            void revalidateTags(["conversations"]);
+            console.log('revalidated the conversations')
+            revalidateTags(["conversations"]);
         };
 
         const handlePing = () => {
@@ -198,7 +198,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
     }, [socket]);
 
     return (
-        <SocketContext.Provider value={{ socket, ready: socketReady }}>
+        <SocketContext.Provider value={{socket, ready: socketReady}}>
             {children}
         </SocketContext.Provider>
     );

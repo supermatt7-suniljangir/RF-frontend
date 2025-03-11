@@ -1,21 +1,21 @@
 "use client";
-import React, { FC } from "react";
-import { ProjectType } from "@/types/project";
-import { useUser } from "@/contexts/UserContext";
+import React, {FC} from "react";
+import {useUser} from "@/contexts/UserContext";
 import Spinner from "@/app/loading";
 import EditorContainer from "./EditorContainer";
-import { ProjectProvider } from "@/contexts/ProjectContext";
-import { MediaUploadProvider } from "@/contexts/MediaContext";
-import { UploadProjectProvider } from "@/contexts/UploadProjectContext";
+
+import ProjectEditorProvider from "@/Providers/ProjectEditorContextWrapper";
+import {ProjectType} from "@/types/project";
 
 interface ProjectEditorProps {
-    initialData: ProjectType | null;
+    initialData?: Partial<ProjectType> | null;
+
 }
 
-const ProjectEditor: FC<ProjectEditorProps> = ({ initialData }) => {
-    const { user, isLoading } = useUser();
+const ProjectEditor: FC<ProjectEditorProps> = ({initialData}) => {
+    const {user, isLoading} = useUser();
 
-    if (isLoading) return <Spinner />;
+    if (isLoading) return <Spinner/>;
     if (!user || (initialData && initialData.creator._id !== user._id))
         return (
             <div>
@@ -26,16 +26,9 @@ const ProjectEditor: FC<ProjectEditorProps> = ({ initialData }) => {
         );
 
     return (
-        <ProjectProvider initialData={initialData}>
-            <MediaUploadProvider
-                initialMediaData={initialData?.media || []}
-                initialThumbnailData={initialData?.thumbnail || ""}
-            >
-                <UploadProjectProvider projectID={initialData?._id}>
-                    <EditorContainer />
-                </UploadProjectProvider>
-            </MediaUploadProvider>
-        </ProjectProvider>
+        <ProjectEditorProvider initialData={initialData}>
+            <EditorContainer/>
+        </ProjectEditorProvider>
     );
 };
 

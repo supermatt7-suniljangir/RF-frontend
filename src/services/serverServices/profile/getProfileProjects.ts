@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { MiniProject } from "@/types/project";
 import { URL } from "@/api/config/configs";
-import { ApiResponse } from "@/lib/ApiResponse";
+import { ApiResponse } from "@/types/ApiResponse";
 
 export const getProfileProjectsAPI = async (
   userId?: string

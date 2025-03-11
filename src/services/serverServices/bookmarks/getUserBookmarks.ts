@@ -1,7 +1,7 @@
 "use server";
 
 import { URL } from "@/api/config/configs";
-import { ApiResponse } from "@/lib/ApiResponse";
+import { ApiResponse } from "@/types/ApiResponse";
 import { IBookmark } from "@/types/others";
 import { cookies } from "next/headers";
 
@@ -19,7 +19,7 @@ export async function getUserBookmarks(): Promise<ApiResponse<IBookmark[]>> {
       method: "GET",
       credentials: "include",
       next: {
-        tags: ["bookmarks"],
+        tags: ['bookmarks-user'],
         revalidate: 60 * 15,
       },
       headers: {

@@ -17,7 +17,7 @@ const SearchResults = () => {
     // const pathname = usePathname();
     // const isSearchPage = pathname === "/search";
     const searchParams = useSearchParams();
-    const { searchUsers, searchProjects, isLoading, error } = useSearch();
+    const { searchUsers, searchProjects, loading:isLoading, error } = useSearch();
     const query = searchParams.get("query");
     const tag = searchParams.get("tag");
     const type = searchParams.get("type") as "project" | "user";

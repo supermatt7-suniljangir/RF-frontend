@@ -59,7 +59,7 @@ export function useAuth() {
           }`,
           duration: 5000,
         });
-      } catch (error: any) {
+      } catch (error) {
         toast({
           title: isLogin ? "Login Error" : "Registration Error",
           description:

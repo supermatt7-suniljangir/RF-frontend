@@ -1,10 +1,10 @@
 "use client";
-import React, { useEffect, useState, useCallback, memo } from "react";
-import { Heart } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { useUser } from "@/contexts/UserContext";
-import { useLikeOperations } from "@/features/like/useLIkeOperations";
+import React, {useEffect, useState, memo} from "react";
+import {Heart} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {cn} from "@/lib/utils";
+import {useUser} from "@/contexts/UserContext";
+import {useLikeOperations} from "@/features/like/useLIkeOperations";
 
 interface LikeButtonProps {
     className?: string;
@@ -14,59 +14,66 @@ interface LikeButtonProps {
 }
 
 const LikeButton: React.FC<LikeButtonProps> = ({
-    size = "small",
-    projectId,
-    className,
-    initialLikes,
-}) => {
-    const { user, isLoading } = useUser();
-    const { checkLikeStatus, toggleLikeProject } = useLikeOperations();
+                                                   size = "small",
+                                                   projectId,
+                                                   className,
+                                                   initialLikes,
+                                               }) => {
+    const {user, isLoading} = useUser();
+    const {checkLikeStatus, toggleLikeProject} = useLikeOperations();
     const [isLiked, setIsLiked] = useState<boolean>(false);
     const [likes, setLikes] = useState<number>(initialLikes);
     const [updating, setUpdating] = useState<boolean>(false);
+    const [hasCheckedInitialStatus, setHasCheckedInitialStatus] = useState<boolean>(false);
 
-    // Separate effect for initial like status check
+    // Separate effect for initial like status check that only runs once
     useEffect(() => {
-        let isMounted = true; // Flag to track component mount status
-        if (!user) return;
+        let isMounted = true;
+
+        if (!user || hasCheckedInitialStatus) return;
 
         const checkLikeStatusEffect = async () => {
-            const response = await checkLikeStatus(projectId);
-            if (isMounted) {
-                setIsLiked(response);
+            console.log('check like status')
+            try {
+                const response = await checkLikeStatus(projectId);
+                if (isMounted) {
+                    setIsLiked(response);
+                    setHasCheckedInitialStatus(true);
+                }
+            } catch (error) {
+                console.error("Error checking like status:", error);
             }
         };
 
         checkLikeStatusEffect();
 
         return () => {
-            isMounted = false; // Cleanup when the component unmounts
+            isMounted = false;
         };
     }, [user, projectId]);
 
-
     const onClickHandler = async () => {
         if (updating || !user) return;
-
+        const initialIsLiked = isLiked;
+        const initialLikes = likes;
         setUpdating(true);
-        const previousLiked = isLiked;
-        const previousLikes = likes;
-
         // Optimistic update
-        setIsLiked(!previousLiked);
+        setIsLiked(prevIsLiked => !prevIsLiked);
+        setLikes(prevLikes => isLiked ? Math.max(0, prevLikes - 1) : prevLikes + 1);
 
         try {
-            const liked = await toggleLikeProject(projectId);
-            setLikes((prevLikes) => (liked ? prevLikes + 1 : Math.max(0, prevLikes - 1)));
+            // Get the actual server state after toggle
+            await toggleLikeProject(projectId);
+            // Update to correct server value if different from our optimistic update
         } catch (err) {
-            // Revert on error
-            setIsLiked(previousLiked);
-            setLikes(previousLikes);
+            // On error, revert our optimistic update by checking the server state
+            setIsLiked(initialIsLiked);
+            setLikes(initialLikes);
+
         } finally {
             setUpdating(false);
         }
-    }
-
+    };
 
     return (
         <div className="flex flex-col items-center space-y-2">
@@ -95,4 +102,11 @@ const LikeButton: React.FC<LikeButtonProps> = ({
     );
 };
 
-export default memo(LikeButton);
+export default memo(LikeButton, (prevProps, nextProps) => {
+    // Custom comparison for memo to prevent unnecessary re-renders
+    return (
+        prevProps.projectId === nextProps.projectId &&
+        prevProps.initialLikes === nextProps.initialLikes &&
+        prevProps.size === nextProps.size
+    );
+});

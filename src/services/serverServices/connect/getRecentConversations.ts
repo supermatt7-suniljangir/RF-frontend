@@ -1,6 +1,6 @@
 "use server";
 import {URL} from "@/api/config/configs";
-import {ApiResponse} from "@/lib/ApiResponse";
+import {ApiResponse} from "@/types/ApiResponse";
 import {cookies} from "next/headers";
 
 //  this function is used to get the recent conversations(the list of people you have interacted with)

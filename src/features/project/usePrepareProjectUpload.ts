@@ -4,7 +4,7 @@ import { ProjectUploadType, TempMedia, Thumbnail } from "@/types/project";
 import { useProjectFilesUploader } from "@/features/cloudUpload/useProjectFilesUploader";
 import { useProjectUpload } from "@/features/project/useProjectUpload";
 import { useRouter } from "next/navigation";
-import { ApiResponse } from "@/lib/ApiResponse";
+import { ApiResponse } from "@/types/ApiResponse";
 import { ProjectMetadata } from "@/types/contexts";
 import { useProjectContext } from "@/contexts/ProjectContext";
 import { useMediaUpload } from "@/contexts/MediaContext";

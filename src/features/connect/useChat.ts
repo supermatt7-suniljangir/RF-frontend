@@ -1,6 +1,6 @@
 import {useEffect} from "react";
 import {toast} from "@/hooks/use-toast";
-import {ApiResponse} from "@/lib/ApiResponse";
+import {ApiResponse} from "@/types/ApiResponse";
 import ChatService from "@/services/clientServices/connect/ChatService";
 import {Message} from "@/types/others";
 import {useUser} from "@/contexts/UserContext";
@@ -13,7 +13,7 @@ export const useChat = (userId: string) => {
     const {messages, replaceAllMessages, sendMessage, joinRoom} = useChatRoom();
 
     useEffect(() => {
-        if (!authUser || !userId || !socket) return;
+        if (!authUser || !userId || !socket || !ready) return;
 
         let joined = false;
         let retryCount = 0;
@@ -29,8 +29,7 @@ export const useChat = (userId: string) => {
             } else if (!joined) {
                 // Exponential backoff if not ready
                 if (retryCount < maxRetries) {
-                    const delay = Math.min(500 * Math.pow(1.5, retryCount), 3000);
-
+                    const delay = Math.min(1000 * Math.pow(1.5, retryCount), 5000);
                     retryCount++;
                     retryTimeout = setTimeout(joinConversation, delay);
                 } else {

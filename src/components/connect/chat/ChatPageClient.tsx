@@ -12,7 +12,7 @@ const ChatClient: React.FC<ChatClientProps> = ({ userId }) => {
   if (!userId) return null;
 
   return (
-    <div className="h-full w-full p-4">
+    <div className="h-screen relative w-full">
       <ChatHeader userId={userId} />
       <ChatContainer userId={userId} />
     </div>

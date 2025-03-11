@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { ApiResponse } from "@/lib/ApiResponse";
+import { ApiResponse } from "@/types/ApiResponse";
 import { User } from "@/types/user";
 import UserProfileService from "@/services/clientServices/profile/ProfileService";
 import { toast } from "@/hooks/use-toast";

@@ -1,7 +1,7 @@
 "use client";
 
 import ApiService from "@/api/wrapper/axios-wrapper";
-import { ApiResponse } from "@/lib/ApiResponse";
+import { ApiResponse } from "@/types/ApiResponse";
 import { revalidateRoute } from "@/lib/revalidatePath";
 import { revalidateTags } from "@/lib/revalidateTags";
 import { ProjectUploadType } from "@/types/project";

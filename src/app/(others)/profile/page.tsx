@@ -5,7 +5,7 @@ import ProfileData from "@/components/profile/ProfileData";
 import { Suspense } from "react";
 import Spinner from "@/app/loading";
 import { getProfileProjectsAPI } from "@/services/serverServices/profile/getProfileProjects";
-import { ApiResponse } from "@/lib/ApiResponse";
+import { ApiResponse } from "@/types/ApiResponse";
 
 interface ProfileProps {
   searchParams: Promise<{ display?: string }>;

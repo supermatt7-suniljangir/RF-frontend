@@ -1,7 +1,7 @@
 "use client";
 
 import ApiService from "@/api/wrapper/axios-wrapper";
-import { ApiResponse } from "@/lib/ApiResponse";
+import { ApiResponse } from "@/types/ApiResponse";
 import { UploadFileResponse } from "@/types/upload";
 
 class FilesUploadService {

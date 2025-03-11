@@ -2,7 +2,7 @@
 
 import { User } from "@/types/user";
 import { URL } from "@/api/config/configs";
-import { ApiResponse } from "@/lib/ApiResponse";
+import { ApiResponse } from "@/types/ApiResponse";
 
 /**
  * Fetches a user profile by ID with consistent ApiResponse structure.

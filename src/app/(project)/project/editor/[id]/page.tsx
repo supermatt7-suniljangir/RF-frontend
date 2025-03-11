@@ -1,6 +1,6 @@
 import Spinner from '@/app/loading';
 import ProjectEditor from '@/components/projectEditor/ProjectEditor';
-import { ApiResponse } from '@/lib/ApiResponse';
+import { ApiResponse } from '@/types/ApiResponse';
 import { getProjectById } from '@/services/serverServices/project/getProjectById';
 import { ProjectType } from '@/types/project';
 import React, { Suspense } from 'react';

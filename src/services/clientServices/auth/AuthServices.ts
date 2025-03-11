@@ -1,7 +1,7 @@
 // services/auth/loginService.ts
 "use client";
 import ApiService from "@/api/wrapper/axios-wrapper";
-import { ApiResponse } from "@/lib/ApiResponse";
+import { ApiResponse } from "@/types/ApiResponse";
 import { LoginPayload, RegisterPayload } from "@/types/auth";
 
 class AuthService {
@@ -21,7 +21,6 @@ class AuthService {
     const response = await this.api.post<ApiResponse>("/users/auth", {
       googleToken,
     });
-    console.log(response);
     if (response.status !== 200 || !response.data.success) {
       throw new Error(response.data.message || "Google authentication failed");
     }

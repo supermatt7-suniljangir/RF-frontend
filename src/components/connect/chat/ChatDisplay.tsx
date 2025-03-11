@@ -17,7 +17,7 @@ const ChatDisplay: React.FC<ChatDisplayProps> = ({ messages }) => {
   }, [messages]);
 
   return (
-    <div className="messages-container space-y-2 p-4 overflow-y-auto flex flex-col h-[75vh]">
+    <div className="messages-container space-y-2 p-4 overflow-y-auto flex flex-col h-[calc(75vh - 4rem)]">
       {messages.length === 0 ? (
         <p className="text-center text-muted-foreground">
           No messages yet. Start the conversation!
