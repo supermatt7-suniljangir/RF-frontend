@@ -1,3 +1,4 @@
+"use server";
 import {Suspense} from "react";
 import ConversationListWrapper from "@/components/connect/conversations/ConversationListWrapper";
 import {getRecentConversations} from "@/services/serverServices/connect/getRecentConversations";
