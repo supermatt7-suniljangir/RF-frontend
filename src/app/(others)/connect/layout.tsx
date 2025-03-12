@@ -1,4 +1,4 @@
-"use server";
+export const dynamic = 'force-dynamic';
 import {Suspense} from "react";
 import ConversationListWrapper from "@/components/connect/conversations/ConversationListWrapper";
 import {getRecentConversations} from "@/services/serverServices/connect/getRecentConversations";
@@ -37,3 +37,4 @@ export default async function ConnectLayout({
         </ChatRoomProvider>
     );
 }
+
