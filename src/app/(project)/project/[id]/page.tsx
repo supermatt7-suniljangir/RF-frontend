@@ -54,7 +54,6 @@ const Project = async ({params}: ProjectPageProps) => {
     const {id} = await params;
 
     const {success, data, message} = await getProjectById({id});
-    console.log('refetched the data');
     if (!success || !data) {
         return (
             <div className="text-center w-full my-8 text-lg font-medium text-red-500">

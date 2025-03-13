@@ -92,6 +92,13 @@ export const SocketProvider = ({children}: SocketProviderProps) => {
             }
         };
 
+        const handleErrors = (error: { message: string, code?: string }) => {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: error.message || "Unknown error occurred.",
+            })
+        }
         const handleReconnect = () => {
             registerUser();
         };
@@ -128,6 +135,7 @@ export const SocketProvider = ({children}: SocketProviderProps) => {
         socket.on("connect_error", handleConnectError);
         socket.on("revalidateConversations", handleRevalidation);
         socket.on("ping", handlePing);
+        socket.on("error", handleErrors);
 
         return () => {
             socket.off("connect", handleConnect);
@@ -135,6 +143,7 @@ export const SocketProvider = ({children}: SocketProviderProps) => {
             socket.off("connect_error", handleConnectError);
             socket.off("revalidateConversations", handleRevalidation);
             socket.off("ping", handlePing);
+            socket.off("error", handleErrors);
         };
     }, [socket, user]);
 

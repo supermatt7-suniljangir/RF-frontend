@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
-import imageCompression from "browser-image-compression";
 import { getFileUrl } from "@/lib/getFileUrl";
 import { useUpdateUserProfile } from "@/features/profile/useUpdateProfile";
 import { User } from "@/types/user";

@@ -1,16 +1,16 @@
 "use client";
-import React, { useRef } from "react";
-import { useUser } from "@/contexts/UserContext";
-import { useMediaUpload } from "@/contexts/MediaContext";
+import React, {useRef} from "react";
+import {useUser} from "@/contexts/UserContext";
+import {useMediaUpload} from "@/contexts/MediaContext";
 import ProjectCard from "../../common/ProjectCard";
-import { Button } from "../../ui/button";
-import { toast } from "@/hooks/use-toast";
-import { useProjectContext } from "@/contexts/ProjectContext";
+import {Button} from "../../ui/button";
+import {toast} from "@/hooks/use-toast";
+import {useProjectContext} from "@/contexts/ProjectContext";
 
 const ProjectThumbnail: React.FC = () => {
-    const { initialThumbnail, newThumbnail, newMedia, updateNewThumbnail } = useMediaUpload();
-    const { projectMetadata } = useProjectContext();
-    const { user } = useUser();
+    const {initialThumbnail, newThumbnail, newMedia, updateNewThumbnail} = useMediaUpload();
+    const {projectMetadata} = useProjectContext();
+    const {user} = useUser();
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
 
@@ -75,13 +75,13 @@ const ProjectThumbnail: React.FC = () => {
     };
 
     return (
-        <div className="w-full lg:w-2/5 h-full p-4">
+        <div className=" lg:w-[420px] h-full p-4">
             <h3 className="text-muted-foreground my-2 text-sm font-semibold">
                 Project Thumbnail
             </h3>
             <div
                 onClick={triggerFileInput}
-                className="border border-dashed border-muted hover:border-foreground transition-colors cursor-pointer p-2"
+                className="cursor-pointer p-4"
             >
                 <ProjectCard
                     project={tempProject}

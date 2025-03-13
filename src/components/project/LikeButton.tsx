@@ -33,7 +33,6 @@ const LikeButton: React.FC<LikeButtonProps> = ({
         if (!user || hasCheckedInitialStatus) return;
 
         const checkLikeStatusEffect = async () => {
-            console.log('check like status')
             try {
                 const response = await checkLikeStatus(projectId);
                 if (isMounted) {

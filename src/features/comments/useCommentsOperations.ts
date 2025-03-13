@@ -31,11 +31,6 @@ export function useCommentsOperations() {
                     projectId,
                     content,
                 });
-                toast({
-                    title: "Comment Posted",
-                    description: response.message,
-                    duration: 5000,
-                });
                 return response.data;
             } catch (error) {
                 toast({
@@ -54,15 +49,9 @@ export function useCommentsOperations() {
     const deleteComment = useCallback(
         async ({projectId, commentId}: DeleteCommentPayload): Promise<void> => {
             try {
-                const response = await CommentsService.deleteComment({
+                await CommentsService.deleteComment({
                     projectId,
                     commentId,
-                });
-
-                toast({
-                    title: "Comment Deleted",
-                    description: response.message,
-                    duration: 5000,
                 });
             } catch (error) {
                 toast({

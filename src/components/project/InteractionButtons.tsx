@@ -23,7 +23,6 @@ function InteractionButtons({project}: InteractionButtonsProps) {
 
     useEffect(() => {
         let isMounted = true;
-        console.log('check bookmark status');
 
         const checkSaveStatus = async () => {
             if (isLoading || !user) return;

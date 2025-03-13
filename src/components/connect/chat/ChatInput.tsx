@@ -20,7 +20,7 @@ const ChatInput: React.FC<ChatInputProps> = ({sendMessage}) => {
 
     return (
         <form onSubmit={handleSubmit}
-              className="flex w-full gap-4 py-8 bg-muted text-muted-foreground h-auto justify-center items-center">
+              className="flex w-full gap-4 py-8 px-4 bg-muted text-muted-foreground h-auto justify-center items-center">
             <Input
                 type="text"
                 value={message}
