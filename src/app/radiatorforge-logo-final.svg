@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120">
+  <!-- Main Shape - Stylized R -->
+  <path d="M50,20 L100,20 C120,20 130,40 120,55 L110,65 L130,100 L100,100 L85,70 L70,70 L70,100 L50,100 Z" 
+        fill="#3366CC" />
+  
+  <!-- F-shaped Forge Element -->
+  <path d="M130,20 L190,20 L190,40 L150,40 L150,50 L180,50 L180,70 L150,70 L150,100 L130,100 Z" 
+        fill="#FF6633" />
+  
+  <!-- Stylized Radiator Lines -->
+  <path d="M75,30 L95,30 M80,40 L100,40 M75,50 L95,50" 
+        stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" />
+  
+  <!-- Spark Elements -->
+  <path d="M165,30 L180,15 M175,60 L190,50" 
+        stroke="#FFCC00" stroke-width="3" stroke-linecap="round" />
+</svg>

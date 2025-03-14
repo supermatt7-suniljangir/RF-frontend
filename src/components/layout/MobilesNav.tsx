@@ -1,7 +1,7 @@
 "use client";
 import React, {useState} from "react";
 import {Button} from "@/components/ui/button";
-import {Search, LogInIcon, LogOutIcon, CircleUserRound, Mail, Plus, Menu, X} from "lucide-react";
+import {Search, LogInIcon, LogOutIcon, Mail, Plus, Menu, X} from "lucide-react";
 import {useUser} from "@/contexts/UserContext";
 import Link from "next/link";
 import Image from "next/image";
@@ -16,7 +16,7 @@ const MobileNav = () => {
             <div className="w-full px-4">
                 <div className="flex items-center justify-between h-16">
                     <Link href="/" className="text-xl font-semibold">
-                        Logo
+                        <Image src={`/logo.svg`} alt={"logo"} width={60} height={30}/>
                     </Link>
                     <div className="flex items-center gap-4">
                         <Link href={"/search"}>

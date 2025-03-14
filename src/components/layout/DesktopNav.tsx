@@ -22,7 +22,7 @@ const DesktopNav = () => {
                     {/* Logo and Main Nav */}
                     <div className="flex items-center gap-10">
                         <Link href="/" className="text-xl font-semibold">
-                            Logo
+                            <Image src={`/logo.svg`} alt={"logo"} width={60} height={30}/>
                         </Link>
                         <NavigationMenu>
                             <NavigationMenuList>
@@ -72,7 +72,8 @@ const DesktopNav = () => {
                         </NavigationMenu>
                     </div>
 
-                    {/* Search and Actions */}
+                    {/* Search and Actions */
+                    }
                     <div className="flex items-center gap-6">
                         {/* <div className="relative w-64">
               <Search className="absolute left-2 top-2.5 h-4 w-4 " />
@@ -122,6 +123,7 @@ const DesktopNav = () => {
                 </div>
             </div>
         </nav>
-    );
+    )
+        ;
 };
 export default DesktopNav;
