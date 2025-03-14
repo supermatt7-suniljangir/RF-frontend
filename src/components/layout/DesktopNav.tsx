@@ -83,8 +83,15 @@ const DesktopNav = () => {
               />
             </div> */}
                         <Link href={"/search"}>
-                            <Search className="h-5 w-5"/>
+                            <Search className="!h-5 !w-5"/>
                         </Link>
+
+                        {user && (
+                            <Link href={`/connect`}>
+                                <Mail />
+                            </Link>
+                        )}
+                        <ModeToggle/>
 
                         <Link href={"/profile"} className="inline-block w-6 h-6 relative">
                             {user?.profile?.avatar ? (
@@ -95,16 +102,9 @@ const DesktopNav = () => {
                                     alt={user.fullName}
                                 />
                             ) : (
-                                <CircleUserRound className="h-5 w-5"/>
+                                <CircleUserRound className="!h-5 !w-5"/>
                             )}
                         </Link>
-                        {user && (
-                            <Link href={`/connect`}>
-                                <Mail/>
-                            </Link>
-                        )}
-                        <ModeToggle/>
-
                         {user ? (
                             <Button
                                 className="bg-secondary text-secondary-foreground"

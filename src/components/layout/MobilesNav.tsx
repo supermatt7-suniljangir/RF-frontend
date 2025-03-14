@@ -1,7 +1,7 @@
 "use client";
 import React, {useState} from "react";
 import {Button} from "@/components/ui/button";
-import {Search, LogInIcon, LogOutIcon, Mail, Plus, Menu, X} from "lucide-react";
+import {Search, LogInIcon, LogOutIcon, Mail, Plus, Menu, X, CircleUserRound} from "lucide-react";
 import {useUser} from "@/contexts/UserContext";
 import Link from "next/link";
 import Image from "next/image";
@@ -28,6 +28,18 @@ const MobileNav = () => {
                             </Link>
                         )}
                         <ModeToggle/>
+                        <Link href={"/profile"} className="inline-block w-6 h-6 relative">
+                            {user?.profile?.avatar ? (
+                                <Image
+                                    src={user.profile.avatar}
+                                    className="rounded-full object-cover"
+                                    fill
+                                    alt={user.fullName}
+                                />
+                            ) : (
+                                <CircleUserRound className="!h-5 !w-5"/>
+                            )}
+                        </Link>
                         <Button
                             variant="ghost"
                             size="icon"
