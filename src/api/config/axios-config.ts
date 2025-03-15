@@ -11,7 +11,7 @@ import {toast} from "@/hooks/use-toast";
 
 export const createAxiosInstance = (headers = {}): AxiosInstance => {
     const instance: AxiosInstance = axios.create({
-        baseURL: process.env.API_URL || "http://localhost:5500/api",
+        baseURL: process.env.NEXT_PUBLIC_API_URL,
         withCredentials: true, // Important: This enables sending cookies in cross-origin requests
         headers: headers, // Pass custom headers if any
     });
@@ -30,7 +30,6 @@ export const createAxiosInstance = (headers = {}): AxiosInstance => {
     instance.interceptors.response.use(
         (response: AxiosResponse): AxiosResponse => response,
         async (error: AxiosError<ApiErrorResponse>): Promise<never> => {
-            console.log('i will never be called');
             const errorLog: ApiErrorLog = {
                 status: error.response?.status,
                 message: error.response?.data?.message || error.message,

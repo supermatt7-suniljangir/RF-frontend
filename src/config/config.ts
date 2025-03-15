@@ -63,7 +63,7 @@ export const Config: AppConfig = {
     CHUNK_SIZE: 10 * 1024 * 1024, // 10MB per chunk
   },
   URLS: {
-    API_URL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api",
-    SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5500",
+    API_URL: process.env.NEXT_PUBLIC_API_URL,
+    SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
   },
 };
