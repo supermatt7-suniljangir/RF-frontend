@@ -1,10 +1,10 @@
 "use client";
-import React, { useEffect, useState, useCallback, useTransition } from "react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { useUser } from "@/contexts/UserContext";
-import { User } from "@/types/user";
-import { useFollowOperations } from "@/features/follow/useFollowOperations";
+import React, {useEffect, useState, useCallback, useTransition} from "react";
+import {Button} from "@/components/ui/button";
+import {cn} from "@/lib/utils";
+import {useUser} from "@/contexts/UserContext";
+import {User} from "@/types/user";
+import {useFollowOperations} from "@/features/follow/useFollowOperations";
 
 interface FollowButtonProps {
     className?: string;
@@ -13,12 +13,12 @@ interface FollowButtonProps {
 }
 
 const FollowDetails: React.FC<FollowButtonProps> = ({
-    size = "small",
-    user,
-    className,
-}) => {
-    const { user: currentUser, isLoading } = useUser();
-    const { checkFollowStatus, toggleFollowUser } = useFollowOperations();
+                                                        size = "small",
+                                                        user,
+                                                        className,
+                                                    }) => {
+    const {user: currentUser, isLoading} = useUser();
+    const {checkFollowStatus, toggleFollowUser} = useFollowOperations();
     const [isFollowing, setIsFollowing] = useState<boolean>(false);
     const [followersCount, setFollowersCount] = useState<number>(
         user?.followersCount ?? currentUser?.followersCount ?? 0
@@ -71,10 +71,8 @@ const FollowDetails: React.FC<FollowButtonProps> = ({
     // Render current user's follow stats
     if (!isExternalProfile) {
         return (
-            <div className="flex items-center justify-center md:justify-start">
-                <span className="text-sm text-muted-foreground">
-                    {followersCount} Followers • {currentUser?.followingCount ?? 0} Following
-                </span>
+            <div className="w-full text-center md:text-start">
+                {followersCount} Followers • {currentUser?.followingCount ?? 0} Following
             </div>
         );
     }
@@ -82,10 +80,8 @@ const FollowDetails: React.FC<FollowButtonProps> = ({
     // Render external user's profile with follow button
     return (
         <div className="flex items-start flex-col relative h-auto space-y-2">
-            <div className={`justify-center md:justify-start flex items-center`}>
-                <span className="text-sm text-muted-foreground">
-                    {followersCount} Followers • {user?.followingCount ?? 0} Following
-                </span>
+            <div className={`w-full text-center md:text-start`}>
+                {followersCount} Followers • {user?.followingCount ?? 0} Following
             </div>
             <Button
                 onClick={handleFollowToggle}

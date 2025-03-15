@@ -118,11 +118,12 @@ export const SocketProvider = ({children}: SocketProviderProps) => {
         };
 
         const handleRevalidation = () => {
-            console.log('revalidated the conversations')
+            console.log('revalidate conversations')
             revalidateTags(["conversations"]);
         };
 
         const handlePing = () => {
+
             lastPingTimeRef.current = Date.now();
         };
 

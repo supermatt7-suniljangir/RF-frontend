@@ -96,8 +96,6 @@ export const ChatRoomProvider = ({children}: ChatRoomProviderProps) => {
         if (!socket) return;
         const handleReceiveMessage = (data: Message) => {
             if (data.conversationId === currentConversationId) {
-                console.log('data', data)
-                console.log('sender should is', user._id)
                 // Check if message already exists in our Map
                 if (!messagesMapRef.current.has(data._id)) {
                     // Add new message to Map
