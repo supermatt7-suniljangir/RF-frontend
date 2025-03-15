@@ -1,15 +1,22 @@
 "use client";
-import React, {useState} from "react";
-import {Button} from "@/components/ui/button";
-import {Search, LogInIcon, LogOutIcon, Mail, Plus, Menu, X, CircleUserRound} from "lucide-react";
-import {useUser} from "@/contexts/UserContext";
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Search, LogInIcon, LogOutIcon, Mail, Plus, Menu, X, CircleUserRound } from "lucide-react";
+import { useUser } from "@/contexts/UserContext";
 import Link from "next/link";
 import Image from "next/image";
-import {ModeToggle} from "./ModeToggle";
+import { ModeToggle } from "./ModeToggle";
+import { usePathname } from "next/navigation";
 
 const MobileNav = () => {
-    const {user, logout} = useUser();
+    const { user, logout } = useUser();
     const [isOpen, setIsOpen] = useState(false);
+    const pathname = usePathname();
+
+    // Close drawer on route change
+    useEffect(() => {
+        setIsOpen(false);
+    }, [pathname]);
 
     return (
         <nav className="w-full border-b">
@@ -53,23 +60,19 @@ const MobileNav = () => {
 
             {/* Mobile Drawer */}
             {isOpen && (
-                <div
-                    className="absolute top-16 left-0 w-full h-[calc(100vh-4rem)] bg-background shadow-md z-50 overflow-y-auto">
+                <div className="absolute top-16 left-0 w-full h-[calc(100vh-4rem)] bg-background shadow-md z-50 overflow-y-auto">
                     <div className="p-4 space-y-4">
                         {/* Explore Section */}
                         <div className="border-b border-muted pb-4">
                             <h3 className="font-semibold">Explore</h3>
                             <div className="flex flex-col mt-2">
-                                <Link href={`/search?category=Web+Design`}
-                                      className="block p-2 rounded-md hover:bg-muted">
+                                <Link href={`/search?category=Web+Design`} className="block p-2 rounded-md hover:bg-muted">
                                     Web Design
                                 </Link>
-                                <Link href={`/search?category=Graphic+Design`}
-                                      className="block p-2 rounded-md hover:bg-muted">
+                                <Link href={`/search?category=Graphic+Design`} className="block p-2 rounded-md hover:bg-muted">
                                     Graphic Design
                                 </Link>
-                                <Link href={`/search?category=Illustration`}
-                                      className="block p-2 rounded-md hover:bg-muted">
+                                <Link href={`/search?category=Illustration`} className="block p-2 rounded-md hover:bg-muted">
                                     Illustration
                                 </Link>
                             </div>
@@ -82,12 +85,10 @@ const MobileNav = () => {
                                 <Link href={`/profile`} className="block p-2 rounded-md hover:bg-muted">
                                     Profile
                                 </Link>
-                                <Link href={`/profile?display=appreciation`}
-                                      className="block p-2 rounded-md hover:bg-muted">
+                                <Link href={`/profile?display=appreciation`} className="block p-2 rounded-md hover:bg-muted">
                                     My Appreciations
                                 </Link>
-                                <Link href={`/profile?display=bookmarks`}
-                                      className="block p-2 rounded-md hover:bg-muted">
+                                <Link href={`/profile?display=bookmarks`} className="block p-2 rounded-md hover:bg-muted">
                                     Bookmarked Projects
                                 </Link>
                             </div>

@@ -71,7 +71,7 @@ const FollowDetails: React.FC<FollowButtonProps> = ({
     // Render current user's follow stats
     if (!isExternalProfile) {
         return (
-            <div className="flex items-center">
+            <div className="flex items-center justify-center md:justify-start">
                 <span className="text-sm text-muted-foreground">
                     {followersCount} Followers • {currentUser?.followingCount ?? 0} Following
                 </span>
@@ -82,7 +82,7 @@ const FollowDetails: React.FC<FollowButtonProps> = ({
     // Render external user's profile with follow button
     return (
         <div className="flex items-start flex-col relative h-auto space-y-2">
-            <div>
+            <div className={`justify-center md:justify-start flex items-center`}>
                 <span className="text-sm text-muted-foreground">
                     {followersCount} Followers • {user?.followingCount ?? 0} Following
                 </span>

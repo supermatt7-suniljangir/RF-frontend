@@ -1,26 +1,23 @@
-
-
-
 "use client";
 import React from "react";
-import { Card, CardContent } from "../ui/card";
-import { Image, Text } from "lucide-react";
-import { Button } from "../ui/button";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { toast } from "@/hooks/use-toast";
+import {Card, CardContent} from "../ui/card";
+import {Image, Text} from "lucide-react";
+import {Button} from "../ui/button";
+import {Label} from "../ui/label";
+import {Input} from "../ui/input";
+import {toast} from "@/hooks/use-toast";
 import ProjectWindow from "./EditorWindow/ProjectWindow";
 import Copyright from "./Copyright";
 import Stagebar from "./Stagebar";
-import { useProjectContext } from "@/contexts/ProjectContext";
-import { useMediaUpload } from "@/contexts/MediaContext";
-import { TempMedia } from "@/types/project";
+import {useProjectContext} from "@/contexts/ProjectContext";
+import {useMediaUpload} from "@/contexts/MediaContext";
+import {TempMedia} from "@/types/project";
 
 const BuildComponents = () => {
     // Retrieve project-specific state/actions
-    const { updateEditorStage, uiState, projectMetadata } = useProjectContext();
+    const {updateEditorStage, uiState, projectMetadata} = useProjectContext();
     // Retrieve media-related state/actions
-    const { initialMedia, newMedia, addNewMedia } = useMediaUpload();
+    const {initialMedia, newMedia, addNewMedia} = useMediaUpload();
 
     // Combine initial and new media for rendering/validation
     const media = [...initialMedia, ...newMedia];
@@ -67,7 +64,6 @@ const BuildComponents = () => {
 
     // Handle continue action with basic validation
     const handleContinue = () => {
-        console.log('the fuck is called')
         if (media.length < 1) {
             toast({
                 variant: "destructive",
@@ -94,23 +90,23 @@ const BuildComponents = () => {
                             onChange={handleMediaUpload}
                         />
                         <CardContent className="p-0 flex items-center justify-center space-x-2">
-                            <Image className="!w-5 !h-5" />
+                            <Image className="!w-5 !h-5"/>
                             <p className="text-sm text-muted-foreground">Image / video</p>
                         </CardContent>
                     </Label>
                 </Card>
 
-                <Stagebar />
+                <Stagebar/>
 
                 {/* Project Details Section */}
                 <Card className="w-5/6 h-auto rounded-none py-4">
                     <CardContent className="p-0 flex items-center justify-center space-x-2">
-                        <Text className="!w-5 !h-5" />
+                        <Text className="!w-5 !h-5"/>
                         <p className="text-sm text-muted-foreground">Project Details</p>
                     </CardContent>
                 </Card>
 
-                <Copyright />
+                <Copyright/>
 
                 {/* Continue Action Button */}
                 <Button
@@ -127,7 +123,7 @@ const BuildComponents = () => {
                 </Button>
 
                 {/* Final Step Modal */}
-                <ProjectWindow />
+                <ProjectWindow/>
             </CardContent>
         </Card>
     );

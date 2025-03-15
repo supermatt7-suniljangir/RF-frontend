@@ -7,7 +7,7 @@ const Error = ({ error, reset }: { error: Error; reset: () => void }) => {
   const router = useRouter();
   return (
     <div className="h-[90dvh] flex justify-center text-center p-8 items-center flex-col space-y-4">
-      <h2 className="text-5xl  font-semibold">An Error Occured</h2>
+      <h2 className="text-5xl  font-semibold">An Error Occurred</h2>
       <p className="text-lg">{error.message}</p>
       <p>
         If you continue facing the problem, please visit our help and support

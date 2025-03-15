@@ -31,7 +31,7 @@ export async function generateMetadata(
 
   return {
     title: user.fullName,
-    description: user.profile?.bio || "User profile",
+    description: user.profile?.profession || "User profile",
     openGraph: {
       title: user.fullName,
       description: user.profile?.bio || "User profile",

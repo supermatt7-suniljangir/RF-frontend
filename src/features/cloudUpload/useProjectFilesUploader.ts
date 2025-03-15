@@ -93,7 +93,6 @@ const uploadProjectFiles = async (
                     file: processedFiles[i]?.file,
                 }))
                 : [];
-
         // Add the thumbnail to upload data if it exists
         if (thumbnail && thumbnailUrl) {
             uploadData.push({

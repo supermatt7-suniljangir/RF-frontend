@@ -130,7 +130,6 @@ const ProjectDescInputs: React.FC = () => {
                         {projectMetadata.title && (
                             <Button
                                 onClick={() =>{
-                                    console.log('fuck you');
                                     updateEditorStage(2)
                                 }}
                                 variant="secondary"

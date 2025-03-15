@@ -78,7 +78,6 @@ export const MediaUploadProvider: React.FC<MediaUploadProviderProps> = ({
   }, [initialMedia, newMedia]);
 
   useEffect(() => {
-    console.log('effect called');
     if (hasImage && editorStage !== 1) {
       updateEditorStage(1);
     } else if (!hasImage && editorStage !== 0) {
