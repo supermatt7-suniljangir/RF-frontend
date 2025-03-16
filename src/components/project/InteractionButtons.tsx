@@ -52,6 +52,8 @@ function InteractionButtons({ project }: InteractionButtonsProps) {
       setIsSaved((prev) => !prev);
     } finally {
       setIsSavingBookmark(false);
+      revalidateTags(["bookmarks"]);
+
     }
   };
 

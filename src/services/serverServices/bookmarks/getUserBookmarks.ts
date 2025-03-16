@@ -19,7 +19,7 @@ export async function getUserBookmarks(): Promise<ApiResponse<MiniProject[]>> {
       method: "GET",
       credentials: "include",
       next: {
-        tags: ["bookmarks-user"],
+        tags: ["bookmarks"],
         revalidate: 60 * 15,
       },
       headers: {

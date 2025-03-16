@@ -1,143 +1,163 @@
 "use client";
 
-import { useState } from "react";
+import {useState} from "react";
 import imageCompression from "browser-image-compression";
-import { getFileUrl } from "@/lib/getFileUrl";
-import { TempMedia, Thumbnail } from "@/types/project";
-import { Config } from "@/config/config";
+import {getFileUrl} from "@/lib/getFileUrl";
+import {TempMedia, Thumbnail} from "@/types/project";
+import {Config} from "@/config/config";
 import FilesUploadService from "@/services/clientServices/filesUpload/FilesUploadService";
-import { UploadFileResponse } from "@/types/upload";
+import {UploadFileResponse} from "@/types/upload";
 
 const validateFiles = (files: TempMedia[]) => {
-  const { MAX_IMAGE_SIZE, MAX_FILES, MAX_VIDEO_SIZE } = Config.FILE_LIMITS;
+    const {MAX_IMAGE_SIZE, MAX_FILES, MAX_VIDEO_SIZE} = Config.FILE_LIMITS;
 
-  //  check if any file is anything other than image or video
-  if (
-    files.filter((f) => !f.type.includes("image") && !f.type.includes("video"))
-      .length > 0
-  ) {
-    throw new Error("Only images and videos are allowed.");
-  }
-
-  if (files.length > MAX_FILES) {
-    throw new Error(`Upload between 1 and ${MAX_FILES} files.`);
-  }
-
-  if (files.filter((f) => f.type.includes("video")).length > 1) {
-    throw new Error("Only 1 video can be uploaded.");
-  }
-
-  for (const file of files) {
+    //  check if any file is anything other than image or video
     if (
-      (file.type.includes("image") && file.file.size > MAX_IMAGE_SIZE) ||
-      (file.type.includes("video") && file.file.size > MAX_VIDEO_SIZE)
+        files.filter((f) => !f.type.includes("image") && !f.type.includes("video"))
+            .length > 0
     ) {
-      throw new Error("Images must be < 5MB, Videos < 50MB.");
+        throw new Error("Only images and videos are allowed.");
     }
-  }
+
+    if (files.length > MAX_FILES) {
+        throw new Error(`Upload between 1 and ${MAX_FILES} files.`);
+    }
+
+    if (files.filter((f) => f.type.includes("video")).length > 1) {
+        throw new Error("Only 1 video can be uploaded.");
+    }
+
+    for (const file of files) {
+        if (
+            (file.type.includes("image") && file.file.size > MAX_IMAGE_SIZE) ||
+            (file.type.includes("video") && file.file.size > MAX_VIDEO_SIZE)
+        ) {
+            throw new Error("Images must be < 5MB, Videos < 50MB.");
+        }
+    }
 };
 
 const compressImages = async (files: TempMedia[]): Promise<TempMedia[]> => {
-  const compressedFiles: TempMedia[] = [];
-  const options = Config.COMPRESSION_OPTIONS;
+    const compressedFiles: TempMedia[] = [];
+    const options = Config.COMPRESSION_OPTIONS;
 
-  for (const file of files) {
-    if (!file.type.includes("image")) {
-      compressedFiles.push(file);
-      continue;
+    for (const file of files) {
+        if (!file.type.includes("image")) {
+            compressedFiles.push(file);
+            continue;
+        }
+
+        try {
+            // Skip compression for files under 1MB
+            if (file.file.size < 1 * 1024 * 1024) {
+                compressedFiles.push(file);
+                continue;
+            }
+
+            // Apply different compression levels based on file size
+            let compressionOptions;
+            if (file.file.size < 2 * 1024 * 1024) {
+                // Light compression for files between 1-2MB (30% quality reduction)
+                compressionOptions = {...options.default, maxSizeMB: file.file.size / (1024 * 1024) * 0.7};
+            } else if (file.file.size < 4 * 1024 * 1024) {
+                // Medium compression for files between 2-4MB
+                compressionOptions = {...options.default, maxSizeMB: file.file.size / (1024 * 1024) * 0.6};
+            } else {
+                // Default (stronger) compression for larger files
+                compressionOptions = options.default;
+            }
+
+            const compressedFile = await imageCompression(file.file, compressionOptions);
+            compressedFiles.push({...file, file: compressedFile});
+        } catch (error) {
+            console.error(`Image compression failed: ${file.file.name}`, error);
+            throw new Error("Failed to compress images.");
+        }
     }
-    try {
-      const compressedFile = await imageCompression(file.file, options.default);
-      compressedFiles.push({ ...file, file: compressedFile });
-    } catch (error) {
-      console.error(`Image compression failed: ${file.file.name}`, error);
-      throw new Error("Failed to compress images.");
-    }
-  }
-  return compressedFiles;
+    return compressedFiles;
 };
 
 const uploadProjectFiles = async (
-  files: TempMedia[],
-  thumbnail?: Thumbnail,
+    files: TempMedia[],
+    thumbnail?: Thumbnail,
 ) => {
-  try {
-    if (files.length === 0 && !thumbnail) {
-      throw new Error("No files to upload");
-    }
-    const processedFiles = files.length > 0 ? await compressImages(files) : [];
+    try {
+        if (files.length === 0 && !thumbnail) {
+            throw new Error("No files to upload");
+        }
+        const processedFiles = files.length > 0 ? await compressImages(files) : [];
 
-    // call it only if files.length > 0
-    if (files.length > 0) {
-      validateFiles(processedFiles);
-    }
-    const uploadUrls: UploadFileResponse[] =
-      processedFiles.length > 0
-        ? await FilesUploadService.getUploadUrls(
-            processedFiles.map((item) => item.file),
-          )
-        : [];
-    // Check if a thumbnail is provided and get a separate signed URL
-    let thumbnailUrl: UploadFileResponse | null = null;
-    if (thumbnail) {
-      let SignedThumbnailUrl = await FilesUploadService.getUploadUrls([
-        thumbnail.file,
-      ]);
-      thumbnailUrl = SignedThumbnailUrl[0];
-    }
+        // call it only if files.length > 0
+        if (files.length > 0) {
+            validateFiles(processedFiles);
+        }
+        const uploadUrls: UploadFileResponse[] =
+            processedFiles.length > 0
+                ? await FilesUploadService.getUploadUrls(
+                    processedFiles.map((item) => item.file),
+                )
+                : [];
+        // Check if a thumbnail is provided and get a separate signed URL
+        let thumbnailUrl: UploadFileResponse | null = null;
+        if (thumbnail) {
+            const SignedThumbnailUrl = await FilesUploadService.getUploadUrls([
+                thumbnail.file,
+            ]);
+            thumbnailUrl = SignedThumbnailUrl[0];
+        }
 
-    const uploadData =
-      uploadUrls.length > 0
-        ? uploadUrls.map((url, i) => ({
-            uploadUrl: url?.uploadUrl,
-            file: processedFiles[i]?.file,
-          }))
-        : [];
-    // Add the thumbnail to upload data if it exists
-    if (thumbnail && thumbnailUrl) {
-      uploadData.push({
-        uploadUrl: thumbnailUrl?.uploadUrl,
-        file: thumbnail?.file,
-      });
+        const uploadData =
+            uploadUrls.length > 0
+                ? uploadUrls.map((url, i) => ({
+                    uploadUrl: url?.uploadUrl,
+                    file: processedFiles[i]?.file,
+                }))
+                : [];
+        // Add the thumbnail to upload data if it exists
+        if (thumbnail && thumbnailUrl) {
+            uploadData.push({
+                uploadUrl: thumbnailUrl?.uploadUrl,
+                file: thumbnail?.file,
+            });
+        }
+
+        // Upload all files
+        await FilesUploadService.uploadFiles(uploadData);
+
+        // Prepare the response
+        const uploadedFiles = uploadUrls.map((item) => ({
+            type: item.key.includes("video") ? "video" : "image",
+            url: getFileUrl(item.key),
+        }));
+
+        // Add the thumbnail to the response
+        if (thumbnailUrl) {
+            uploadedFiles.push({
+                type: "image/thumbnail",
+                url: getFileUrl(thumbnailUrl.key),
+            });
+        }
+        return uploadedFiles;
+    } catch (error) {
+        console.error("Project files upload failed", error);
+        throw error;
     }
-
-    // Upload all files
-    await FilesUploadService.uploadFiles(uploadData);
-
-    // Prepare the response
-    const uploadedFiles = uploadUrls.map((item) => ({
-      type: item.key.includes("video") ? "video" : "image",
-      url: getFileUrl(item.key),
-    }));
-
-    // Add the thumbnail to the response
-    if (thumbnailUrl) {
-      uploadedFiles.push({
-        type: "image/thumbnail",
-        url: getFileUrl(thumbnailUrl.key),
-      });
-    }
-    return uploadedFiles;
-  } catch (error) {
-    console.error("Project files upload failed", error);
-    throw error;
-  }
 };
 
 export const useProjectFilesUploader = () => {
-  const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-  const handleProjectFilesUpload = async (
-    files: TempMedia[],
-    thumnail?: Thumbnail,
-  ) => {
-    setLoading(true);
-    try {
-      return await uploadProjectFiles(files, thumnail);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const handleProjectFilesUpload = async (
+        files: TempMedia[],
+        thumnail?: Thumbnail,
+    ) => {
+        setLoading(true);
+        try {
+            return await uploadProjectFiles(files, thumnail);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  return { handleProjectFilesUpload, loading };
+    return {handleProjectFilesUpload, loading};
 };
