@@ -19,6 +19,7 @@ const ProjectActionsContextMenu = ({projectId}: { projectId: string }) => {
     const handleDeleteProject = useCallback(async () => {
         await deleteExisting(projectId);
         setOpenDeleteWindow(false);
+        // revalidateTags(['userProjects-personal'])
     }, [projectId, deleteExisting]);
 
     return (
