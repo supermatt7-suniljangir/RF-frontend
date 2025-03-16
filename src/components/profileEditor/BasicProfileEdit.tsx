@@ -14,7 +14,8 @@ import { redirect } from "next/navigation";
 import { Switch } from "../ui/switch";
 
 const BasicInfoEdit: React.FC = () => {
-  const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+  const urlPattern =
+    /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
 
   const { updateProfile, loading: isUpdating } = useUpdateUserProfile();
   const { user, setUser } = useUser();
@@ -26,7 +27,7 @@ const BasicInfoEdit: React.FC = () => {
   } = useForm<User>();
 
   const [availableForHire, setAvailableForHire] = useState(
-    user.profile?.availableForHire || false
+    user.profile?.availableForHire || false,
   );
 
   useEffect(() => {
@@ -57,7 +58,10 @@ const BasicInfoEdit: React.FC = () => {
     };
     if (cleanData.profile) {
       Object.keys(cleanData.profile).forEach((key) => {
-        if (cleanData.profile && cleanData.profile[key as keyof typeof cleanData.profile] === undefined) {
+        if (
+          cleanData.profile &&
+          cleanData.profile[key as keyof typeof cleanData.profile] === undefined
+        ) {
           delete cleanData.profile[key as keyof typeof cleanData.profile];
         }
       });
@@ -75,8 +79,10 @@ const BasicInfoEdit: React.FC = () => {
     }
   };
 
-  return (
-    isUpdating ? <Spinner /> : <form onSubmit={handleSubmit(onSubmit)}>
+  return isUpdating ? (
+    <Spinner />
+  ) : (
+    <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col md:flex-row gap-8">
         <div className="flex-shrink-0 self-center md:self-start">
           <ProfilePhoto />
@@ -142,17 +148,21 @@ const BasicInfoEdit: React.FC = () => {
               {...register("profile.website", {
                 pattern: {
                   value: urlPattern,
-                  message: "Please enter a valid URL (e.g., https://example.com)"
+                  message:
+                    "Please enter a valid URL (e.g., https://example.com)",
                 },
                 validate: {
                   validProtocol: (value) => {
                     if (!value) return true; // Allow empty values
-                    if (!value.startsWith('http://') && !value.startsWith('https://')) {
-                      return 'URL must start with http:// or https://';
+                    if (
+                      !value.startsWith("http://") &&
+                      !value.startsWith("https://")
+                    ) {
+                      return "URL must start with http:// or https://";
                     }
                     return true;
-                  }
-                }
+                  },
+                },
               })}
             />
             {errors.profile?.website && (

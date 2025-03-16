@@ -1,5 +1,11 @@
 "use client";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter, useSearchParams } from "next/navigation";
 import CategorySelector from "./Categories";
@@ -50,10 +56,12 @@ export default function SearchBar() {
       params.delete("category");
       router.push(`?${params.toString()}`);
     },
-    [params, router, setError]
+    [params, router, setError],
   );
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col
      sm:flex-row sm:items-center md:justify-center items-center gap-4 w-full"
     >
       <div className="w-full sm:w-[120px]">

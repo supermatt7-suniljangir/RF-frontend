@@ -11,7 +11,7 @@ import FilesUploadService from "@/services/clientServices/filesUpload/FilesUploa
 export const useProfileFilesUploader = (
   setImage: (url: string | null) => void,
   setUser: (user: User) => void,
-  type: "avatar" | "cover"
+  type: "avatar" | "cover",
 ) => {
   const [loading, setLoading] = useState(false);
   const { updateProfile } = useUpdateUserProfile();
@@ -25,7 +25,7 @@ export const useProfileFilesUploader = (
       const maxSize = Config.FILE_LIMITS[type];
       if (file.size > maxSize) {
         throw new Error(
-          `File must be smaller than ${type === "cover" ? "5MB" : "3MB"}.`
+          `File must be smaller than ${type === "cover" ? "5MB" : "3MB"}.`,
         );
       }
       if (!file.type.includes("image")) {

@@ -8,7 +8,7 @@ class FollowService {
   static checkFollowStatus = async (userId: string): Promise<ApiResponse> => {
     const apiService = ApiService.getInstance();
     const response = await apiService.get<ApiResponse>(
-      `/follow/${userId}/check`
+      `/follow/${userId}/check`,
     );
 
     if (!response.data.success || response.status !== 200) {
@@ -23,7 +23,7 @@ class FollowService {
   static toggleFollowUser = async (userId: string): Promise<ApiResponse> => {
     const apiService = ApiService.getInstance();
     const response = await apiService.put<ApiResponse>(
-      `/follow/${userId}/toggle`
+      `/follow/${userId}/toggle`,
     );
 
     if (!response.data.success || response.status !== 200) {

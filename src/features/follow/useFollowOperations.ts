@@ -21,7 +21,7 @@ export function useFollowOperations() {
         return false;
       }
     },
-    [toast]
+    [toast],
   );
 
   const toggleFollowUser = useCallback(
@@ -38,7 +38,7 @@ export function useFollowOperations() {
         throw error;
       }
     },
-    [toast]
+    [toast],
   );
 
   return { checkFollowStatus, toggleFollowUser };

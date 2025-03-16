@@ -84,8 +84,8 @@ const SocialEdit = () => {
     // Structure the data according to the User schema
     const updateData: Partial<User> = {
       profile: {
-        social: cleanSocial
-      }
+        social: cleanSocial,
+      },
     };
 
     const res = await updateProfile(updateData);
@@ -100,15 +100,16 @@ const SocialEdit = () => {
     }
     toast({
       variant: "default",
-      title: "Profile updated successfully"
+      title: "Profile updated successfully",
     });
     setUser(res.data);
     redirect("/profile");
   };
 
-
-  return (
-    isUpdating ? <Spinner /> : <form onSubmit={handleSubmit(onSubmit)} className="w-3/4 mx-auto space-y-4">
+  return isUpdating ? (
+    <Spinner />
+  ) : (
+    <form onSubmit={handleSubmit(onSubmit)} className="w-3/4 mx-auto space-y-4">
       {socialConfig.map((social) => (
         <Card key={social.id} className="w-full rounded-sm px-4 py-2">
           <div className="flex items-center space-x-4">
@@ -127,11 +128,14 @@ const SocialEdit = () => {
                   },
                   validate: (value) => {
                     if (!value) return true;
-                    if (!value.startsWith('http://') && !value.startsWith('https://')) {
-                      return 'URL must start with http:// or https://';
+                    if (
+                      !value.startsWith("http://") &&
+                      !value.startsWith("https://")
+                    ) {
+                      return "URL must start with http:// or https://";
                     }
                     return true;
-                  }
+                  },
                 })}
                 placeholder={social.placeholder}
                 className="w-full"

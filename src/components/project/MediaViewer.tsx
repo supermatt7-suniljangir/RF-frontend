@@ -20,12 +20,12 @@ const MediaViewer: React.FC<MediaViewerProps> = ({ media }) => {
           {item.type === "image" ? (
             <div className="relative">
               <Image
-              sizes="(max-width: 640px) 100vw, 640px"
+                sizes="(max-width: 640px) 100vw, 640px"
                 src={item.url}
                 alt={`Media ${index + 1}`}
                 className="rounded h-auto w-full"
                 width={0} // Let Next.js calculate dimensions dynamically
-                height={0} // Let Next.js calculate dimensions dynamically                              
+                height={0} // Let Next.js calculate dimensions dynamically
               />
             </div>
           ) : (

@@ -1,40 +1,65 @@
+"use client";
+
 import ApiService from "@/api/wrapper/axios-wrapper";
-import {ApiResponse} from "@/types/ApiResponse";
+import { ApiResponse } from "@/types/ApiResponse";
 
 interface GetChatHistoryProps {
-    userId: string;
-    page?: number;
-    limit?: number;
+  userId: string;
+  page?: number;
+  limit?: number;
 }
 
 class ChatService {
-    private static apiService = ApiService.getInstance();
+  private static apiService = ApiService.getInstance();
 
-    static getChatHistory = async ({
-                                       userId,
-                                       page = 1,
-                                       limit = 100,
-                                   }: GetChatHistoryProps): Promise<ApiResponse> => {
-        try {
+  static getChatHistory = async ({
+    userId,
+    page = 1,
+    limit = 100,
+  }: GetChatHistoryProps): Promise<ApiResponse> => {
+    try {
+      // Construct URL with query parameters manually
+      const url = `/connect/chat?recipient=${userId}&page=${page}&limit=${limit}`;
 
-            // Construct URL with query parameters manually
-            const url = `/connect/chat?recipient=${userId}&page=${page}&limit=${limit}`;
+      const response = await this.apiService.get<ApiResponse>(url);
 
-            const response = await this.apiService.get<ApiResponse>(url);
+      if (!response.data.success || response.status !== 200) {
+        return {
+          success: false,
+          message: response.data.message || "Failed to fetch chat history",
+        };
+      }
 
-            if (!response.data.success || response.status !== 200) {
-                return {
-                    success: false,
-                    message: response.data.message || "Failed to fetch chat history",
-                };
-            }
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching chat history:", error.message);
+      return { success: false, message: error.message };
+    }
+  };
 
-            return response.data;
-        } catch (error) {
-            console.error("Error fetching chat history:", error.message);
-            return {success: false, message: error.message};
-        }
-    };
+  static deleteConversation = async ({
+    recipientId,
+  }: {
+    recipientId: string;
+  }): Promise<ApiResponse> => {
+    try {
+      const response = await this.apiService.delete<ApiResponse>(
+        `/connect/conversation/${recipientId}`,
+      );
+
+      if (!response.data.success || response.status !== 200) {
+        return {
+          success: false,
+          message: response.data.message || "Failed to delete conversation",
+        };
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting conversation:", error.message);
+      return { success: false, message: error.message };
+    }
+  };
 }
 
 export default ChatService;

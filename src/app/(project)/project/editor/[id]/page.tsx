@@ -1,8 +1,8 @@
-import Spinner from '@/app/loading';
-import ProjectEditor from '@/components/projectEditor/ProjectEditor';
-import { getProjectById } from '@/services/serverServices/project/getProjectById';
-import { ProjectType } from '@/types/project';
-import React, { Suspense } from 'react';
+import Spinner from "@/app/loading";
+import ProjectEditor from "@/components/projectEditor/ProjectEditor";
+import { getProjectById } from "@/services/serverServices/project/getProjectById";
+import { ProjectType } from "@/types/project";
+import React, { Suspense } from "react";
 
 interface ProjectPageProps {
   params: Promise<{ id: string }>;

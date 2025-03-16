@@ -25,7 +25,11 @@ const ProfileEditor: React.FC = () => {
   return (
     <Card className="w-full max-w-3xl md:mt-8 mx-auto md:rounded-sm rounded-none">
       <div className="flex justify-between p-4  items-center">
-        <Button variant="secondary" className="rounded-full w-8 h-8" onClick={() => router.push("/profile")}>
+        <Button
+          variant="secondary"
+          className="rounded-full w-8 h-8"
+          onClick={() => router.push("/profile")}
+        >
           <CircleArrowLeft />
         </Button>
         <div className="flex gap-2">
@@ -34,7 +38,7 @@ const ProfileEditor: React.FC = () => {
             onClick={() => handleTabChange("basic")}
             className={cn(
               "px-4 py-2 rounded-md text-sm font-medium transition-colors bg-muted ",
-              currentTab === "basic" && "bg-primary text-primary-foreground"
+              currentTab === "basic" && "bg-primary text-primary-foreground",
             )}
           >
             Basic Info
@@ -44,7 +48,7 @@ const ProfileEditor: React.FC = () => {
             onClick={() => handleTabChange("social")}
             className={cn(
               "px-4 py-2  rounded-md text-sm font-medium bg-muted transition-colors ",
-              currentTab === "social" && "bg-primary text-primary-foreground"
+              currentTab === "social" && "bg-primary text-primary-foreground",
             )}
           >
             Social Links

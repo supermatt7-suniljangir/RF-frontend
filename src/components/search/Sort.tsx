@@ -21,7 +21,6 @@
 //   const tag = params.get("tag");
 //   const type = params.get("type") as "project" | "user";
 
-
 //   const handleSortChange = (sortOption: string) => {
 //     if (params.get("sort") === sortOption) {
 //       params.delete("sort"); // Remove sort if clicked again
@@ -81,9 +80,8 @@ export default function Sort() {
   const params = new URLSearchParams(searchParams.toString());
   const sortBy = params.get("sortBy");
   const sortOrder = params.get("sortOrder") as "asc" | "desc";
-  const type = params.get("type") as "project" | "user";  // Can be "user" or "project"
+  const type = params.get("type") as "project" | "user"; // Can be "user" or "project"
   if (type === "user") return null;
-
 
   const projectSortMapping = {
     likes: "stats.likes",
@@ -92,32 +90,37 @@ export default function Sort() {
     title: "title",
   };
 
-
   // Function to handle the sort change
   const handleSortChange = (sortOption: string) => {
-    params.set("sortBy", sortOption);  // Update sortBy query param
-    router.push(`?${params.toString()}`);  // Trigger URL update to re-fetch with new sort
+    params.set("sortBy", sortOption); // Update sortBy query param
+    router.push(`?${params.toString()}`); // Trigger URL update to re-fetch with new sort
   };
 
   // Function to handle the sort order (ascending or descending)
   const handleSortOrderChange = (order: "asc" | "desc") => {
-    params.set("sortOrder", order);  // Update sortOrder query param
-    router.push(`?${params.toString()}`);  // Trigger URL update
+    params.set("sortOrder", order); // Update sortOrder query param
+    router.push(`?${params.toString()}`); // Trigger URL update
   };
 
   return (
     <div className="flex items-center gap-4">
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <Button variant="outline" className="flex items-center gap-2 capitalize">
+          <Button
+            variant="outline"
+            className="flex items-center gap-2 capitalize"
+          >
             <SortAsc className="w-4 h-4" /> {sortBy || "Sort By"}
             <ChevronDown className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           {Object.keys(projectSortMapping).map((sortOption) => (
-            <DropdownMenuItem className="capitalize" key={sortOption}
-              onClick={() => handleSortChange(sortOption)}>
+            <DropdownMenuItem
+              className="capitalize"
+              key={sortOption}
+              onClick={() => handleSortChange(sortOption)}
+            >
               {sortOption === "createdAt" ? "Date" : sortOption}
             </DropdownMenuItem>
           ))}
@@ -126,7 +129,10 @@ export default function Sort() {
 
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <Button variant="outline" className="flex items-center gap-2 capitalize">
+          <Button
+            variant="outline"
+            className="flex items-center gap-2 capitalize"
+          >
             {sortOrder === "asc" ? "Ascending" : "Descending"}
             <ChevronDown className="w-4 h-4" />
           </Button>

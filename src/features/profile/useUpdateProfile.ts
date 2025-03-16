@@ -9,7 +9,7 @@ export function useUpdateUserProfile() {
   const [loading, setLoading] = useState<boolean>(false);
 
   const updateProfile = async (
-    payload: Partial<User>
+    payload: Partial<User>,
   ): Promise<ApiResponse> => {
     setLoading(true);
     try {

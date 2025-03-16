@@ -25,34 +25,35 @@ const SearchTags = () => {
   const params = new URLSearchParams(searchParams.toString());
   const tag = params.get("tag");
   const [selectedTag, setSelectedTag] = useState<string | null>(
-    params.get("tag") || ""
+    params.get("tag") || "",
   );
   useEffect(() => {
     setSelectedTag(params.get("tag") || "");
-  }
-    , [tag]);
+  }, [tag]);
 
-  const handleTagClick = useCallback((tag: string) => {
-    // Clear all params when a tag is selected
-    params.delete("query");
-    params.delete("page");
-    params.delete("filter"); // Example: Remove other filters
-    params.delete("sortBy"); // Example: Remove sorting
-    params.delete("sortOrder"); // Example: Remove sorting
-    params.delete("type"); // Example: Remove sorting
-    params.delete("category"); // Example: Remove sorting
+  const handleTagClick = useCallback(
+    (tag: string) => {
+      // Clear all params when a tag is selected
+      params.delete("query");
+      params.delete("page");
+      params.delete("filter"); // Example: Remove other filters
+      params.delete("sortBy"); // Example: Remove sorting
+      params.delete("sortOrder"); // Example: Remove sorting
+      params.delete("type"); // Example: Remove sorting
+      params.delete("category"); // Example: Remove sorting
 
-    if (selectedTag === tag) {
-      setSelectedTag(null);
-      params.delete("tag");
-    } else {
-      setSelectedTag(tag);
-      params.set("tag", tag);
-    }
+      if (selectedTag === tag) {
+        setSelectedTag(null);
+        params.delete("tag");
+      } else {
+        setSelectedTag(tag);
+        params.set("tag", tag);
+      }
 
-    router.replace(`?${params.toString()}`);
-  }, [params, router, selectedTag]);
-
+      router.replace(`?${params.toString()}`);
+    },
+    [params, router, selectedTag],
+  );
 
   return (
     <div className="flex flex-wrap gap-2 justify-center">
@@ -60,8 +61,11 @@ const SearchTags = () => {
         <Button
           key={index}
           onClick={() => handleTagClick(tag)}
-          className={`px-3 h-auto py-1 capitalize w-auto text-base rounded-none font-medium ${selectedTag === tag ? "bg-primary" : "bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground"
-            }`}
+          className={`px-3 h-auto py-1 capitalize w-auto text-base rounded-none font-medium ${
+            selectedTag === tag
+              ? "bg-primary"
+              : "bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground"
+          }`}
         >
           {tag}
         </Button>

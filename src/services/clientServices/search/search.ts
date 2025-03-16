@@ -7,7 +7,7 @@ class SearchService {
   // Fetch users function
   static async fetchUsers(
     queryString: string,
-    signal?: AbortSignal
+    signal?: AbortSignal,
   ): Promise<UserSearchResponse> {
     const url = `${URL}/search/users?${queryString}`;
 
@@ -29,7 +29,7 @@ class SearchService {
 
   // Fetch projects function
   static async fetchProjects(
-    queryString: string
+    queryString: string,
   ): Promise<ProjectSearchResponse> {
     const url = `${URL}/search/projects?${queryString}`;
 

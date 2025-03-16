@@ -16,8 +16,6 @@ class UserProfileService {
     }
     return response.data;
   }
-
-  
 }
 
 export default UserProfileService;

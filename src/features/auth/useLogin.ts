@@ -71,7 +71,7 @@ export function useAuth() {
         setIsLoading(false);
       }
     },
-    [isLogin, setIsLoading, setUser, toast]
+    [isLogin, setIsLoading, setUser, toast],
   );
 
   return { auth, isLoading };

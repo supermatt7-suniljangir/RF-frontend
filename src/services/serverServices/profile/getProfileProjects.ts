@@ -6,7 +6,7 @@ import { URL } from "@/api/config/configs";
 import { ApiResponse } from "@/types/ApiResponse";
 
 export const getProfileProjectsAPI = async (
-  userId?: string
+  userId?: string,
 ): Promise<ApiResponse> => {
   try {
     const cookieStore = await cookies();

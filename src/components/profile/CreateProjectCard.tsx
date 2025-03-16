@@ -1,16 +1,16 @@
 "use client";
-import { revalidateRoute } from '@/lib/revalidatePath';
+import { revalidateRoute } from "@/lib/revalidatePath";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Plus } from "lucide-react";
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const CreateProjectCard = () => {
   const pathname = usePathname();
 
   // Only show if we're on /profile exactly
-  if (pathname !== '/profile') {
+  if (pathname !== "/profile") {
     return null;
   }
 

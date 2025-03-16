@@ -8,8 +8,14 @@ import { useProfileFilesUploader } from "@/features/cloudUpload/useProfileFilesU
 
 const ProfilePhoto: React.FC = () => {
   const { user, setUser } = useUser();
-  const [image, setImage] = useState<string | null>(user?.profile?.avatar || null);
-  const { handleProfileFileUpload, loading } = useProfileFilesUploader(setImage, setUser, "avatar");
+  const [image, setImage] = useState<string | null>(
+    user?.profile?.avatar || null,
+  );
+  const { handleProfileFileUpload, loading } = useProfileFilesUploader(
+    setImage,
+    setUser,
+    "avatar",
+  );
 
   // Use react-dropzone for handling drag and drop or file selection
   const { getRootProps, getInputProps } = useDropzone({
@@ -22,10 +28,7 @@ const ProfilePhoto: React.FC = () => {
   });
 
   return (
-    <div
-      className="relative w-32 h-32"
-      {...getRootProps()}
-    >
+    <div className="relative w-32 h-32" {...getRootProps()}>
       <input {...getInputProps()} />
       <div
         className={`w-full h-full rounded-full relative border-2 border-dashed flex items-center justify-center overflow-hidden cursor-pointer`}

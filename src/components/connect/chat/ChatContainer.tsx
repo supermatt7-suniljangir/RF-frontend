@@ -18,7 +18,9 @@ const ChatContainer: React.FC<ChatContainerProps> = ({userId}) => {
     return (
         <div className={`flex flex-col h-full w-full justify-between`}>
             <ChatDisplay messages={messages}/>
-            <ChatInput sendMessage={(text: string): void => sendMessage(userId, text)}/>
+            <ChatInput
+                sendMessage={(text: string): void => sendMessage(userId, text)}
+            />
         </div>
     );
 };

@@ -14,7 +14,11 @@ interface UserInfoProps {
 const CreatorMiniInfo: React.FC<UserInfoProps> = ({ creator, styles }) => {
   const { user } = useUser();
   return (
-    <Link href={user?._id === creator?._id ? "/profile" : `/profile/${creator?._id}`}>
+    <Link
+      href={
+        user?._id === creator?._id ? "/profile" : `/profile/${creator?._id}`
+      }
+    >
       <div className={cn("flex items-center gap-4", styles)}>
         <div className="w-12 h-12 rounded-full overflow-hidden relative">
           <Image

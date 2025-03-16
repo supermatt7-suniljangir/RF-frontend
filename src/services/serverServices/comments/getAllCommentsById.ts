@@ -4,7 +4,7 @@ import { ApiResponse } from "@/types/ApiResponse";
 import { IComment } from "@/types/others";
 
 export const fetchComments = async (
-  projectId: string
+  projectId: string,
 ): Promise<ApiResponse<IComment[]>> => {
   if (!projectId) {
     return { success: false, message: "Project ID is required" };

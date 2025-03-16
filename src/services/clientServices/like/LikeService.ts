@@ -7,12 +7,12 @@ export default class LikeService {
 
   // Check if a project is liked
   public static checkLikeStatus = async (
-    projectId: string
+    projectId: string,
   ): Promise<ApiResponse> => {
     if (!projectId) throw new Error("Project ID is required");
 
     const response = await this.apiService.get<ApiResponse>(
-      `/likes/${projectId}/check`
+      `/likes/${projectId}/check`,
     );
     if (!response.data.success || response.status !== 200) {
       throw new Error(response.data.message);
@@ -22,12 +22,12 @@ export default class LikeService {
 
   // Toggle like status for a project
   public static toggleLikeProject = async (
-    projectId: string
+    projectId: string,
   ): Promise<ApiResponse> => {
     if (!projectId) throw new Error("Project ID is required");
 
     const response = await this.apiService.put<ApiResponse>(
-      `/likes/${projectId}/toggle`
+      `/likes/${projectId}/toggle`,
     );
     if (!response.data.success || response.status !== 200) {
       throw new Error(response.data.message);

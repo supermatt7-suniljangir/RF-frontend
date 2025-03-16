@@ -6,7 +6,7 @@ import { useCallback } from "react";
 
 interface GoogleLoginResult {
   handleGoogleSuccess: (
-    credentialResponse: CredentialResponse
+    credentialResponse: CredentialResponse,
   ) => Promise<void>;
   handleGoogleError: () => void;
   isLoading: boolean;
@@ -29,7 +29,7 @@ const useGoogleLogin = (): GoogleLoginResult => {
       }
       await auth({ googleToken });
     },
-    [auth]
+    [auth],
   );
 
   const handleGoogleError = useCallback(() => {

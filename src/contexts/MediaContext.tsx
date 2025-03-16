@@ -1,4 +1,12 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect, useMemo, useCallback } from "react";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import { Imedia, TempMedia, Thumbnail } from "@/types/project";
 import { useProjectContext } from "./ProjectContext";
 
@@ -28,15 +36,18 @@ interface MediaUploadProviderProps {
   initialThumbnailData?: string;
 }
 
-const MediaUploadContext = createContext<MediaUploadContextType | undefined>(undefined);
+const MediaUploadContext = createContext<MediaUploadContextType | undefined>(
+  undefined,
+);
 
 export const MediaUploadProvider: React.FC<MediaUploadProviderProps> = ({
   children,
   initialMediaData = [],
-  initialThumbnailData = ""
+  initialThumbnailData = "",
 }) => {
-  const { updateEditorStage, updateUIState, editorStage, uiState } = useProjectContext();
-  
+  const { updateEditorStage, updateUIState, editorStage, uiState } =
+    useProjectContext();
+
   // State for initial media and new media uploads.
   const [initialMedia, setInitialMedia] = useState<Imedia[]>(initialMediaData);
   const [newMedia, setNewMedia] = useState<TempMedia[]>([]);
@@ -52,7 +63,9 @@ export const MediaUploadProvider: React.FC<MediaUploadProviderProps> = ({
 
   const removeMedia = useCallback((mediaItem: TempMedia) => {
     setNewMedia((prev) => prev.filter((item) => item.url !== mediaItem.url));
-    setInitialMedia((prev) => prev.filter((item) => item.url !== mediaItem.url));
+    setInitialMedia((prev) =>
+      prev.filter((item) => item.url !== mediaItem.url),
+    );
   }, []);
 
   const clearNewMedia = useCallback(() => {
@@ -74,7 +87,9 @@ export const MediaUploadProvider: React.FC<MediaUploadProviderProps> = ({
   // Memoize the hasImage calculation
   const hasImage = useMemo(() => {
     const allMedia = [...initialMedia, ...newMedia];
-    return allMedia.length > 0 && allMedia.some(item => item.type === "image");
+    return (
+      allMedia.length > 0 && allMedia.some((item) => item.type === "image")
+    );
   }, [initialMedia, newMedia]);
 
   useEffect(() => {
@@ -90,29 +105,32 @@ export const MediaUploadProvider: React.FC<MediaUploadProviderProps> = ({
   }, [hasImage, uiState.isDescOpen, updateUIState]);
 
   // Memoize the context value
-  const contextValue = useMemo(() => ({
-    initialMedia,
-    newMedia,
-    addNewMedia,
-    removeMedia,
-    clearNewMedia,
-    updateNewMedia,
-    initialThumbnail,
-    newThumbnail,
-    updateNewThumbnail,
-    clearNewThumbnail,
-  }), [
-    initialMedia,
-    newMedia,
-    addNewMedia,
-    removeMedia,
-    clearNewMedia,
-    updateNewMedia,
-    initialThumbnail,
-    newThumbnail,
-    updateNewThumbnail,
-    clearNewThumbnail
-  ]);
+  const contextValue = useMemo(
+    () => ({
+      initialMedia,
+      newMedia,
+      addNewMedia,
+      removeMedia,
+      clearNewMedia,
+      updateNewMedia,
+      initialThumbnail,
+      newThumbnail,
+      updateNewThumbnail,
+      clearNewThumbnail,
+    }),
+    [
+      initialMedia,
+      newMedia,
+      addNewMedia,
+      removeMedia,
+      clearNewMedia,
+      updateNewMedia,
+      initialThumbnail,
+      newThumbnail,
+      updateNewThumbnail,
+      clearNewThumbnail,
+    ],
+  );
 
   return (
     <MediaUploadContext.Provider value={contextValue}>

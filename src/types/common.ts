@@ -20,7 +20,6 @@ export interface ProjectSearchResponse {
   data: MiniProject[];
 }
 
-
 export interface SearchParams {
   query?: string;
   tag?: string;

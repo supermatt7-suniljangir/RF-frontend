@@ -1,128 +1,122 @@
 "use client";
-import React from 'react';
+import React from "react";
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-    Twitter,
-    Facebook,
-    Linkedin,
-    Link2,
-    Copy,
-    Check
-} from "lucide-react";
-import { MiniProject, ProjectType } from '@/types/project';
-import { MiniUser } from '@/types/user';
-import ProjectCard from '../common/ProjectCard';
+import { Twitter, Facebook, Linkedin, Link2, Copy, Check } from "lucide-react";
+import { MiniProject, ProjectType } from "@/types/project";
+import { MiniUser } from "@/types/user";
+import ProjectCard from "../common/ProjectCard";
 
 interface ShareModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    project?: MiniProject,
+  isOpen: boolean;
+  onClose: () => void;
+  project?: MiniProject;
 }
 
 const ShareModal: React.FC<ShareModalProps> = ({
-    isOpen,
-    onClose,
-    project,
+  isOpen,
+  onClose,
+  project,
 }) => {
-    if (!project) return null;
-    const { _id, title, thumbnail, creator: { fullName, profile } } = project;
-    const projectUrl = `${window?.location.origin}/project/${_id}`;
-    const [copied, setCopied] = React.useState(false);
-    const handleCopyLink = async () => {
-        try {
-            await navigator.clipboard.writeText(projectUrl);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 3000);
-        } catch (err) {
-            console.error('Failed to copy:', err);
-        }
-    };
+  if (!project) return null;
+  const {
+    _id,
+    title,
+    thumbnail,
+    creator: { fullName, profile },
+  } = project;
+  const projectUrl = `${window?.location.origin}/project/${_id}`;
+  const [copied, setCopied] = React.useState(false);
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(projectUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
 
-    const shareUrls = {
-        twitter: `https://twitter.com/intent/tweet?text=Check out this project: ${title}&url=${encodeURIComponent(projectUrl)}`,
-        facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(projectUrl)}`,
-        linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(projectUrl)}`
-    };
+  const shareUrls = {
+    twitter: `https://twitter.com/intent/tweet?text=Check out this project: ${title}&url=${encodeURIComponent(projectUrl)}`,
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(projectUrl)}`,
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(projectUrl)}`,
+  };
 
-    return (
-        <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="p-6 w-full md:w-1/2 flex items-center flex-col">
-                <DialogHeader>
-                    <DialogTitle className="text-xl font-semibold text-center">
-                        Share Project
-                    </DialogTitle>
-                </DialogHeader>
-                <ProjectCard project={project} renderUser={false} />
-                <div className="mt-2 space-y-6">
-                    {/* Social sharing buttons */}
-                    <div className="flex justify-center gap-4">
-                        <Button
-                            variant="outline"
-                            className="p-2"
-                            onClick={() => window.open(shareUrls.twitter, '_blank')}
-                        >
-                            <Twitter className="w-5 h-5" />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            className="p-2"
-                            onClick={() => window.open(shareUrls.facebook, '_blank')}
-                        >
-                            <Facebook className="w-5 h-5 " />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            className="p-2"
-                            onClick={() => window.open(shareUrls.linkedin, '_blank')}
-                        >
-                            <Linkedin className="w-5 h-5" />
-                        </Button>
-                    </div>
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="p-6 w-full md:w-1/2 flex items-center flex-col">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-semibold text-center">
+            Share Project
+          </DialogTitle>
+        </DialogHeader>
+        <ProjectCard project={project} renderUser={false} />
+        <div className="mt-2 space-y-6">
+          {/* Social sharing buttons */}
+          <div className="flex justify-center gap-4">
+            <Button
+              variant="outline"
+              className="p-2"
+              onClick={() => window.open(shareUrls.twitter, "_blank")}
+            >
+              <Twitter className="w-5 h-5" />
+            </Button>
+            <Button
+              variant="outline"
+              className="p-2"
+              onClick={() => window.open(shareUrls.facebook, "_blank")}
+            >
+              <Facebook className="w-5 h-5 " />
+            </Button>
+            <Button
+              variant="outline"
+              className="p-2"
+              onClick={() => window.open(shareUrls.linkedin, "_blank")}
+            >
+              <Linkedin className="w-5 h-5" />
+            </Button>
+          </div>
 
-                    {/* Project link section */}
+          {/* Project link section */}
 
-                    <div className="flex gap-2 w-full">
-                        <label className="text-sm text-muted-foreground flex items-center gap-2">
-                            <Link2 className="w-4 h-4" />
+          <div className="flex gap-2 w-full">
+            <label className="text-sm text-muted-foreground flex items-center gap-2">
+              <Link2 className="w-4 h-4" />
+            </label>
+            <Input value={projectUrl} readOnly />
+            <Button
+              variant="outline"
+              className="flex-shrink-0"
+              onClick={handleCopyLink}
+            >
+              {copied ? (
+                <Check className="w-4 h-4" />
+              ) : (
+                <Copy className="w-4 h-4" />
+              )}
+            </Button>
+          </div>
+        </div>
 
-                        </label>
-                        <Input
-                            value={projectUrl}
-                            readOnly
-                        />
-                        <Button
-                            variant="outline"
-                            className="flex-shrink-0"
-                            onClick={handleCopyLink}
-                        >
-                            {copied ? (
-                                <Check className="w-4 h-4" />
-                            ) : (
-                                <Copy className="w-4 h-4" />
-                            )}
-                        </Button>
-                    </div>
-                </div>
-
-                <div className="text-center">
-                    <Button
-                        variant="ghost"
-                        onClick={onClose}
-                        className="text-muted-foreground"
-                    >
-                        Done
-                    </Button>
-                </div>
-            </DialogContent>
-        </Dialog>
-    );
+        <div className="text-center">
+          <Button
+            variant="ghost"
+            onClick={onClose}
+            className="text-muted-foreground"
+          >
+            Done
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
 };
 
 export default ShareModal;

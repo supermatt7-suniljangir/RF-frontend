@@ -1,10 +1,14 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { categories } from "@/lib/categories";
-
-
 
 export default function CategorySelector() {
   const router = useRouter();
@@ -28,10 +32,7 @@ export default function CategorySelector() {
 
   return (
     <div className="flex items-center gap-4">
-      <Select
-        value={selectedCategory}
-        onValueChange={handleCategoryChange}
-      >
+      <Select value={selectedCategory} onValueChange={handleCategoryChange}>
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Category" />
         </SelectTrigger>

@@ -39,8 +39,9 @@ const SearchInput: React.FC<SearchInputs> = ({ errors, register }) => {
         <Input
           {...register("query")}
           placeholder="Search inspiration"
-          className={`pl-8 ${errors?.query ? "ring-2 ring-red-500" : "focus:ring-2"
-            } bg-muted text-muted-foreground focus:border-primary placeholder:text-muted-foreground`}
+          className={`pl-8 ${
+            errors?.query ? "ring-2 ring-red-500" : "focus:ring-2"
+          } bg-muted text-muted-foreground focus:border-primary placeholder:text-muted-foreground`}
         />
         {errors?.query && (
           <p className="text-red-500 text-sm mt-1">{errors.query.message}</p>

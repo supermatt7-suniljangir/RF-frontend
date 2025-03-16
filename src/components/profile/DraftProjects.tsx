@@ -7,12 +7,18 @@ interface ProfileProjectProps {
 }
 
 const DraftProjects: React.FC<ProfileProjectProps> = ({ projects }) => {
-  const publishProjects = projects?.filter((project) => project.status === ProjectStatus.DRAFT);
+  const publishProjects = projects?.filter(
+    (project) => project.status === ProjectStatus.DRAFT,
+  );
   return (
     <div className="flex flex-wrap gap-4 justify-center md:justiy-start w-full">
-      {publishProjects?.length > 0 ? publishProjects?.map((project) => (
-        <ProjectCard key={project._id} project={project} />
-      )) : <p className="text-muted-foreground">No draft projects</p>}
+      {publishProjects?.length > 0 ? (
+        publishProjects?.map((project) => (
+          <ProjectCard key={project._id} project={project} />
+        ))
+      ) : (
+        <p className="text-muted-foreground">No draft projects</p>
+      )}
     </div>
   );
 };

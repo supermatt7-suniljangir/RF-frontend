@@ -14,9 +14,11 @@ interface ProfileProps {
   searchParams: Promise<{ display?: string }>;
 }
 
-export async function generateMetadata(
-  { params }: { params: Promise<{ id: string }> }
-): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
   const { id } = await params;
   const userRes: ApiResponse = await getProfileById(id);
 
@@ -61,15 +63,15 @@ const Profile: React.FC<ProfileProps> = async ({ params, searchParams }) => {
   const userRes: ApiResponse = await getProfileById(id);
   if (!userRes.success || !userRes.data) {
     return (
-      <p className="text-red-500">
-        {userRes.message || "User not found"}
-      </p>
+      <p className="text-red-500">{userRes.message || "User not found"}</p>
     );
   }
   const user = userRes.data;
 
   const profileProjectsRes: ApiResponse = await getProfileProjectsAPI(id);
-  const projects: MiniProject[] = profileProjectsRes.success ? profileProjectsRes.data : [];
+  const projects: MiniProject[] = profileProjectsRes.success
+    ? profileProjectsRes.data
+    : [];
 
   return (
     <Suspense fallback={<Spinner />}>
