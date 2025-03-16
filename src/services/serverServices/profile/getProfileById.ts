@@ -1,6 +1,5 @@
 "use server";
 
-import { User } from "@/types/user";
 import { URL } from "@/api/config/configs";
 import { ApiResponse } from "@/types/ApiResponse";
 

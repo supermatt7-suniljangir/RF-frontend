@@ -24,7 +24,6 @@ export const getUserProfile = async ({
         "Content-Type": "application/json",
         Cookie: cookieHeader,
       },
-      cache: cacheSettings,
       next: {
         revalidate: 60 * 60,
       },
