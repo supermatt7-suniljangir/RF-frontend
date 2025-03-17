@@ -41,10 +41,10 @@ const DesktopNav = () => {
                   <NavigationMenuContent className="">
                     <div className="grid w-[300px] p-4 shadow-lg">
                       <Link
-                        href={`/search?category=Web+Design`}
+                        href={`/search?tag=Figma`}
                         className="block p-2 "
                       >
-                        Web Design
+                        Figma Design
                       </Link>
                       <Link
                         className="block p-2"

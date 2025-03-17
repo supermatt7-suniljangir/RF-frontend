@@ -9,17 +9,17 @@ export type AppConfig = {
   COMPRESSION_OPTIONS: {
     avatar: {
       maxSizeMB: number;
-      maxWidthOrHeight: number;
+      maxWidthOrHeight?: number;
       useWebWorker: boolean;
     };
     cover: {
       maxSizeMB: number;
-      maxWidthOrHeight: number;
+      maxWidthOrHeight?: number;
       useWebWorker: boolean;
     };
     default: {
       maxSizeMB: number;
-      maxWidthOrHeight: number;
+      maxWidthOrHeight?: number;
       useWebWorker: boolean;
     };
   };
@@ -44,17 +44,14 @@ export const Config: AppConfig = {
   COMPRESSION_OPTIONS: {
     avatar: {
       maxSizeMB: 3,
-      maxWidthOrHeight: 800,
       useWebWorker: true,
     },
     cover: {
       maxSizeMB: 5,
-      maxWidthOrHeight: 3200,
       useWebWorker: true,
     },
     default: {
       maxSizeMB: 5,
-      maxWidthOrHeight: 3200,
       useWebWorker: true,
     },
   },

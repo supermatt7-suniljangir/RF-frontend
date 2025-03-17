@@ -64,7 +64,7 @@ function InteractionButtons({ project }: InteractionButtonsProps) {
           disabled={isSavingBookmark || isLoading || !user}
           variant="outline"
           onClick={handleSaveBookMark}
-          className="hover:bg-secondary w-10 h-10 rounded-full bg-secondary"
+          className="hover:bg-secondary text-secondary-foreground w-10 h-10 rounded-full bg-secondary"
         >
           <Bookmark
             className={`w-5 h-5 ${
@@ -78,7 +78,7 @@ function InteractionButtons({ project }: InteractionButtonsProps) {
         <Button
           variant="outline"
           size="icon"
-          className="w-10 h-10 rounded-full bg-secondary"
+          className="w-10 h-10 text-secondary-foreground rounded-full bg-secondary "
           onClick={() => setIsShareModalOpen(true)}
         >
           <Share2 />
@@ -88,7 +88,7 @@ function InteractionButtons({ project }: InteractionButtonsProps) {
           <Button
             onClick={() => router.push(`/project/editor/${project._id}`)}
             variant="outline"
-            className="w-10 h-10 rounded-full bg-secondary"
+            className="w-10 h-10 text-secondary-foreground rounded-full bg-secondary"
           >
             <Edit />
           </Button>

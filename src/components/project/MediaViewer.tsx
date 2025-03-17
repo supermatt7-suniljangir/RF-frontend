@@ -27,6 +27,7 @@ const MediaViewer: React.FC<MediaViewerProps> = ({media}) => {
                                 className="rounded h-auto w-full"
                                 width={0} // Let Next.js calculate dimensions dynamically
                                 height={0} // Let Next.js calculate dimensions dynamically
+                                unoptimized
                             />
                         </div>
                     ) : (

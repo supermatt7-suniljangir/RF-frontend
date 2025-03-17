@@ -40,6 +40,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             <Link href={`/project/${project._id}`} className="w-full">
                 <div className="relative h-64 overflow-hidden rounded-none">
                     <Image
+                        unoptimized
                         src={project?.thumbnail || Project2}
                         alt={project.title}
                         width={640}

@@ -48,34 +48,34 @@ const compressImages = async (files: TempMedia[]): Promise<TempMedia[]> => {
         }
 
         try {
-            // Skip compression for files under 1MB
-            if (file.file.size < 1 * 1024 * 1024) {
+            const sizeMB = file.file.size / (1024 * 1024);
+
+            if (sizeMB < 1) {
+                console.log('Skipping compression for small file');
                 compressedFiles.push(file);
                 continue;
             }
 
-            // Apply different compression levels based on file size
-            let compressionOptions;
-            if (file.file.size < 2 * 1024 * 1024) {
-                // Light compression for files between 1-2MB (30% quality reduction)
-                compressionOptions = {...options.default, maxSizeMB: file.file.size / (1024 * 1024) * 0.7};
-            } else if (file.file.size < 4 * 1024 * 1024) {
-                // Medium compression for files between 2-4MB
-                compressionOptions = {...options.default, maxSizeMB: file.file.size / (1024 * 1024) * 0.6};
+            const compressionOptions = {...options.default};
+            if (sizeMB < 2) {
+                compressionOptions.maxSizeMB = 1.6;
+            } else if (sizeMB < 4) {
+                compressionOptions.maxSizeMB = 3.2;
             } else {
-                // Default (stronger) compression for larger files
-                compressionOptions = options.default;
+                compressionOptions.maxSizeMB = 4;
             }
 
             const compressedFile = await imageCompression(file.file, compressionOptions);
             compressedFiles.push({...file, file: compressedFile});
         } catch (error) {
             console.error(`Image compression failed: ${file.file.name}`, error);
-            throw new Error("Failed to compress images.");
+            compressedFiles.push(file);
         }
     }
+
     return compressedFiles;
 };
+
 
 const uploadProjectFiles = async (
     files: TempMedia[],
