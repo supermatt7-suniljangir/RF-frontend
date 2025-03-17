@@ -65,11 +65,11 @@ const AuthForm = () => {
         <Card className="w-full max-w-md mx-auto">
             <CardHeader>
                 <h1 className="text-2xl font-bold text-center">
-                    Sign {isLogin ? "In" : "Up"} to Creativity Spotlight
+                    Sign {isLogin ? "In" : "Up"} with RadiatorForge
                 </h1>
             </CardHeader>
             <CardContent className="space-y-4">
-                <div className="!w-1/2 !mx-auto">
+                <div className="!w-1/2 !mx-auto bg-background p-0">
                     <GoogleLogin
                         text={isLogin ? "signin_with" : "signup_with"}
                         logo_alignment="center"
@@ -129,11 +129,6 @@ const AuthForm = () => {
                     <div className="space-y-1">
                         <div className="flex items-center justify-between">
                             <Label htmlFor="password">Password</Label>
-                            {isLogin && (
-                                <Button variant="link" className="text-sm font-semibold">
-                                    Forgot?
-                                </Button>
-                            )}
                         </div>
                         <Input
                             id="password"
@@ -171,9 +166,13 @@ const AuthForm = () => {
                         </div>
                     )}
 
-                    <Button type="submit" className="w-full">
+                    <Button type="submit" className="w-full rounded-none">
                         {isLogin ? "Sign In" : "Sign Up"}
                     </Button>
+                    <Button onClick={() => router.replace(`/`)}
+                            className={`!mt-4 mx-auto w-full rounded-none bg-foreground text-background`}>Continue
+                        Without Authentication</Button>
+
                 </form>
             </CardContent>
 
