@@ -67,9 +67,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = async () => {
     await logoutService();
     setUser(null);
-    setTimeout(() => {
-      router.push("/login");
-    }, 0);
   };
 
   return (
