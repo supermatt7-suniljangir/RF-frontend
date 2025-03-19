@@ -11,6 +11,7 @@ import { MiniProject } from "@/types/project";
  */
 export async function getUserBookmarks(): Promise<ApiResponse<MiniProject[]>> {
   try {
+    console.log('Ka-chow! bookmarks');
     const cookieStore = await cookies();
     const cookieHeader = cookieStore.toString();
 

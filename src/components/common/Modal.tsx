@@ -23,7 +23,6 @@ interface ModalProps {
   customContainerStyles?: string;
   customButtonStyles?: string;
   children: ReactNode;
-  loading?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -37,7 +36,6 @@ const Modal: React.FC<ModalProps> = ({
   customContainerStyles = "",
   customButtonStyles = "",
   children,
-  loading = false,
 }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -57,35 +55,31 @@ const Modal: React.FC<ModalProps> = ({
       <DialogContent
         className={`flex flex-col items-center space-y-4 ${customContainerStyles}`}
       >
-        {loading ? (
-          <Spinner />
-        ) : (
-          <>
-            {title && <DialogTitle>{title}</DialogTitle>}
-            {children}
-            <div className="flex gap-4">
-              <Button
-                variant="destructive"
-                onClick={handler}
-                disabled={isLoading}
-                className={customButtonStyles}
-              >
-                {isLoading ? <Loader2 className="animate-spin" /> : "Confirm"}
-              </Button>
-              <Button
-                autoFocus={true}
-                variant="secondary"
-                onClick={() => setIsOpen(false)}
-                className={cn(
-                  `focus:border focus:border-muted `,
-                  customButtonStyles,
-                )}
-              >
-                Cancel
-              </Button>
-            </div>
-          </>
-        )}
+        <>
+          {title && <DialogTitle>{title}</DialogTitle>}
+          {children}
+          <div className="flex gap-4">
+            <Button
+              variant="destructive"
+              onClick={handler}
+              disabled={isLoading}
+              className={customButtonStyles}
+            >
+              {isLoading ? <Loader2 className="animate-spin" /> : "Confirm"}
+            </Button>
+            <Button
+              autoFocus={true}
+              variant="secondary"
+              onClick={() => setIsOpen(false)}
+              className={cn(
+                `focus:border focus:border-muted `,
+                customButtonStyles,
+              )}
+            >
+              Cancel
+            </Button>
+          </div>
+        </>
       </DialogContent>
     </Dialog>
   );

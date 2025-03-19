@@ -29,6 +29,7 @@ function ExternalProfileInfo({user}: { user: User }) {
                 {user.profile?.avatar ? (
                     <Image
                         fill
+                        priority
                         unoptimized
                         src={user.profile?.avatar}
                         alt={user.fullName}

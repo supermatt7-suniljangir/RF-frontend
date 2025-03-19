@@ -56,7 +56,7 @@ const ProjectActionsContextMenu = ({projectId}: { projectId: string }) => {
                     isOpen={openDeleteWindow}
                     customContainerStyles={`w-full md:w-1/3 text-red-500`}
                     setIsOpen={setOpenDeleteWindow}
-                    loading={loading}
+                    isLoading={loading}
                     handler={handleDeleteProject}
                 >
                     This is a Permanent Action and cannot be undone

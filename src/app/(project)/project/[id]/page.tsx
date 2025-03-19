@@ -27,16 +27,17 @@ export async function generateMetadata({
   const project = data as ProjectType;
   return {
     title: project.title,
-    description: project?.description,
+    description: project.shortDescription,
     openGraph: {
       title: project.title,
-      description: project.description,
+      description: project.shortDescription,
       images: [
         {
-          url: project?.thumbnail,
+          url: `${project.thumbnail}?v=${project.createdAt}`,
           width: 800,
           height: 600,
           alt: project.title,
+          type: "image/png",
         },
       ],
       type: "website",
@@ -44,8 +45,8 @@ export async function generateMetadata({
     twitter: {
       card: "summary_large_image",
       title: project.title,
-      description: project?.description || "Project details",
-      images: [project?.thumbnail || "/default-project-image.png"],
+      description: project.shortDescription,
+      images: [project.thumbnail],
     },
   };
 }

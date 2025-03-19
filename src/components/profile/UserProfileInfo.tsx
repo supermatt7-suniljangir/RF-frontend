@@ -21,6 +21,7 @@ export default function UserProfileInfo() {
         {authUser.profile?.avatar ? (
           <Image
             fill
+            priority
             unoptimized
             src={authUser.profile?.avatar}
             alt={authUser.fullName}

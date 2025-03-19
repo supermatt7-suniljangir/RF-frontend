@@ -9,6 +9,7 @@ export const getProjectsLikedByUser = async ({
   userId?: string;
 }): Promise<ApiResponse> => {
   try {
+
     const cookieStore = await cookies();
     const cookieHeader = cookieStore.toString();
     const url = `${URL}/likes/${userId ? userId : "personal"}/user`;

@@ -50,7 +50,7 @@ class ProjectService {
     if (response.status !== 200 || !response.data.success) {
       throw new Error(`Failed to delete project: ${response.data.message}`);
     }
-    await revalidateTags(["userProjects-personal"]);
+    await revalidateTags(["userProjects-personal", "bookmarks", "likedProjects"]);
     return response.data;
   };
 }
