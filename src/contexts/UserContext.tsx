@@ -30,8 +30,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       const { success, data, error, status } = (await getUserProfile({
         cacheSettings: "reload",
       })) as ApiResponse;
-      if (!success) {
-        console.log("error", error);
+      if (!success || !data) {
+        console.error(error);
         if (status === 401 && error !== "AUTH_REQUIRED") {
           // Only show toast for 401 errors if user was logged in
           const toastMessage =

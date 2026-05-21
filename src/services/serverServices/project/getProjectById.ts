@@ -44,7 +44,7 @@ export const getProjectById = async ({
     }
 
     return data;
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error fetching project by ID:", error.message);
     return {
       success: false,

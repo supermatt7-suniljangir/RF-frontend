@@ -22,18 +22,17 @@ const BuildComponents = () => {
   // Combine initial and new media for rendering/validation
   const media = [...initialMedia, ...newMedia];
 
-  // Handle file uploads with validation for image/video types
+  // Handle file uploads with validation for image types
   const handleMediaUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     const invalidFiles = files.filter(
-      (file) =>
-        !file.type.startsWith("image/") && !file.type.startsWith("video/"),
+      (file) => !file.type.startsWith("image/"),
     );
     if (invalidFiles.length > 0) {
       toast({
         variant: "destructive",
         title: "Error processing files",
-        description: "Only images and videos are allowed.",
+        description: "Only images are allowed.",
         duration: 4000,
       });
       event.target.value = "";
@@ -41,35 +40,27 @@ const BuildComponents = () => {
     }
 
     // Separate files into video and image groups
-    const videoFiles = files.filter((file) => file.type.startsWith("video/"));
     const imageFiles = files.filter((file) => file.type.startsWith("image/"));
 
     // Map files into media objects with blob URLs
-    const mediaFiles = [
-      ...videoFiles.map((file) => ({
-        type: "video",
-        file,
-        url: URL.createObjectURL(file),
-      })),
-      ...imageFiles.map((file) => ({
-        type: "image",
-        file,
-        url: URL.createObjectURL(file),
-      })),
-    ];
+    const mediaFiles = imageFiles.map((file, i) => ({
+      type: "image",
+      file,
+      id: i + 1,
+      url: URL.createObjectURL(file),
+    }));
 
     // Update new media state
     addNewMedia(mediaFiles as TempMedia[]);
     event.target.value = "";
   };
-
   // Handle continue action with basic validation
   const handleContinue = () => {
     if (media.length < 1) {
       toast({
         variant: "destructive",
         title: "Error processing files",
-        description: "Please upload at least one image or video.",
+        description: "Please upload at least one image.",
         duration: 4000,
       });
       return;
@@ -90,6 +81,7 @@ const BuildComponents = () => {
               id="file-upload"
               type="file"
               multiple
+              accept="image/jpeg,image/png,image/webp,image/jpg"
               className="hidden"
               onChange={handleMediaUpload}
             />

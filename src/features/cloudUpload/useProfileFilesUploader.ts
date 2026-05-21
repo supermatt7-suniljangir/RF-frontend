@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
-import { getFileUrl } from "@/lib/getFileUrl";
 import { useUpdateUserProfile } from "@/features/profile/useUpdateProfile";
 import { User } from "@/types/user";
 import { Config } from "@/config/config";
@@ -21,23 +20,30 @@ export const useProfileFilesUploader = (
     setLoading(true);
 
     try {
-      const file = files[0];
+      const profilePhotoItem = {
+        file: files[0],
+        id: 1,
+      };
       const maxSize = Config.FILE_LIMITS[type];
-      if (file.size > maxSize) {
+      if (profilePhotoItem.file.size > maxSize) {
         throw new Error(
           `File must be smaller than ${type === "cover" ? "5MB" : "3MB"}.`,
         );
       }
-      if (!file.type.includes("image")) {
+      if (!profilePhotoItem.file.type.includes("image")) {
         throw new Error("File must be an image.");
       }
-
-      const [uploadUrlData] = await FilesUploadService.getUploadUrls([file]);
-      await FilesUploadService.uploadFiles([
-        { uploadUrl: uploadUrlData.uploadUrl, file: file },
+      // get upload URL
+      const [uploadUrlData] = await FilesUploadService.getUploadUrls([
+        profilePhotoItem,
       ]);
+      // upload the file to the received url
+      const [data] = await FilesUploadService.uploadFiles([
+        { uploadUrl: uploadUrlData.uploadUrl, file: profilePhotoItem.file },
+      ]);
+      const imageUrl = data.secure_url;
 
-      const imageUrl = getFileUrl(uploadUrlData.key);
+      // upload profile once profile picture gets updated
       const response = await updateProfile({ profile: { [type]: imageUrl } });
       setImage(imageUrl);
       setUser(response.data);

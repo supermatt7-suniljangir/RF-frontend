@@ -1,4 +1,3 @@
-import { Itool } from "@/types/others";
 import { URL } from "@/api/config/configs";
 import ApiService from "@/api/wrapper/axios-wrapper";
 
@@ -17,9 +16,10 @@ class ToolService {
         throw new Error(response.statusText);
       }
       const data = await response.json();
+      console.log(data);
       return data.data;
     } catch (error) {
-      throw new Error("Failed to fetch tools");
+      throw new Error("Failed to fetch tools", error);
     }
   };
 
@@ -33,7 +33,7 @@ class ToolService {
       }
       return response.data;
     } catch (error) {
-      throw new Error("Failed to create tool");
+      throw new Error("Failed to create tool", error);
     }
   };
 
@@ -46,7 +46,7 @@ class ToolService {
       }
       return response.data;
     } catch (error) {
-      throw new Error("Failed to delete tool");
+      throw new Error("Failed to delete tool", error);
     }
   };
 }

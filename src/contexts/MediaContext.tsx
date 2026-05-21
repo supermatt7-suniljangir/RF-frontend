@@ -7,7 +7,7 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import { Imedia, TempMedia, Thumbnail } from "@/types/project";
+import { Imedia, Ithumbnail, TempMedia, Thumbnail } from "@/types/project";
 import { useProjectContext } from "./ProjectContext";
 
 /**
@@ -23,7 +23,7 @@ interface MediaUploadContextType {
   clearNewMedia: () => void;
   updateNewMedia: (media: TempMedia[]) => void;
   // Already existing thumbnail URL from API.
-  initialThumbnail: string;
+  initialThumbnail: Ithumbnail;
   // New thumbnail upload with file data.
   newThumbnail: Thumbnail | null;
   updateNewThumbnail: (thumbnail: Thumbnail) => void;
@@ -33,7 +33,7 @@ interface MediaUploadContextType {
 interface MediaUploadProviderProps {
   children: ReactNode;
   initialMediaData?: Imedia[];
-  initialThumbnailData?: string;
+  initialThumbnailData?: Ithumbnail | null;
 }
 
 const MediaUploadContext = createContext<MediaUploadContextType | undefined>(
@@ -43,7 +43,7 @@ const MediaUploadContext = createContext<MediaUploadContextType | undefined>(
 export const MediaUploadProvider: React.FC<MediaUploadProviderProps> = ({
   children,
   initialMediaData = [],
-  initialThumbnailData = "",
+  initialThumbnailData = null,
 }) => {
   const { updateEditorStage, updateUIState, editorStage, uiState } =
     useProjectContext();
@@ -53,7 +53,7 @@ export const MediaUploadProvider: React.FC<MediaUploadProviderProps> = ({
   const [newMedia, setNewMedia] = useState<TempMedia[]>([]);
 
   // State for initial thumbnail and new thumbnail.
-  const [initialThumbnail] = useState<string>(initialThumbnailData);
+  const [initialThumbnail] = useState<Ithumbnail>(initialThumbnailData);
   const [newThumbnail, setNewThumbnail] = useState<Thumbnail | null>(null);
 
   // Memoize functions to prevent unnecessary re-renders

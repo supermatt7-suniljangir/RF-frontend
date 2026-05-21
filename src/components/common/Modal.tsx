@@ -10,7 +10,6 @@ import { Loader2 } from "lucide-react";
 import { Button } from "../ui/button";
 import React, { memo, ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import Spinner from "@/app/loading";
 
 interface ModalProps {
   isOpen: boolean;

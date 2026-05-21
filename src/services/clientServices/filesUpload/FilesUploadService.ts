@@ -2,20 +2,22 @@
 
 import ApiService from "@/api/wrapper/axios-wrapper";
 import { ApiResponse } from "@/types/ApiResponse";
-import { UploadFileResponse } from "@/types/upload";
+import { TempMedia, Thumbnail } from "@/types/project";
+import { CloudinaryUploadResponse, GeneratedUploadURL } from "@/types/upload";
 
 class FilesUploadService {
   private static api = ApiService.getInstance();
   private static uploadEndpoint = "/upload/files";
   static getUploadUrls = async (
-    files: File[],
-  ): Promise<UploadFileResponse[]> => {
-    const metadata = files.map((file) => ({
-      filename: file.name,
-      contentType: file.type,
+    files: TempMedia[] | Thumbnail[],
+  ): Promise<GeneratedUploadURL[]> => {
+    const metadata = files.map((item) => ({
+      filename: item.file.name,
+      contentType: item.file.type,
+      id: item?.id || null,
     }));
 
-    const response = await this.api.post<ApiResponse<UploadFileResponse[]>>(
+    const response = await this.api.post<ApiResponse<GeneratedUploadURL[]>>(
       this.uploadEndpoint,
       {
         files: metadata,
@@ -30,7 +32,7 @@ class FilesUploadService {
 
   static uploadFiles = async (
     uploadData: { uploadUrl: string; file: File }[],
-  ): Promise<any[]> => {
+  ): Promise<CloudinaryUploadResponse[]> => {
     try {
       // Process each upload individually to handle errors better
       const results = await Promise.all(
@@ -41,25 +43,21 @@ class FilesUploadService {
               body: file,
               headers: { "Content-Type": file.type },
             });
+            const data = await response.json();
+
             // S3 returns 200 for successful uploads
             if (!response.ok) {
               throw new Error(
                 `Upload failed with status: ${response.status} ${response.statusText}`,
               );
             }
-
-            return {
-              success: true,
-              response,
-              url: uploadUrl.split("?")[0], // Base URL without query parameters
-            };
+            return data;
           } catch (error) {
             console.error(`Error uploading file ${file.name}:`, error);
             throw error; // Re-throw to be caught by the outer Promise.all
           }
         }),
       );
-
       return results;
     } catch (error) {
       console.error("Failed to upload one or more files:", error);

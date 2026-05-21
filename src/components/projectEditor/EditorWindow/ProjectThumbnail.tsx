@@ -6,6 +6,7 @@ import ProjectCard from "../../common/ProjectCard";
 import { Button } from "../../ui/button";
 import { toast } from "@/hooks/use-toast";
 import { useProjectContext } from "@/contexts/ProjectContext";
+import { MiniProject } from "@/types/project";
 
 const ProjectThumbnail: React.FC = () => {
   const { initialThumbnail, newThumbnail, newMedia, updateNewThumbnail } =
@@ -14,22 +15,25 @@ const ProjectThumbnail: React.FC = () => {
   const { user } = useUser();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const tempProject: any = {
+  const tempProject: Partial<MiniProject> = {
     title: projectMetadata.title,
-    description: projectMetadata.description,
-    thumbnail: newThumbnail
-      ? newThumbnail.url
-      : initialThumbnail
-        ? initialThumbnail
-        : newMedia.find((media) => media.type === "image")?.url,
+    thumbnail: newThumbnail ??
+      initialThumbnail ?? {
+        type: "image/thumbnail",
+        url: newMedia.find((media) => media.type === "image").url,
+      },
     creator: {
+      email: user.email,
       _id: user?._id || "123",
       fullName: user?.fullName || "John Doe",
-      avatar: user?.profile?.avatar,
+      profile: {
+        avatar: user?.profile?.avatar,
+      },
     },
     stats: {
       views: 0,
       likes: 0,
+      comments: 0,
     },
   };
 

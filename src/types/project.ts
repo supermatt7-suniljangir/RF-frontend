@@ -28,7 +28,7 @@ export interface ProjectType {
   title: string;
   description: string;
   shortDescription: string;
-  thumbnail: string;
+  thumbnail: Ithumbnail;
   media: Imedia[];
   creator: MiniUser;
   collaborators?: MiniUser[];
@@ -50,12 +50,12 @@ export interface ProjectUploadType {
   title: string;
   description: string;
   shortDescription: string;
-  thumbnail: Thumbnail | string;
-  media: Imedia[];
+  thumbnail: Thumbnail | Ithumbnail;
+  media: Imedia[] | TempMedia[];
   creator: string; // User ID
   collaborators?: string[]; // Array of user IDs
   tags: string[];
-  tools: Itool[];
+  tools: Itool[] | string[];
   category: string;
   stats: IStats;
   featured: boolean;
@@ -68,28 +68,45 @@ export interface ProjectUploadType {
 }
 
 export interface Imedia {
-  type: "image" | "video";
+  type: "image";
   url: string;
+  key?: string;
 }
 
-export interface TempMedia extends Imedia {
+export interface TempMedia extends Partial<Imedia> {
   file?: File;
+  id?: number;
 }
-export interface Thumbnail {
-  url: string;
-  file?: File;
+
+export interface Ithumbnail {
   type: "image/thumbnail";
+  url: string;
+  key?: string;
 }
-
+export interface Thumbnail extends Ithumbnail {
+  file?: File; //avoid usage in components, only temporary while modifying project data in useProjectFilesUploader service
+}
 export interface MiniProject {
   _id?: string;
   title: string;
-  thumbnail: string;
+  thumbnail: Ithumbnail | Thumbnail;
   creator?: MiniUser;
   collaborators?: MiniUser[];
-  stats: IStats;
-  featured: boolean;
+  stats?: IStats;
+  featured?: boolean;
   publishedAt: Date;
   status: ProjectStatus;
+  category: string;
+}
+
+export interface MiniThumbnailCard {
+  _id?: string;
+  title: string;
+  thumbnail: Ithumbnail | Thumbnail | TempMedia;
+  creator?: {
+    _id: string;
+    fullName: string;
+    avatar: string;
+  };
   category: string;
 }

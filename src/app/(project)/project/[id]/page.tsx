@@ -33,7 +33,7 @@ export async function generateMetadata({
       description: project.shortDescription,
       images: [
         {
-          url: `${project.thumbnail}?v=${project.createdAt}`,
+          url: `${project.thumbnail.url}?v=${project.createdAt}`,
           width: 800,
           height: 600,
           alt: project.title,
@@ -46,7 +46,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: project.title,
       description: project.shortDescription,
-      images: [project.thumbnail],
+      images: [project.thumbnail.url],
     },
   };
 }

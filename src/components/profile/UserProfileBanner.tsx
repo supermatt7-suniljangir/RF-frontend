@@ -45,7 +45,7 @@ export default function UserProfileBanner() {
             <Spinner />
           ) : bannerImage ? (
             <Image
-                unoptimized
+              unoptimized
               src={bannerImage}
               alt="Banner"
               fill

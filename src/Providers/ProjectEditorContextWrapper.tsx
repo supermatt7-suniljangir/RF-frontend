@@ -30,7 +30,7 @@ const ProjectEditorProvider: React.FC<ProjectEditorProviderProps> = ({
     <ProjectProvider initialData={initialData}>
       <MediaUploadProvider
         initialMediaData={initialData?.media || []}
-        initialThumbnailData={initialData?.thumbnail || ""}
+        initialThumbnailData={initialData?.thumbnail}
       >
         <UploadProjectProvider projectID={initialData?._id}>
           {children}

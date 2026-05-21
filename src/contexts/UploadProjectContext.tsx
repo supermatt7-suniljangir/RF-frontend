@@ -2,13 +2,7 @@ import React, { createContext, useContext, ReactNode } from "react";
 import { useProjectContext } from "./ProjectContext";
 import { useUser } from "@/contexts/UserContext";
 import { useProjectUploadHandler } from "@/features/project/usePrepareProjectUpload";
-import {
-  ProjectStatus,
-  Imedia,
-  TempMedia,
-  ProjectUploadType,
-  Thumbnail,
-} from "@/types/project";
+import { ProjectStatus, ProjectUploadType, Thumbnail } from "@/types/project";
 import { useMediaUpload } from "./MediaContext";
 
 interface UploadProjectContextType {
@@ -21,7 +15,7 @@ const UploadProjectContext = createContext<
 
 interface UploadProjectProviderProps {
   children: ReactNode;
-  projectID: string;
+  projectID?: string | null;
 }
 
 export const UploadProjectProvider: React.FC<UploadProjectProviderProps> = ({
@@ -38,7 +32,7 @@ export const UploadProjectProvider: React.FC<UploadProjectProviderProps> = ({
   // Compute final thumbnail using newThumbnail if available; otherwise fallback to initialThumbnail
   const finalThumbnail: Thumbnail = newThumbnail
     ? newThumbnail
-    : { url: initialThumbnail, file: undefined, type: "image/thumbnail" };
+    : initialThumbnail;
 
   /**
    * Prepare and upload project data
@@ -56,7 +50,7 @@ export const UploadProjectProvider: React.FC<UploadProjectProviderProps> = ({
       creator: user._id,
       collaborators: collaborators.map((collab) => collab._id),
       tags: tags,
-      tools: tools.map((tool) => tool._id) as any,
+      tools: tools.map((tool) => tool._id),
       category: projectMetadata.category,
       stats: projectMetadata.stats,
       featured: projectMetadata.featured || false,
