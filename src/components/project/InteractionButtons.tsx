@@ -1,5 +1,5 @@
 "use client";
-import { memo, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Bookmark, Edit, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserContext";
@@ -53,7 +53,6 @@ function InteractionButtons({ project }: InteractionButtonsProps) {
     } finally {
       setIsSavingBookmark(false);
       revalidateTags(["bookmarks"]);
-
     }
   };
 
@@ -64,10 +63,10 @@ function InteractionButtons({ project }: InteractionButtonsProps) {
           disabled={isSavingBookmark || isLoading || !user}
           variant="outline"
           onClick={handleSaveBookMark}
-          className="hover:bg-secondary text-secondary-foreground w-10 h-10 rounded-full bg-secondary"
+          className="h-10 w-10 rounded-full bg-secondary text-secondary-foreground hover:bg-secondary"
         >
           <Bookmark
-            className={`w-5 h-5 ${
+            className={`h-5 w-5 ${
               isSaved
                 ? "fill-primary-foreground text-primary-foreground"
                 : "text-primary-foreground"
@@ -78,7 +77,7 @@ function InteractionButtons({ project }: InteractionButtonsProps) {
         <Button
           variant="outline"
           size="icon"
-          className="w-10 h-10 text-secondary-foreground rounded-full bg-secondary "
+          className="h-10 w-10 rounded-full bg-secondary text-secondary-foreground"
           onClick={() => setIsShareModalOpen(true)}
         >
           <Share2 />
@@ -86,9 +85,11 @@ function InteractionButtons({ project }: InteractionButtonsProps) {
 
         {user && project.creator._id === user._id && (
           <Button
-            onClick={() => router.push(`/project/editor/${project._id}`)}
+            onClick={() =>
+              window.open(`/project/editor/${project._id}`, "_blank")
+            }
             variant="outline"
-            className="w-10 h-10 text-secondary-foreground rounded-full bg-secondary"
+            className="h-10 w-10 rounded-full bg-secondary text-secondary-foreground"
           >
             <Edit />
           </Button>

@@ -52,3 +52,4 @@ export default function Lightbox({ image, onClose }: LightboxProps) {
     </Dialog>
   );
 }
+

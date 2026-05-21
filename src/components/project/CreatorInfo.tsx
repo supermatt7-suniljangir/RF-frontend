@@ -8,12 +8,13 @@ interface CreatorInfoProps {
 }
 const CreatorInfo: React.FC<CreatorInfoProps> = ({ creator }) => {
   return (
-    <div className="border relative w-full md:w-1/3 py-8 md:p-8 ">
+    <div className="relative w-full border py-8 md:w-1/3 md:p-8">
       <Link
         href={`/profile/${creator._id}`}
-        className="flex justify-center items-center flex-col gap-2 h-full"
+        target="_blank"
+        className="flex h-full flex-col items-center justify-center gap-2"
       >
-        <div className="relative w-36 h-36 border border- rounded-full flex flex-col">
+        <div className="border- relative flex h-36 w-36 flex-col rounded-full border">
           <Image
             src={creator.profile.avatar}
             alt={creator.fullName}

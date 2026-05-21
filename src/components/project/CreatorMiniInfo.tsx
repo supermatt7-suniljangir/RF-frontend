@@ -18,14 +18,15 @@ const CreatorMiniInfo: React.FC<UserInfoProps> = ({ creator, styles }) => {
       href={
         user?._id === creator?._id ? "/profile" : `/profile/${creator?._id}`
       }
+      target="_blank"
     >
       <div className={cn("flex items-center gap-4", styles)}>
-        <div className="w-12 h-12 rounded-full overflow-hidden relative">
+        <div className="relative h-12 w-12 overflow-hidden rounded-full">
           <Image
             fill
             src={creator?.profile.avatar || rakesh}
             alt="Creator avatar"
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
           />
         </div>
         <div>
@@ -37,4 +38,3 @@ const CreatorMiniInfo: React.FC<UserInfoProps> = ({ creator, styles }) => {
   );
 };
 export default memo(CreatorMiniInfo);
-// https://creativespotlight.s3.eu-north-1.amazonaws.com/media/6734d491aa911275db54e114/21f1b7ce-c936-4923-b54f-da7947178e99.jpg

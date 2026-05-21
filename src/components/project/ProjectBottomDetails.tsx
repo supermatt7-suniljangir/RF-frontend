@@ -4,7 +4,6 @@ import LikeButton from "./LikeButton";
 import { cn } from "@/lib/utils";
 import { ProjectType } from "@/types/project";
 import { formatDate } from "@/lib/formateDate";
-import { ThumbsUp } from "lucide-react";
 import Image from "next/image";
 
 interface CasinoMetricsProps {
@@ -13,39 +12,38 @@ interface CasinoMetricsProps {
 
 const ProjectBottomDetails: React.FC<CasinoMetricsProps> = ({ project }) => {
   const {
-    title,
-    stats: { likes, views, comments },
+    stats: { views, comments, likes },
     publishedAt,
   } = project;
   return (
-    <div className="md:w-2/3 w-full h-full">
-      <div className="w-full flex flex-col">
+    <div className="h-full w-full md:w-2/3">
+      <div className="flex w-full flex-col">
         <Card
           className={cn(
-            "rounded-none border-none h-full shadow-none w-auto py-0",
+            "h-full w-auto rounded-none border-none py-0 shadow-none",
           )}
         >
-          <CardContent className="pt-6 pb-0 rounded-none border-none h-full shadow-none">
-            <div className="flex flex-col items-center h-full">
+          <CardContent className="h-full rounded-none border-none pb-0 pt-6 shadow-none">
+            <div className="flex h-full flex-col items-center">
               <LikeButton
                 projectId={project._id}
                 size="large"
-                initialLikes={project.stats.likes || 0}
+                initialLikes={likes || 0}
               />
 
-              <div className="flex items-center space-x-6 text-sm text-muted-foreground my-1">
+              <div className="my-1 flex items-center space-x-6 text-sm text-muted-foreground">
                 <div className="flex items-center space-x-1">
-                  <Eye className="w-4 h-4" />
+                  <Eye className="h-4 w-4" />
                   <span>
                     {views >= 1000 ? `${(views / 1000).toFixed(1)}K` : views}
                   </span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <MessageCircleMore className="w-4 h-4" />
+                  <MessageCircleMore className="h-4 w-4" />
                   <span>{comments}</span>
                 </div>
               </div>
-              <p className="text-muted-foreground text-sm text-center md:text-start">
+              <p className="text-center text-sm text-muted-foreground md:text-start">
                 Published:
                 {formatDate(publishedAt)}
               </p>
@@ -55,17 +53,17 @@ const ProjectBottomDetails: React.FC<CasinoMetricsProps> = ({ project }) => {
 
         {/* tools and creators */}
         {project?.tools.length > 0 && (
-          <div className="space-y-2 relative py-4">
-            <h4 className="text-balance font-semibold text-center">Tools</h4>
-            <div className=" flex gap-2 justify-center flex-wrap">
+          <div className="relative space-y-2 py-4">
+            <h4 className="text-balance text-center font-semibold">Tools</h4>
+            <div className="flex flex-wrap justify-center gap-2">
               {project.tools?.map((tool, index) => (
                 <Card
                   key={index}
-                  className="text-muted-foreground p-0 rounded-none"
+                  className="rounded-none p-0 text-muted-foreground"
                 >
-                  <CardContent className="flex gap-2 px-2 py-1 justify-between items-center">
+                  <CardContent className="flex items-center justify-between gap-2 px-2 py-1">
                     <p className="font-medium"> {tool.name} </p>
-                    <div className="w-8 h-8 relative">
+                    <div className="relative h-8 w-8">
                       <Image src={tool.icon} alt={tool.name} fill />
                     </div>
                   </CardContent>

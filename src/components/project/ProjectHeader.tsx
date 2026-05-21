@@ -6,25 +6,32 @@ import type { ProjectType } from "@/types/project";
 
 interface ProjectHeaderProps {
   project: ProjectType;
+  isModal?: boolean;
 }
 
-const ProjectHeader = ({ project }: ProjectHeaderProps) => {
+const ProjectHeader = ({ project, isModal = false }: ProjectHeaderProps) => {
   return (
     <div className="w-full px-4">
       <div className="my-4 md:m-0">
-        <h1 className="text-2xl font-bold">{project.title}</h1>
+        <h1 className={`text-2xl font-bold ${isModal ? "text-white" : ""}`}>
+          {project.title}
+        </h1>
       </div>
       <div className="flex items-center justify-between">
         <div>
           {project.collaborators?.length > 0 ? (
             <div>
               <Collaborators
+                styles={isModal ? "text-white" : ""}
                 collaborators={project.collaborators}
                 creator={project.creator}
               />
             </div>
           ) : (
-            <CreatorMiniInfo creator={project.creator} />
+            <CreatorMiniInfo
+              creator={project.creator}
+              styles={isModal ? "text-white" : ""}
+            />
           )}
         </div>
         <div className="flex items-center gap-4">

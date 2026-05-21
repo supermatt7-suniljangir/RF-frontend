@@ -12,11 +12,13 @@ import CreatorMiniInfo from "./CreatorMiniInfo";
 interface CollaboratorsProps {
   collaborators: MiniUser[];
   creator: MiniUser;
+  styles?: string;
 }
 
 const Collaborators: React.FC<CollaboratorsProps> = ({
   collaborators,
   creator,
+  styles,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -31,16 +33,16 @@ const Collaborators: React.FC<CollaboratorsProps> = ({
       >
         <SquareStack />
         <span>Multiple Owners</span>
-        <ChevronDown className="w-4 h-4" />
+        <ChevronDown className="h-4 w-4" />
       </PopoverTrigger>
       <PopoverContent
-        className="w-auto -mt-1 flex flex-col gap-4"
+        className="-mt-1 flex w-auto flex-col gap-4"
         onMouseEnter={() => handleOpen(true)}
         onMouseLeave={() => handleOpen(false)}
       >
         <CreatorMiniInfo
           creator={creator}
-          styles="px-4 py-2 bg-muted text-muted-foreground"
+          styles={`px-4 py-2 bg-muted ${styles}`}
         />
         {collaborators.map((collab, idx) => (
           <CreatorMiniInfo
