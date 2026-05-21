@@ -1,4 +1,4 @@
-"user server";
+"use server";
 import { URL } from "@/api/config/configs";
 import { ApiResponse } from "@/types/ApiResponse";
 
