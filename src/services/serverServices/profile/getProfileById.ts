@@ -2,11 +2,14 @@
 
 import { URL } from "@/api/config/configs";
 import { ApiResponse } from "@/types/ApiResponse";
+import { User } from "@/types/user";
 
 /**
  * Fetches a user profile by ID with consistent ApiResponse structure.
  */
-export const getProfileById = async (userId: string): Promise<ApiResponse> => {
+export const getProfileById = async (
+  userId: string,
+): Promise<ApiResponse<User>> => {
   if (!userId) {
     return { success: false, message: "User ID is required" };
   }
@@ -24,7 +27,7 @@ export const getProfileById = async (userId: string): Promise<ApiResponse> => {
       },
     });
 
-    const result: ApiResponse = await response.json();
+    const result: ApiResponse<User> = await response.json();
 
     if (!response.ok || !result.success) {
       console.error(

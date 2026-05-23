@@ -1,7 +1,6 @@
 import { MiniProject, ProjectStatus } from "@/types/project";
 import React from "react";
 import ProjectCard from "../common/ProjectCard";
-import CreateProjectCard from "./CreateProjectCard";
 interface ProfileProjectProps {
   projects: MiniProject[];
 }
@@ -11,7 +10,7 @@ const DraftProjects: React.FC<ProfileProjectProps> = ({ projects }) => {
     (project) => project.status === ProjectStatus.DRAFT,
   );
   return (
-    <div className="flex flex-wrap gap-4 justify-center md:justiy-start w-full">
+    <div className="md:justiy-start flex w-full flex-wrap justify-center gap-4">
       {publishProjects?.length > 0 ? (
         publishProjects?.map((project) => (
           <ProjectCard key={project._id} project={project} />

@@ -3,7 +3,6 @@ import UserProfileInfo from "./UserProfileInfo";
 import ExternalProfileInfo from "./ExternalProfileInfo";
 import ProfileMenu from "./ProfileMenu";
 import PublishedProjects from "./PublishedProjects";
-import Statistics from "./Statistics";
 import { MiniProject } from "@/types/project";
 import { User } from "@/types/user";
 import ExternalProfileBanner from "./ExternalProfileBanner";
@@ -13,7 +12,7 @@ import DraftProjects from "./DraftProjects";
 import AppreciatedProjects from "./AppreciatedProjects";
 
 interface ProfileDataProps {
-  display: string;
+  display: string | undefined;
   projects: MiniProject[] | null;
   user?: User;
 }
@@ -32,15 +31,15 @@ const ProfileData: React.FC<ProfileDataProps> = ({
         <UserProfileBanner />
       )}
       {/* <ProfileBanner cover={user ? user.profile.cover : null} /> */}
-      <div className="grid grid-cols-1 lg:grid-cols-6 w-full">
-        <div className="lg:px-4 lg:col-span-2">
+      <div className="grid w-full grid-cols-1 lg:grid-cols-6">
+        <div className="lg:col-span-2 lg:px-4">
           {user ? <ExternalProfileInfo user={user!} /> : <UserProfileInfo />}
         </div>
-        <div className="lg:col-span-4 place-items-center lg:place-items-start w-full">
+        <div className="w-full place-items-center lg:col-span-4 lg:place-items-start">
           <ProfileMenu user={user || null} />
 
           {display === "projects" && <PublishedProjects projects={projects} />}
-          {display === "stats" && <Statistics user={user ? user : null} />}
+          {/* {display === "stats" && <Statistics user={user ? user : null} />} */}
           {display === "bookmarks" && !user && <Bookmarks />}
           {display === "drafts" && !user && (
             <DraftProjects projects={projects} />

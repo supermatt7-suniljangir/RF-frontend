@@ -21,7 +21,7 @@ export default function UserProfileBanner() {
     if (user?.profile?.cover) {
       setBannerImage(user.profile.cover);
     }
-  }, [bannerImage, user]);
+  }, [user]);
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: {

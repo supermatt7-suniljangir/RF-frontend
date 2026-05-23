@@ -17,20 +17,20 @@ const AppreciatedProjects: React.FC<ProfileProjectProps> = async ({ user }) => {
 
   if (!success) {
     return (
-      <p className="text-red-500 text-center w-full my-8">
+      <p className="my-8 w-full text-center text-red-500">
         {message || "Failed to fetch appreciated projects"}
       </p>
     );
   }
 
   return (
-    <div className="flex flex-wrap gap-4 justify-center md:justify-start w-full">
+    <div className="flex w-full flex-wrap justify-center gap-4 md:justify-start">
       {likedProjects?.length > 0 ? (
         likedProjects.map((project) => (
           <ProjectCard key={project._id} project={project} />
         ))
       ) : (
-        <p className="text-muted-foreground text-center w-full my-8">
+        <p className="my-8 w-full text-center text-muted-foreground">
           No Appreciated projects
         </p>
       )}

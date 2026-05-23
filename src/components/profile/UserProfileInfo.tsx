@@ -7,17 +7,28 @@ import { Button } from "../ui/button";
 import Social from "./Social";
 import { useUser } from "@/contexts/UserContext";
 import Spinner from "@/app/loading";
-import { redirect } from "next/navigation";
 import ProfilePlaceholder from "@/media/user.png";
 import FollowDetails from "./FollowDetails";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 export default function UserProfileInfo() {
   const { user: authUser, isLoading } = useUser();
-  if (isLoading) return <Spinner />;
-  if (!authUser) redirect("/login?redirect=/profile");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && !authUser) {
+      router.replace("/login?redirect=/profile");
+    }
+  }, [isLoading, authUser, router]);
+
+  if (isLoading || !authUser) {
+    return <Spinner />;
+  }
+
   return (
-    <div className="flex flex-col space-x-4 w-full relative items-center lg:items-start text-center lg:text-left space-y-4">
-      <div className="w-20 h-20 lg:w-24 lg:h-24 relative -mt-12 lg:ml-4 border-2 border-primary rounded-full">
+    <div className="relative flex w-full flex-col items-center space-x-4 space-y-4 text-center lg:items-start lg:text-left">
+      <div className="relative -mt-12 h-20 w-20 rounded-full border-2 border-primary lg:ml-4 lg:h-24 lg:w-24">
         {authUser.profile?.avatar ? (
           <Image
             fill
@@ -38,7 +49,7 @@ export default function UserProfileInfo() {
       </div>
 
       <div className="space-y-1">
-        <h3 className="font-semibold text-xl">{authUser.fullName}</h3>
+        <h3 className="text-xl font-semibold">{authUser.fullName}</h3>
         <div>
           <Link href={`mailto:${authUser.email}`}>
             <AtSign size={16} className="inline" /> {authUser.email}
@@ -63,7 +74,7 @@ export default function UserProfileInfo() {
       <Link href="/profile/editor" className="w-full">
         <Button
           variant="outline"
-          className="bg-secondary text-secondary-foreground text-lg lg:w-5/6 md:w-2/4 w-3/4 rounded-full"
+          className="w-3/4 rounded-full bg-secondary text-lg text-secondary-foreground md:w-2/4 lg:w-5/6"
         >
           <Pencil />
           Edit Profile
@@ -71,7 +82,7 @@ export default function UserProfileInfo() {
       </Link>
 
       <div className="!mt-8 w-[95%] p-4 lg:p-0">
-        <h2 className="text-muted-foreground font-bold uppercase">About</h2>
+        <h2 className="font-bold uppercase text-muted-foreground">About</h2>
         <p className="text-wrap">{authUser.profile?.bio}</p>
       </div>
 

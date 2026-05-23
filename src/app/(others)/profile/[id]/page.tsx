@@ -8,6 +8,7 @@ import Spinner from "@/app/loading";
 import { getProfileProjectsAPI } from "@/services/serverServices/profile/getProfileProjects";
 import { getProfileById } from "@/services/serverServices/profile/getProfileById";
 import { ApiResponse } from "@/types/ApiResponse";
+import { User } from "@/types/user";
 
 interface ProfileProps {
   params: Promise<{ id: string }>;
@@ -20,7 +21,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const userRes: ApiResponse = await getProfileById(id);
+  const userRes: ApiResponse<User> = await getProfileById(id);
 
   if (!userRes.success || !userRes.data) {
     return {
@@ -29,7 +30,7 @@ export async function generateMetadata({
     };
   }
 
-  const user = userRes.data;
+  const user: User = userRes.data;
 
   return {
     title: user.fullName,
@@ -58,9 +59,9 @@ export async function generateMetadata({
 
 const Profile: React.FC<ProfileProps> = async ({ params, searchParams }) => {
   const { id } = await params;
-  const { display } = await searchParams;
+  const { display = "projects" } = await searchParams;
 
-  const userRes: ApiResponse = await getProfileById(id);
+  const userRes: ApiResponse<User> = await getProfileById(id);
   if (!userRes.success || !userRes.data) {
     return (
       <p className="text-red-500">{userRes.message || "User not found"}</p>
@@ -68,7 +69,8 @@ const Profile: React.FC<ProfileProps> = async ({ params, searchParams }) => {
   }
   const user = userRes.data;
 
-  const profileProjectsRes: ApiResponse = await getProfileProjectsAPI(id);
+  const profileProjectsRes: ApiResponse<MiniProject[]> =
+    await getProfileProjectsAPI(id);
   const projects: MiniProject[] = profileProjectsRes.success
     ? profileProjectsRes.data
     : [];
