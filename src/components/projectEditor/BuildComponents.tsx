@@ -69,24 +69,24 @@ const BuildComponents = () => {
   };
 
   return (
-    <Card className="w-full h-full rounded-none border-none">
-      <CardContent className="w-full h-full flex flex-col items-center p-0 pt-10 space-y-4">
+    <Card className="h-full w-full rounded-none border-none">
+      <CardContent className="flex h-full w-full flex-col items-center space-y-4 p-0 pt-10">
         {/* File Upload Section */}
-        <Card className="w-5/6 h-auto py-4 rounded-none">
+        <Card className="h-auto w-5/6 rounded-none py-4">
           <Label
             htmlFor="file-upload"
-            className="w-full h-full p-0 cursor-pointer"
+            className="h-full w-full cursor-pointer p-0"
           >
             <Input
               id="file-upload"
               type="file"
               multiple
-              accept="image/jpeg,image/png,image/webp,image/jpg"
+              accept="image/jpeg,image/png,image/webp,image/jpg,image/gif"
               className="hidden"
               onChange={handleMediaUpload}
             />
-            <CardContent className="p-0 flex items-center justify-center space-x-2">
-              <Image className="!w-5 !h-5" />
+            <CardContent className="flex items-center justify-center space-x-2 p-0">
+              <Image className="!h-5 !w-5" />
               <p className="text-sm text-muted-foreground">Image / video</p>
             </CardContent>
           </Label>
@@ -95,9 +95,9 @@ const BuildComponents = () => {
         <Stagebar />
 
         {/* Project Details Section */}
-        <Card className="w-5/6 h-auto rounded-none py-4">
-          <CardContent className="p-0 flex items-center justify-center space-x-2">
-            <Text className="!w-5 !h-5" />
+        <Card className="h-auto w-5/6 rounded-none py-4">
+          <CardContent className="flex items-center justify-center space-x-2 p-0">
+            <Text className="!h-5 !w-5" />
             <p className="text-sm text-muted-foreground">Project Details</p>
           </CardContent>
         </Card>
