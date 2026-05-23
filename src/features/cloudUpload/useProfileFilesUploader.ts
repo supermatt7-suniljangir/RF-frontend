@@ -6,6 +6,7 @@ import { useUpdateUserProfile } from "@/features/profile/useUpdateProfile";
 import { User } from "@/types/user";
 import { Config } from "@/config/config";
 import FilesUploadService from "@/services/clientServices/filesUpload/FilesUploadService";
+import { revalidateTags } from "@/lib/revalidateTags";
 
 export const useProfileFilesUploader = (
   setImage: (url: string | null) => void,
@@ -46,7 +47,8 @@ export const useProfileFilesUploader = (
       // upload profile once profile picture gets updated
       const response = await updateProfile({ profile: { [type]: imageUrl } });
       setImage(imageUrl);
-      setUser(response.data);
+      setUser(response.data as User);
+      revalidateTags(["userProfile"]);
       toast({
         title: `${type === "cover" ? "Banner" : "Profile photo"} updated`,
         description: "Successfully updated your profile.",

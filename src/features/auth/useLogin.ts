@@ -10,7 +10,6 @@ import { getUserProfile } from "@/services/serverServices/profile/getUserProfile
 import AuthService from "@/services/clientServices/auth/AuthServices";
 
 interface AuthPayload {
-  googleToken?: string;
   email?: string;
   password?: string;
   fullName?: string;
@@ -25,12 +24,8 @@ export function useAuth() {
   const auth = useCallback(
     async (data: AuthPayload): Promise<void> => {
       setIsLoading(true);
-
       try {
-        // Handle based on login type
-        if (data.googleToken) {
-          await AuthService.googleLogin(data.googleToken);
-        } else if (isLogin) {
+        if (isLogin) {
           await AuthService.login({
             email: data.email,
             password: data.password,
@@ -59,11 +54,17 @@ export function useAuth() {
           }`,
           duration: 5000,
         });
-      } catch (error) {
+      } catch (error: unknown) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : isLogin
+              ? "Login failed"
+              : "Registration failed";
         toast({
           title: isLogin ? "Login Error" : "Registration Error",
           description:
-            error.message || (isLogin ? "Login failed" : "Registration failed"),
+            message || (isLogin ? "Login failed" : "Registration failed"),
           variant: "destructive",
           duration: 5000,
         });

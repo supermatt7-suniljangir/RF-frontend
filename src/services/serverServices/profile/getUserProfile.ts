@@ -20,11 +20,13 @@ export const getUserProfile = async ({
     const response = await fetch(url, {
       method: "GET",
       credentials: "include",
+      cache: cacheSettings,
       headers: {
         "Content-Type": "application/json",
         Cookie: cookieHeader,
       },
       next: {
+        tags: [`userProfile`],
         revalidate: 60 * 60,
       },
     });

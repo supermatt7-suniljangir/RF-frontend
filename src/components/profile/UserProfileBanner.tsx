@@ -35,11 +35,11 @@ export default function UserProfileBanner() {
   } as DropzoneOptions);
 
   return (
-    <Card className="w-full bg-muted mx-auto rounded-none">
-      <CardContent className="w-full p-0 relative">
+    <Card className="mx-auto w-full rounded-none bg-muted">
+      <CardContent className="relative w-full p-0">
         <div
           {...getRootProps()}
-          className="flex items-center w-full p-0 justify-center h-[60vh] md:h-96 cursor-pointer relative"
+          className="relative flex h-[60vh] w-full cursor-pointer items-center justify-center p-0 md:h-96"
         >
           {isLoading || isUpdating ? (
             <Spinner />
@@ -49,13 +49,13 @@ export default function UserProfileBanner() {
               src={bannerImage}
               alt="Banner"
               fill
-              className="w-full h-full object-cover relative"
+              className="relative h-full w-full object-cover"
             />
           ) : (
             <div className="grid place-items-center text-center">
               <Wallpaper size={48} />
               <h2 className="text-2xl font-semibold">Banner Image</h2>
-              <p className="text-muted-foreground text-lg mt-2">
+              <p className="mt-2 text-lg text-muted-foreground">
                 Optimal dimensions 3200x410px
               </p>
             </div>

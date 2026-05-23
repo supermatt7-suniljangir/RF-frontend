@@ -5,9 +5,9 @@ import React from "react";
 
 const HomePage: React.FC = async () => {
   return (
-    <div className="flex w-full flex-wrap justify-center p-4 flex-col">
+    <div className="flex w-full flex-col flex-wrap justify-center p-4">
       <div className="my-4">
-        <div className="w-96 -mt-4 mb-8 mx-auto">
+        <div className="mx-auto mb-8 w-full">
           <CreateProjectCard />
         </div>
         <SearchInput />

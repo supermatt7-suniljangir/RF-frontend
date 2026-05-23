@@ -31,8 +31,8 @@ const Collaborators: React.FC<CollaboratorsProps> = ({
         onMouseEnter={() => handleOpen(true)}
         onMouseLeave={() => handleOpen(false)}
       >
-        <SquareStack />
-        <span>Multiple Owners</span>
+        <SquareStack className={styles} />
+        <span className={styles}>Multiple Owners</span>
         <ChevronDown className="h-4 w-4" />
       </PopoverTrigger>
       <PopoverContent
@@ -40,15 +40,12 @@ const Collaborators: React.FC<CollaboratorsProps> = ({
         onMouseEnter={() => handleOpen(true)}
         onMouseLeave={() => handleOpen(false)}
       >
-        <CreatorMiniInfo
-          creator={creator}
-          styles={`px-4 py-2 bg-muted ${styles}`}
-        />
+        <CreatorMiniInfo creator={creator} styles={`px-4 py-2 bg-muted`} />
         {collaborators.map((collab, idx) => (
           <CreatorMiniInfo
             key={collab._id || idx}
             creator={collab}
-            styles="px-4 py-2 hover:bg-muted hover:text-muted-foreground"
+            styles={`px-4 py-2 hover:bg-muted hover:text-muted-foreground `}
           />
         ))}
       </PopoverContent>

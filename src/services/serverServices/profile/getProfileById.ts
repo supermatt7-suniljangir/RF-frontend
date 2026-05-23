@@ -38,11 +38,13 @@ export const getProfileById = async (userId: string): Promise<ApiResponse> => {
     }
 
     return result;
-  } catch (error: any) {
-    console.error("Error fetching user profile:", error.message);
+  } catch (error: unknown) {
+    console.error("Error fetching user profile:", error);
+
     return {
       success: false,
-      message: error.message || "An unexpected error occurred",
+      message:
+        error instanceof Error ? error.message : "An unexpected error occurred",
     };
   }
 };

@@ -18,7 +18,7 @@ class AuthService {
   };
 
   static googleLogin = async (googleToken: string): Promise<ApiResponse> => {
-    const response = await this.api.post<ApiResponse>("/users/auth", {
+    const response = await this.api.post<ApiResponse>("/google/auth", {
       googleToken,
     });
     if (response.status !== 200 || !response.data.success) {

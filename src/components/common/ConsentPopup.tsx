@@ -35,8 +35,10 @@ const ConsentPopup = () => {
             <p>
               This portfolio site is a personal project developed to demonstrate
               my technical skills and abilities. The design draws inspiration
-              from Behance. All featured projects are displayed with explicit
-              permission from their creators.
+              from Behance.All artworks belong to their respective creators and
+              are used for demonstration purposes only. Any artwork will be
+              removed upon creator contact. This project is a technical
+              showcase/demo platform.
             </p>
 
             <p className={`mt-4`}>
@@ -47,9 +49,9 @@ const ConsentPopup = () => {
             <p>
               For questions or concerns, contact me{" "}
               <a
-                href="https://suniljangir.site"
+                href="https://suniljangir.in"
                 target={"_blank"}
-                className={`text-blue-700 underline text-lg`}
+                className={`text-lg text-blue-700 underline`}
               >
                 here
               </a>
