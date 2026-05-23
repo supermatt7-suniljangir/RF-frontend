@@ -17,7 +17,7 @@ const PostComment: React.FC<PostCommentProps> = ({
 }) => {
   const [text, setText] = useState("");
   const { user } = useUser();
-  const { postComment } = useCommentsOperations();
+  const { postComment, isProcessingCommentOperation } = useCommentsOperations();
   const handlePostComment = async () => {
     if (!text.trim() || !user) return;
 
@@ -48,16 +48,17 @@ const PostComment: React.FC<PostCommentProps> = ({
   };
 
   return (
-    <div className="flex items-center gap-2 mt-2">
+    <div className="mt-2 flex items-center gap-2">
       <Textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="Add a comment..."
-        className="w-full h-24 resize-none bg-background text-foreground border border-input px-4 py-2 rounded-md focus:border-none focus:outline-none "
+        className="h-24 w-full resize-none rounded-md border border-input bg-background px-4 py-2 text-foreground focus:border-none focus:outline-none"
       />
       <Button
+        disabled={isProcessingCommentOperation}
         onClick={handlePostComment}
-        className="h-10 px-6 bg-primary text-white rounded-md hover:bg-primary/90"
+        className="h-10 rounded-md bg-primary px-6 text-white hover:bg-primary/90"
       >
         Post
       </Button>

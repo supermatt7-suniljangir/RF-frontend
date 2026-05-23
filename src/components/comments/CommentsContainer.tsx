@@ -34,12 +34,12 @@ const CommentsContainer: React.FC<CommentsContainerProps> = ({ project }) => {
   }, [project._id, fetchComments]);
 
   return (
-    <Card className="sm:w-5/6 w-[95%] mt-8 rounded-none">
+    <Card className="mt-8 w-[95%] rounded-none sm:w-5/6">
       <CardHeader className="text-center">Remarks</CardHeader>
       <CardContent>
         <PostComment projectId={project._id} setComments={setComments} />
         {error ? (
-          <p className="text-muted-foreground text-center my-4">{error}</p>
+          <p className="my-4 text-center text-muted-foreground">{error}</p>
         ) : (
           <CommentsList comments={comments} setComments={setComments} />
         )}
