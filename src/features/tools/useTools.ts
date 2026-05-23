@@ -19,7 +19,7 @@ const useTools = () => {
     setError(null);
 
     try {
-      const toolsData = await ToolService.getTools(cacheSettings);
+      const toolsData = await ToolService.getTools("reload");
       setTools(toolsData);
     } catch (error) {
       let errorMessage = "Failed to fetch tools";

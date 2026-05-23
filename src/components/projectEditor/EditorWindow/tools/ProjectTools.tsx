@@ -30,8 +30,8 @@ const ProjectTools = () => {
 
   if (error) {
     return (
-      <Card className="flex flex-wrap items-center w-full rounded-none p-4 border-none shadow-none">
-        <h2 className="font-semibold w-full">Tools Used</h2>
+      <Card className="flex w-full flex-wrap items-center rounded-none border-none p-4 shadow-none">
+        <h2 className="w-full font-semibold">Tools Used</h2>
         <CardContent className="p-0">
           <div className="text-red-500">
             <p>Error fetching tools: {error.message}</p>
@@ -42,8 +42,8 @@ const ProjectTools = () => {
   }
 
   return (
-    <Card className="flex flex-wrap items-center w-full rounded-none p-4 border-none shadow-none">
-      <h2 className="font-semibold w-full">Tools Used</h2>
+    <Card className="flex w-full flex-wrap items-center rounded-none border-none p-4 shadow-none">
+      <h2 className="w-full font-semibold">Tools Used</h2>
       <CardContent className="p-0">
         <SelectedTools selectedTools={selectedTools} onRemove={removeTool} />
 

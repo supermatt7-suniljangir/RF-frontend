@@ -7,7 +7,7 @@ import { Config } from "@/config/config";
 import FilesUploadService from "@/services/clientServices/filesUpload/FilesUploadService";
 import { CloudinaryUploadResponse, GeneratedUploadURL } from "@/types/upload";
 
-const validateFiles = (files: TempMedia[]) => {
+const validateFiles = (files: TempMedia[] | Thumbnail[]) => {
   const { MAX_IMAGE_SIZE, MAX_FILES } = Config.FILE_LIMITS;
 
   //  check if any file is anything other than image or video
@@ -21,26 +21,33 @@ const validateFiles = (files: TempMedia[]) => {
 
   for (const file of files) {
     if (file.type.includes("image") && file.file.size > MAX_IMAGE_SIZE) {
-      throw new Error("Images must be < 5MB.");
+      throw new Error(
+        `uploaded images must be less than ${(MAX_IMAGE_SIZE / (1024 * 1024)).toFixed(1)}MB.`,
+      );
     }
   }
 };
 
-const compressImages = async (files: TempMedia[]): Promise<TempMedia[]> => {
-  const compressedFiles: TempMedia[] = [];
+const compressImages = async <T extends TempMedia | Thumbnail>(
+  files: T[],
+): Promise<T[]> => {
+  const compressedFiles: T[] = [];
   const options = Config.COMPRESSION_OPTIONS;
 
   for (const file of files) {
     try {
+      if (file.file.type === "image/gif") {
+        compressedFiles.push(file);
+        continue;
+      }
       const sizeMB = file.file.size / (1024 * 1024);
-
       if (sizeMB < 1) {
-        // ("Skipping compression for small file");
         compressedFiles.push(file);
         continue;
       }
 
       const compressionOptions = { ...options.default };
+
       if (sizeMB < 2) {
         compressionOptions.maxSizeMB = 1;
       } else if (sizeMB < 4) {
@@ -53,9 +60,13 @@ const compressImages = async (files: TempMedia[]): Promise<TempMedia[]> => {
         file.file,
         compressionOptions,
       );
-      compressedFiles.push({ ...file, file: compressedFile });
+
+      compressedFiles.push({
+        ...file,
+        file: compressedFile,
+      });
     } catch (error) {
-      console.error(`Image compression failed:`, error);
+      console.error("Image compression failed:", error);
       compressedFiles.push(file);
     }
   }
@@ -77,7 +88,7 @@ const uploadProjectFiles = async (
     }
 
     const processedFiles = files.length > 0 ? await compressImages(files) : [];
-
+    console.log("processed files after compression are: ", processedFiles);
     const processedFilesMap = new Map(
       processedFiles.map((file) => [file.id, file.file]),
     );
@@ -114,8 +125,10 @@ const uploadProjectFiles = async (
     let uploadedThumbnail = null;
 
     if (thumbnail) {
+      validateFiles([thumbnail]);
+      const [processedThumbnail] = await compressImages([thumbnail]);
       const [thumbnailUploadUrl] = await FilesUploadService.getUploadUrls([
-        thumbnail,
+        processedThumbnail,
       ]);
 
       const thumbnailUploadData = [

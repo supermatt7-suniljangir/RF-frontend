@@ -43,10 +43,10 @@ const BuildComponents = () => {
     const imageFiles = files.filter((file) => file.type.startsWith("image/"));
 
     // Map files into media objects with blob URLs
-    const mediaFiles = imageFiles.map((file, i) => ({
+    const mediaFiles = imageFiles.map((file) => ({
       type: "image",
       file,
-      id: i + 1,
+      id: crypto.randomUUID(),
       url: URL.createObjectURL(file),
     }));
 
@@ -87,7 +87,7 @@ const BuildComponents = () => {
             />
             <CardContent className="flex items-center justify-center space-x-2 p-0">
               <Image className="!h-5 !w-5" />
-              <p className="text-sm text-muted-foreground">Image / video</p>
+              <p className="text-sm text-muted-foreground">Image</p>
             </CardContent>
           </Label>
         </Card>

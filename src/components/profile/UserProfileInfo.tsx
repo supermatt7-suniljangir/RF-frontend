@@ -9,7 +9,7 @@ import { useUser } from "@/contexts/UserContext";
 import Spinner from "@/app/loading";
 import ProfilePlaceholder from "@/media/user.png";
 import FollowDetails from "./FollowDetails";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function UserProfileInfo() {

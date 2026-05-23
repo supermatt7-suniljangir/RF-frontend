@@ -16,7 +16,6 @@ class ToolService {
         throw new Error(response.statusText);
       }
       const data = await response.json();
-      console.log(data);
       return data.data;
     } catch (error) {
       throw new Error("Failed to fetch tools", error);

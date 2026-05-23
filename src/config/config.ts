@@ -37,13 +37,13 @@ export const Config: AppConfig = {
   FILE_LIMITS: {
     avatar: 3 * 1024 * 1024, // 3MB
     cover: 5 * 1024 * 1024, // 5MB
-    MAX_IMAGE_SIZE: 5 * 1024 * 1024, // 5MB
+    MAX_IMAGE_SIZE: 8 * 1024 * 1024, // 8MB
     MAX_VIDEO_SIZE: 50 * 1024 * 1024, // 50MB
     MAX_FILES: 10,
   },
   COMPRESSION_OPTIONS: {
     avatar: {
-      maxSizeMB: 3,
+      maxSizeMB: 5,
       useWebWorker: true,
     },
     cover: {

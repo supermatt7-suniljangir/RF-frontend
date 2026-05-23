@@ -40,8 +40,8 @@ const ProjectDescInputs: React.FC = () => {
   if (!isDescOpen) return null;
 
   return (
-    <Card className="relative py-8 px-6 sm:px-10 md:px-16 lg:px-20 shadow-md rounded-none">
-      <h2 className="text-center text-2xl font-semibold mb-6">
+    <Card className="relative rounded-none px-6 py-8 shadow-md sm:px-10 md:px-16 lg:px-20">
+      <h2 className="mb-6 text-center text-2xl font-semibold">
         Project Details
       </h2>
       <CardContent className="space-y-6">
@@ -63,7 +63,7 @@ const ProjectDescInputs: React.FC = () => {
               className="w-full rounded-none"
             />
             {errors.title && (
-              <p className="text-red-500 text-sm mt-1">
+              <p className="mt-1 text-sm text-red-500">
                 {errors.title.message}
               </p>
             )}
@@ -72,7 +72,6 @@ const ProjectDescInputs: React.FC = () => {
           <div>
             <Textarea
               {...register("shortDescription", {
-                required: "Short summary is required",
                 minLength: {
                   value: 10,
                   message: "Summary must be at least 10 characters",
@@ -87,7 +86,7 @@ const ProjectDescInputs: React.FC = () => {
               rows={3}
             />
             {errors.shortDescription && (
-              <p className="text-red-500 text-sm mt-1">
+              <p className="mt-1 text-sm text-red-500">
                 {errors.shortDescription.message}
               </p>
             )}
@@ -96,10 +95,9 @@ const ProjectDescInputs: React.FC = () => {
           <div>
             <Textarea
               {...register("description", {
-                required: "Description is required",
                 minLength: {
-                  value: 20,
-                  message: "Description must be at least 20 characters",
+                  value: 10,
+                  message: "Description must be at least 10 characters",
                 },
                 maxLength: {
                   value: 500,
@@ -111,14 +109,14 @@ const ProjectDescInputs: React.FC = () => {
               rows={6}
             />
             {errors.description && (
-              <p className="text-red-500 text-sm mt-1">
+              <p className="mt-1 text-sm text-red-500">
                 {errors.description.message}
               </p>
             )}
           </div>
 
-          <div className="flex justify-center space-x-4 mt-6">
-            <Button type="submit" className="px-8 py-2 rounded-none">
+          <div className="mt-6 flex justify-center space-x-4">
+            <Button type="submit" className="rounded-none px-8 py-2">
               Save
             </Button>
             {projectMetadata.title && (
@@ -127,7 +125,7 @@ const ProjectDescInputs: React.FC = () => {
                   updateEditorStage(2);
                 }}
                 variant="secondary"
-                className="px-8 py-2 rounded-none"
+                className="rounded-none px-8 py-2"
               >
                 Continue
               </Button>

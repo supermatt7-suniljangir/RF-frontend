@@ -1,6 +1,11 @@
 "use client";
 import { toast } from "@/hooks/use-toast";
-import { ProjectUploadType, TempMedia, Thumbnail } from "@/types/project";
+import {
+  ProjectType,
+  ProjectUploadType,
+  TempMedia,
+  Thumbnail,
+} from "@/types/project";
 import { useProjectFilesUploader } from "@/features/cloudUpload/useProjectFilesUploader";
 import { useProjectUpload } from "@/features/project/useProjectUpload";
 import { useRouter } from "next/navigation";
@@ -101,14 +106,16 @@ export const useProjectUploadHandler = (projectID?: string) => {
 
       if (!res?.success) return;
       // Navigate to project page
-      router.push(`/project/${res.data._id}`);
-    } catch (error) {
+      window.location.assign(`/project/${res.data?._id}`);
+    } catch (error: unknown) {
       console.error("Project Upload Error:", error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Error uploading the project",
         description:
-          "An error occurred while uploading the project. Please try again.",
+          error instanceof Error
+            ? error.message
+            : "Project could not uploded due to an unexpected reason",
         duration: 3000,
       });
 
