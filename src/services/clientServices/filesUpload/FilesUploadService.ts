@@ -43,6 +43,7 @@ class FilesUploadService {
               body: file,
               headers: { "Content-Type": file.type },
             });
+
             const data = await response.json();
 
             // S3 returns 200 for successful uploads

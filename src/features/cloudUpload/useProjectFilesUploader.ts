@@ -10,7 +10,6 @@ import { CloudinaryUploadResponse, GeneratedUploadURL } from "@/types/upload";
 const validateFiles = (files: TempMedia[] | Thumbnail[]) => {
   const { MAX_IMAGE_SIZE, MAX_FILES } = Config.FILE_LIMITS;
 
-  //  check if any file is anything other than image or video
   if (files.filter((f) => !f.type.includes("image")).length > 0) {
     throw new Error("Only images are allowed.");
   }
@@ -31,45 +30,50 @@ const validateFiles = (files: TempMedia[] | Thumbnail[]) => {
 const compressImages = async <T extends TempMedia | Thumbnail>(
   files: T[],
 ): Promise<T[]> => {
-  const compressedFiles: T[] = [];
   const options = Config.COMPRESSION_OPTIONS;
 
-  for (const file of files) {
-    try {
-      if (file.file.type === "image/gif") {
-        compressedFiles.push(file);
-        continue;
+  const compressedFiles = await Promise.all(
+    files.map(async (file) => {
+      try {
+        if (file.file.type === "image/gif") {
+          return file;
+        }
+
+        const sizeMB = file.file.size / (1024 * 1024);
+
+        if (sizeMB < 1) {
+          return file;
+        }
+
+        const compressionOptions = {
+          ...options.default,
+          useWebWorker: true,
+          maxWidthOrHeight: 1920,
+        };
+
+        if (sizeMB < 3) {
+          compressionOptions.maxSizeMB = 1.5;
+        } else if (sizeMB < 6) {
+          compressionOptions.maxSizeMB = 2.5;
+        } else {
+          compressionOptions.maxSizeMB = 4;
+        }
+
+        const compressedFile = await imageCompression(
+          file.file,
+          compressionOptions,
+        );
+
+        return {
+          ...file,
+          file: compressedFile,
+        };
+      } catch (error) {
+        console.error("Image compression failed:", error);
+        return file;
       }
-      const sizeMB = file.file.size / (1024 * 1024);
-      if (sizeMB < 1) {
-        compressedFiles.push(file);
-        continue;
-      }
-
-      const compressionOptions = { ...options.default };
-
-      if (sizeMB < 2) {
-        compressionOptions.maxSizeMB = 1;
-      } else if (sizeMB < 4) {
-        compressionOptions.maxSizeMB = 2.5;
-      } else {
-        compressionOptions.maxSizeMB = 3;
-      }
-
-      const compressedFile = await imageCompression(
-        file.file,
-        compressionOptions,
-      );
-
-      compressedFiles.push({
-        ...file,
-        file: compressedFile,
-      });
-    } catch (error) {
-      console.error("Image compression failed:", error);
-      compressedFiles.push(file);
-    }
-  }
+    }),
+  );
 
   return compressedFiles;
 };
@@ -83,41 +87,44 @@ const uploadProjectFiles = async (
       throw new Error("No files to upload");
     }
 
-    if (files.length > 0) {
-      validateFiles(files);
-    }
-
-    const processedFiles = files.length > 0 ? await compressImages(files) : [];
-    console.log("processed files after compression are: ", processedFiles);
-    const processedFilesMap = new Map(
-      processedFiles.map((file) => [file.id, file.file]),
-    );
-
     // =========================
     // MEDIA
     // =========================
 
-    const mediaUploadUrls: GeneratedUploadURL[] =
-      processedFiles.length > 0
-        ? await FilesUploadService.getUploadUrls(processedFiles)
-        : [];
+    let uploadedMedia: Imedia[] = [];
 
-    const mediaUploadData = mediaUploadUrls.map((item) => ({
-      key: item.key,
-      uploadUrl: item.uploadUrl,
-      file: processedFilesMap.get(item.id),
-    }));
+    if (files.length > 0) {
+      validateFiles(files);
 
-    const uploadedMediaResponse: CloudinaryUploadResponse[] =
-      mediaUploadData.length > 0
-        ? await FilesUploadService.uploadFiles(mediaUploadData)
-        : [];
+      const processedFiles = await compressImages(files);
 
-    const uploadedMedia: Imedia[] = uploadedMediaResponse.map((item) => ({
-      type: item.resource_type as "image",
-      key: item.public_id,
-      url: item.secure_url,
-    }));
+      const mediaUploadUrls: GeneratedUploadURL[] =
+        await FilesUploadService.getUploadUrls(processedFiles);
+
+      const mediaUploadData = processedFiles.map((file) => {
+        const uploadData = mediaUploadUrls.find((item) => item.id === file.id);
+
+        if (!uploadData) {
+          throw new Error(`Upload URL not found for file ${file.id}`);
+        }
+
+        return {
+          key: uploadData.key,
+          uploadUrl: uploadData.uploadUrl,
+          file: file.file,
+        };
+      });
+
+      const uploadedMediaResponse: CloudinaryUploadResponse[] =
+        await FilesUploadService.uploadFiles(mediaUploadData);
+
+      uploadedMedia = uploadedMediaResponse.map((item) => ({
+        type: item.resource_type as "image",
+        key: item.public_id,
+        url: item.secure_url,
+      }));
+    }
+
     // =========================
     // THUMBNAIL
     // =========================
@@ -126,7 +133,9 @@ const uploadProjectFiles = async (
 
     if (thumbnail) {
       validateFiles([thumbnail]);
+
       const [processedThumbnail] = await compressImages([thumbnail]);
+
       const [thumbnailUploadUrl] = await FilesUploadService.getUploadUrls([
         processedThumbnail,
       ]);
@@ -135,7 +144,7 @@ const uploadProjectFiles = async (
         {
           key: thumbnailUploadUrl.key,
           uploadUrl: thumbnailUploadUrl.uploadUrl,
-          file: thumbnail.file,
+          file: processedThumbnail.file,
         },
       ];
 
@@ -151,7 +160,7 @@ const uploadProjectFiles = async (
 
     return {
       media: uploadedMedia,
-      thumbnail: uploadedThumbnail ?? null,
+      thumbnail: uploadedThumbnail,
     };
   } catch (error) {
     console.error("Project files upload failed", error);
@@ -167,8 +176,9 @@ export const useProjectFilesUploader = () => {
     thumnail?: Thumbnail | Ithumbnail,
   ) => {
     setLoading(true);
+
     try {
-      return await uploadProjectFiles(files, thumnail);
+      return await uploadProjectFiles(files, thumnail as Thumbnail);
     } finally {
       setLoading(false);
     }
