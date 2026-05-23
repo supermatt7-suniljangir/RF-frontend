@@ -41,7 +41,7 @@ const compressImages = async <T extends TempMedia | Thumbnail>(
 
         const sizeMB = file.file.size / (1024 * 1024);
 
-        if (sizeMB < 1) {
+        if (sizeMB < 5) {
           return file;
         }
 
@@ -51,12 +51,10 @@ const compressImages = async <T extends TempMedia | Thumbnail>(
           maxWidthOrHeight: 1920,
         };
 
-        if (sizeMB < 3) {
-          compressionOptions.maxSizeMB = 1.5;
-        } else if (sizeMB < 6) {
-          compressionOptions.maxSizeMB = 2.5;
+        if (sizeMB < 8) {
+          compressionOptions.maxSizeMB = sizeMB * 0.8;
         } else {
-          compressionOptions.maxSizeMB = 4;
+          compressionOptions.maxSizeMB = sizeMB * 0.7;
         }
 
         const compressedFile = await imageCompression(
