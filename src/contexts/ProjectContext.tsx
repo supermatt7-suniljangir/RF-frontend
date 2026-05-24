@@ -66,7 +66,6 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
     projectUrl: initialData?.projectUrl || "",
     stats: initialData?.stats || { views: 0, likes: 0, comments: 0 },
   });
-
   const [tags, setTags] = useState<string[]>(initialData?.tags || []);
   const [tools, setTools] = useState<Itool[]>(initialData?.tools || []);
   const [collaborators, setCollaborators] = useState<MiniUser[]>(

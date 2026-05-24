@@ -14,12 +14,13 @@ const useTools = () => {
   const [tools, setTools] = useState<Itool[]>([]);
   const [success, setSuccess] = useState<boolean>(false);
 
-  const getTools = async (cacheSettings?: RequestCache) => {
+  const getTools = async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const toolsData = await ToolService.getTools("reload");
+      const toolsData = await ToolService.getTools();
+      console.log(toolsData);
       setTools(toolsData);
     } catch (error) {
       let errorMessage = "Failed to fetch tools";

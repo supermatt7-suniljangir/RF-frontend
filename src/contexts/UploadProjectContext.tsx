@@ -59,7 +59,6 @@ export const UploadProjectProvider: React.FC<UploadProjectProviderProps> = ({
       copyright: copyRight,
       publishedAt: Date.now(),
     };
-
     // Call the updated hook which now handles everything internally
     await handleProjectUpload(projectData);
   };

@@ -4,10 +4,8 @@ import { User } from "@/types/user";
 import { createContext, useState, useContext, useEffect } from "react";
 import React from "react";
 import { logout as logoutService } from "@/features/auth/logout";
-import { getUserProfile } from "@/services/serverServices/profile/getUserProfile";
-import { useRouter } from "next/navigation";
+import { getProfile } from "@/services/clientServices/profile/ProfileService";
 import { toast } from "@/hooks/use-toast";
-import { ApiResponse, toastMap } from "@/api/types/api-types";
 
 interface UserContextType {
   user: User | null;
@@ -21,35 +19,25 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchUser = async () => {
     try {
-      const { success, data, error, status } = (await getUserProfile({
-        cacheSettings: "reload",
-      })) as ApiResponse;
-      if (!success || !data) {
-        console.error(error);
-        if (status === 401 && error !== "AUTH_REQUIRED") {
-          // Only show toast for 401 errors if user was logged in
-          const toastMessage =
-            toastMap[error] || "An unexpected error occurred.";
-          toast({
-            variant: "destructive",
-            description: toastMessage,
-            title: "Error",
-          });
-        }
-        await logout();
-        router.push("/login");
-        return;
-      }
+      const { data } = await getProfile();
 
-      setUser(data || null);
+      setUser(data);
     } catch (error) {
       console.error("Failed to fetch user profile:", error);
+
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred",
+      });
     } finally {
       setIsLoading(false);
     }

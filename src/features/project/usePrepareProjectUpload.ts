@@ -1,20 +1,13 @@
 "use client";
 import { toast } from "@/hooks/use-toast";
-import {
-  ProjectType,
-  ProjectUploadType,
-  TempMedia,
-  Thumbnail,
-} from "@/types/project";
+import { ProjectUploadType, TempMedia, Thumbnail } from "@/types/project";
 import { useProjectFilesUploader } from "@/features/cloudUpload/useProjectFilesUploader";
 import { useProjectUpload } from "@/features/project/useProjectUpload";
-import { useRouter } from "next/navigation";
 import { ApiResponse } from "@/types/ApiResponse";
 import { useProjectContext } from "@/contexts/ProjectContext";
 import { useMediaUpload } from "@/contexts/MediaContext";
 
 export const useProjectUploadHandler = (projectID?: string) => {
-  const router = useRouter();
   const { createNew, updateExisting } = useProjectUpload();
   const { handleProjectFilesUpload } = useProjectFilesUploader();
   const isUpdating = !!projectID;
@@ -98,7 +91,6 @@ export const useProjectUploadHandler = (projectID?: string) => {
             key: fallbackThumbnailThroughMedia.key,
           } as Thumbnail),
       };
-
       // Send to API
       const res: ApiResponse = isUpdating
         ? await updateExisting(finalProjectData)

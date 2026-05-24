@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { ApiResponse } from "@/types/ApiResponse";
 import { User } from "@/types/user";
-import UserProfileService from "@/services/clientServices/profile/ProfileService";
+import { updateProfile } from "@/services/clientServices/profile/ProfileService";
 import { toast } from "@/hooks/use-toast";
 
 export function useUpdateUserProfile() {
@@ -13,7 +13,7 @@ export function useUpdateUserProfile() {
   ): Promise<ApiResponse> => {
     setLoading(true);
     try {
-      const res = await UserProfileService.updateProfile(payload);
+      const res = await updateProfile(payload);
       toast({
         title: "Success",
         description: res.message,

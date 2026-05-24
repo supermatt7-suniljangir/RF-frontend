@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserContext";
 import { useBookmarkOperations } from "@/features/bookmarks/useBookmarkOperations";
 import { ProjectType } from "@/types/project";
-import { useRouter } from "next/navigation";
 import ShareModal from "./ShareModal";
 import { revalidateTags } from "@/lib/revalidateTags";
 
@@ -14,11 +13,11 @@ interface InteractionButtonsProps {
 }
 
 function InteractionButtons({ project }: InteractionButtonsProps) {
+  console.log("the project inside InteractionButtons is: ", project);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const { user, isLoading } = useUser();
   const [isSavingBookmark, setIsSavingBookmark] = useState(false);
-  const router = useRouter();
   const { checkBookmarkStatus, toggleBookmarkProject } =
     useBookmarkOperations();
 
